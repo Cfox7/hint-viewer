@@ -3,9 +3,14 @@ import socketserver
 import subprocess
 import threading
 import time
+import os
 from urllib.parse import urlparse
 
 class TwitchExtensionHandler(http.server.SimpleHTTPRequestHandler):
+    def __init__(self, *args, **kwargs):
+        # Serve from the dist directory
+        super().__init__(*args, directory='dist', **kwargs)
+    
     def end_headers(self):
         # CORS headers for Twitch extension
         self.send_header('Access-Control-Allow-Origin', '*')
