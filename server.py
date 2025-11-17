@@ -57,6 +57,8 @@ threading.Thread(target=start_ngrok, daemon=True).start()
 time.sleep(3)
 
 # Start server
+socketserver.TCPServer.allow_reuse_address = True
+
 try:
     with socketserver.TCPServer(("", PORT), TwitchExtensionHandler) as httpd:
         httpd.allow_reuse_address = True
