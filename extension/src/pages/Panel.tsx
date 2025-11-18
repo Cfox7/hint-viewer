@@ -2,16 +2,14 @@ import { useState } from 'react';
 import { useTwitchAuth } from '../hooks/useTwitchAuth';
 import Upload from '../components/Upload';
 import DisplayHints from '../components/DisplayHints';
-
-interface SpoilerLog {
-  "Wrinkly Hints": {
-    [hintLocation: string]: string;
-  };
-}
+import type { SpoilerLog } from '@hint-viewer/shared';
 
 function Panel() {
-  const { game, role } = useTwitchAuth();
+  const { game, role, auth } = useTwitchAuth();
   const [spoilerData, setSpoilerData] = useState<SpoilerLog | null>(null);
+
+  // Get channel ID from auth data
+  const channelId = auth?.channelId;
 
   return (
     <div style={{ color: 'white', padding: '20px' }}>
@@ -22,7 +20,7 @@ function Panel() {
         </>
       )}
       {spoilerData && <DisplayHints spoilerData={spoilerData} />}
-      {role === 'broadcaster' && <Upload setSpoilerData={setSpoilerData} />}
+      <Upload setSpoilerData={setSpoilerData} channelId={channelId} />
     </div>
   );
 }

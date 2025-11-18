@@ -1,35 +1,21 @@
 {
-  "name": "hint-viewer",
+  "name": "hint-viewer-monorepo",
   "private": true,
-  "version": "0.0.0",
-  "type": "module",
+  "version": "1.0.0",
+  "workspaces": [
+    "extension",
+    "broadcaster-site",
+    "backend",
+    "shared"
+  ],
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview",
-    "serve": "python3 server.py",
-    "build:serve": "npm run build && npm run serve"
-  },
-  "dependencies": {
-    "bootstrap": "^5.3.8",
-    "react": "^19.2.0",
-    "react-bootstrap": "^2.10.10",
-    "react-dom": "^19.2.0"
-  },
-  "devDependencies": {
-    "@eslint/js": "^9.39.1",
-    "@types/node": "^24.10.0",
-    "@types/react": "^19.2.2",
-    "@types/react-dom": "^19.2.2",
-    "@types/twitch-ext": "^1.24.9",
-    "@vitejs/plugin-react": "^5.1.0",
-    "eslint": "^9.39.1",
-    "eslint-plugin-react-hooks": "^7.0.1",
-    "eslint-plugin-react-refresh": "^0.4.24",
-    "globals": "^16.5.0",
-    "typescript": "~5.9.3",
-    "typescript-eslint": "^8.46.3",
-    "vite": "^7.2.2"
+    "dev:extension": "npm run dev --workspace=extension",
+    "dev:broadcaster": "npm run dev --workspace=broadcaster-site",
+    "dev:backend": "npm run dev --workspace=backend",
+    "build:extension": "npm run build --workspace=extension",
+    "build:broadcaster": "npm run build --workspace=broadcaster-site",
+    "build:backend": "npm run build --workspace=backend",
+    "build:all": "npm run build --workspaces --if-present",
+    "install:all": "npm install"
   }
 }

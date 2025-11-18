@@ -1,10 +1,5 @@
 import { Carousel } from 'react-bootstrap';
-
-interface SpoilerLog {
-  "Wrinkly Hints": {
-    [hintLocation: string]: string;
-  };
-}
+import type { SpoilerLog } from '@hint-viewer/shared';
 
 interface DisplayHintsProps {
   spoilerData: SpoilerLog | null;
