@@ -1,14 +1,15 @@
 import { useState, useEffect } from 'react';
+import { HintCarousel } from './HintCarousel';
 import type { SpoilerLog, SpoilerResponse } from '@hint-viewer/shared';
 
-interface UploadProps {
-  setSpoilerData: (data: SpoilerLog | null) => void;
+interface ProcessHintsProps {
   channelId: string | undefined;
 }
 
 const API_URL = 'https://hint-viewer-production.up.railway.app';
 
-function Upload({ setSpoilerData, channelId }: UploadProps) {
+function ProcessHints({ channelId }: ProcessHintsProps) {
+  const [spoilerData, setSpoilerData] = useState<SpoilerLog | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastFetch, setLastFetch] = useState<string | null>(null);
@@ -32,7 +33,7 @@ function Upload({ setSpoilerData, channelId }: UploadProps) {
         }
 
         if (!response.ok) {
-          throw new Error('Failed to fetch spoiler data');
+          throw new Error('Failed to fetch spoiler data. API error occurred.');
         }
 
         const data: SpoilerResponse = await response.json();
@@ -49,11 +50,11 @@ function Upload({ setSpoilerData, channelId }: UploadProps) {
 
     fetchSpoilerData();
     
-    // Poll every 30 seconds for updates
-    const interval = setInterval(fetchSpoilerData, 30000);
+    // Poll every 15 seconds for updates
+    const interval = setInterval(fetchSpoilerData, 15000);
     
     return () => clearInterval(interval);
-  }, [channelId, setSpoilerData]);
+  }, [channelId]);
 
   if (loading) {
     return <p style={{ fontSize: '12px', color: '#999' }}>Loading hints...</p>;
@@ -62,13 +63,25 @@ function Upload({ setSpoilerData, channelId }: UploadProps) {
   if (error) {
     return <p style={{ fontSize: '12px', color: '#ff6b6b' }}>{error}</p>;
   }
-  
+
+  if (!spoilerData) {
+    return (
+      <div style={{ fontSize: '10px', opacity: 0.7 }}>
+        <p>No spoiler log uploaded yet. Broadcaster should upload via the broadcaster site.</p>
+      </div>
+    );
+  }
+
   return (
-    <div style={{ fontSize: '10px', opacity: 0.7, marginTop: '10px' }}>
-      {lastFetch && <p>Last updated: {new Date(lastFetch).toLocaleTimeString()}</p>}
-      {!lastFetch && <p>No spoiler log uploaded yet. Broadcaster should upload via the broadcaster site.</p>}
-    </div>
+    <>
+      <HintCarousel spoilerData={spoilerData} className="carousel-container" />
+      {lastFetch && (
+        <div style={{ fontSize: '10px', opacity: 0.7, marginTop: '10px' }}>
+          <p>Last updated: {new Date(lastFetch).toLocaleTimeString()}</p>
+        </div>
+      )}
+    </>
   );
 }
 
-export default Upload;
+export default ProcessHints;

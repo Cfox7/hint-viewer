@@ -1,15 +1,12 @@
 import { Carousel } from 'react-bootstrap';
-import type { SpoilerLog } from '@hint-viewer/shared';
+import type { SpoilerLog } from '../types';
 
-interface DisplayHintsProps {
-  spoilerData: SpoilerLog | null;
+export interface HintCarouselProps {
+  spoilerData: SpoilerLog;
+  className?: string;
 }
 
-function DisplayHints({ spoilerData }: DisplayHintsProps) {
-  if (!spoilerData) {
-    return <p>No spoiler log loaded. Broadcaster needs to upload a file.</p>;
-  }
-
+export function HintCarousel({ spoilerData, className = '' }: HintCarouselProps) {
   const hints = spoilerData["Wrinkly Hints"];
   
   // Group hints by level (extract level name from location)
@@ -29,7 +26,7 @@ function DisplayHints({ spoilerData }: DisplayHintsProps) {
   const levels = Object.keys(groupedHints).sort();
 
   return (
-    <div className="carousel-container">
+    <div className={className}>
       <Carousel interval={null}>
         {levels.map((level) => (
           <Carousel.Item key={level}>
@@ -61,5 +58,3 @@ function DisplayHints({ spoilerData }: DisplayHintsProps) {
     </div>
   );
 }
-
-export default DisplayHints;

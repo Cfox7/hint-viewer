@@ -16,10 +16,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true,
-    "paths": {
-      "@hint-viewer/shared": ["../shared/types.ts"]
-    }
+    "noUncheckedSideEffectImports": true
   },
   "include": ["src"]
 }
