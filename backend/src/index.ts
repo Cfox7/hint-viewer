@@ -23,6 +23,9 @@ interface SpoilerResponse {
 
 const spoilerLogs = new Map<string, SpoilerResponse>();
 
+// Store revealed hints per channel
+const revealedHints = new Map<string, string[]>();
+
 // POST - Upload spoiler log
 app.post('/api/spoiler/:channelId', (req, res) => {
   const { channelId } = req.params;
@@ -59,6 +62,30 @@ app.delete('/api/spoiler/:channelId', (req, res) => {
   } else {
     res.status(404).json({ error: 'No spoiler log found for this channel' });
   }
+});
+
+// POST - Update revealed hints
+app.post('/api/hints/reveal', (req, res) => {
+  const { channelId, revealedHints: hints } = req.body;
+  if (!channelId || !Array.isArray(hints)) {
+    return res.status(400).json({ error: 'channelId and revealedHints are required' });
+  }
+  revealedHints.set(channelId, hints);
+  res.json({ success: true });
+});
+
+// GET - Retrieve revealed hints
+app.get('/api/hints/:channelId', (req, res) => {
+  const { channelId } = req.params;
+  const hints = revealedHints.get(channelId) || [];
+  res.json({ revealedHints: hints });
+});
+
+// DELETE - Clear revealed hints for a channel
+app.delete('/api/hints/:channelId', (req, res) => {
+  const { channelId } = req.params;
+  revealedHints.delete(channelId);
+  res.json({ success: true });
 });
 
 app.listen(PORT, () => {

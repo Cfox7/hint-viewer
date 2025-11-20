@@ -19,6 +19,7 @@ function Upload({ channelId }: UploadProps) {
   const [spoilerData, setSpoilerData] = useState<SpoilerLog | null>(null);
   const [showClearModal, setShowClearModal] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [revealedHints, setRevealedHints] = useState<Set<string>>(new Set());
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -38,9 +39,22 @@ function Upload({ channelId }: UploadProps) {
     setUploading(true);
 
     try {
+      // Clear old spoiler log and revealed hints before uploading new log
+      await fetch(`${API_URL}/api/spoiler/${channelId}`, { method: 'DELETE' });
+      await fetch(`${API_URL}/api/hints/${channelId}`, { method: 'DELETE' });
+
       const text = await selectedFile.text();
       const json: SpoilerLog = JSON.parse(text);
-      
+
+      // Filter out First Hint from Wrinkly Hints before uploading
+      if (json["Wrinkly Hints"]) {
+        Object.keys(json["Wrinkly Hints"]).forEach(key => {
+          if (key.startsWith("First")) {
+            delete json["Wrinkly Hints"][key];
+          }
+        });
+      }
+
       const response = await fetch(`${API_URL}/api/spoiler/${channelId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -55,6 +69,7 @@ function Upload({ channelId }: UploadProps) {
       setSuccess(true);
       setUploadedAt(result.uploadedAt);
       setSpoilerData(json);
+      setRevealedHints(new Set());
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to upload spoiler log');
       console.error('Upload error:', err);
@@ -69,7 +84,13 @@ function Upload({ channelId }: UploadProps) {
     setError(null);
 
     try {
+      // Delete spoiler log
       const response = await fetch(`${API_URL}/api/spoiler/${channelId}`, {
+        method: 'DELETE',
+      });
+
+      // Delete revealed hints
+      await fetch(`${API_URL}/api/hints/${channelId}`, {
         method: 'DELETE',
       });
 
@@ -82,6 +103,7 @@ function Upload({ channelId }: UploadProps) {
       setUploadedAt(null);
       setError(null);
       setSpoilerData(null);
+      setRevealedHints(new Set());
       
       // Reset file input so the same file can be selected again
       if (fileInputRef.current) {
@@ -93,6 +115,24 @@ function Upload({ channelId }: UploadProps) {
     } finally {
       setClearing(false);
     }
+  };
+
+  const handleToggleHint = (location: string) => {
+    setRevealedHints(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(location)) {
+        newSet.delete(location);
+      } else {
+        newSet.add(location);
+      }
+      // Sync with backend
+      fetch(`${API_URL}/api/hints/reveal`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ channelId, revealedHints: Array.from(newSet) })
+      });
+      return newSet;
+    });
   };
 
   return (
@@ -125,7 +165,13 @@ function Upload({ channelId }: UploadProps) {
 
       {spoilerData && (
         <div className="hints-preview">
-          <HintCarousel spoilerData={spoilerData} className="carousel-container" />
+          <HintCarousel
+            spoilerData={spoilerData}
+            className="carousel-container"
+            channelId={channelId}
+            revealedHints={revealedHints}
+            onToggleHint={handleToggleHint}
+          />
         </div>
       )}
 

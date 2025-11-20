@@ -70,6 +70,7 @@ h1 {
 }
 
 .carousel-container .hint-item {
+  text-align: center;
   margin-bottom: 10px;
 }
 

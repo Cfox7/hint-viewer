@@ -10,6 +10,7 @@ const API_URL = 'https://hint-viewer-production.up.railway.app';
 
 function ProcessHints({ channelId }: ProcessHintsProps) {
   const [spoilerData, setSpoilerData] = useState<SpoilerLog | null>(null);
+  const [revealedHints, setRevealedHints] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastFetch, setLastFetch] = useState<string | null>(null);
@@ -20,7 +21,8 @@ function ProcessHints({ channelId }: ProcessHintsProps) {
       return;
     }
 
-    const fetchSpoilerData = async () => {
+    const fetchAll = async () => {
+      // Fetch spoiler data
       try {
         const response = await fetch(`${API_URL}/api/spoiler/${channelId}`);
         
@@ -46,13 +48,21 @@ function ProcessHints({ channelId }: ProcessHintsProps) {
         setLoading(false);
         console.error('Fetch error:', err);
       }
+
+      // Fetch revealed hints
+      try {
+        const res = await fetch(`${API_URL}/api/hints/${channelId}`);
+        const data = await res.json();
+        if (Array.isArray(data.revealedHints)) {
+          setRevealedHints(new Set(data.revealedHints));
+        }
+      } catch {
+        // Optionally handle error
+      }
     };
 
-    fetchSpoilerData();
-    
-    // Poll every 15 seconds for updates
-    const interval = setInterval(fetchSpoilerData, 15000);
-    
+    fetchAll();
+    const interval = setInterval(fetchAll, 10000);
     return () => clearInterval(interval);
   }, [channelId]);
 
@@ -74,7 +84,13 @@ function ProcessHints({ channelId }: ProcessHintsProps) {
 
   return (
     <>
-      <HintCarousel spoilerData={spoilerData} className="carousel-container" />
+      {channelId && (
+        <HintCarousel
+          spoilerData={spoilerData}
+          className="carousel-container"
+          revealedHints={revealedHints}
+        />
+      )}
       {lastFetch && (
         <div style={{ fontSize: '10px', opacity: 0.7, marginTop: '10px' }}>
           <p>Last updated: {new Date(lastFetch).toLocaleTimeString()}</p>

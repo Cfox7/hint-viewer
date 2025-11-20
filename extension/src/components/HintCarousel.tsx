@@ -4,26 +4,39 @@ import type { SpoilerLog } from '@hint-viewer/shared';
 export interface HintCarouselProps {
   spoilerData: SpoilerLog;
   className?: string;
+  revealedHints: Set<string>;
 }
 
-export function HintCarousel({ spoilerData, className = '' }: HintCarouselProps) {
+export function HintCarousel({ spoilerData, className = '', revealedHints }: HintCarouselProps) {
   const hints = spoilerData["Wrinkly Hints"];
-  
+
   // Group hints by level (extract level name from location)
   const groupedHints: { [level: string]: string[] } = {};
-  
+
   Object.keys(hints).forEach((location) => {
-    // Extract level name (e.g., "Japes DK" -> "Japes", "Aztec Diddy" -> "Aztec")
     const level = location.split(' ')[0];
-    
     if (!groupedHints[level]) {
       groupedHints[level] = [];
     }
     groupedHints[level].push(location);
   });
 
-  // Sort levels alphabetically
-  const levels = Object.keys(groupedHints).sort();
+  const levelDisplayNames: Record<string, string> = {
+    Japes: "Jungle Japes",
+    Aztec: "Angry Aztec",
+    Factory: "Frantic Factory",
+    Galleon: "Gloomy Galleon",
+    Fungi: "Fungi Forest",
+    Caves: "Crystal Caves",
+    Castle: "Creepy Castle",
+    Isles: "DK Isles",
+    Helm: "Hideout Helm"
+  };
+
+  const levelOrder = Object.keys(levelDisplayNames);
+  const levels = Object.keys(groupedHints)
+    .filter(level => levelOrder.includes(level)) // only include known levels
+    .sort((a, b) => levelOrder.indexOf(a) - levelOrder.indexOf(b));
 
   return (
     <div className={className}>
@@ -36,16 +49,16 @@ export function HintCarousel({ spoilerData, className = '' }: HintCarouselProps)
               alt={`${level} background`}
             />
             <Carousel.Caption>
-              <h3>{level}</h3>
+              <h3>{levelDisplayNames[level] || level}</h3>
               <div className="hints-list">
                 {groupedHints[level].sort().map((location) => {
                   const cleanedHint = hints[location].split('|')[0].trim();
-                  
+                  const isRevealed = revealedHints.has(location);
+
                   return (
                     <div key={location} className="hint-item">
-                      <strong className="hint-location">{location}:</strong>
                       <p className="hint-text">
-                        {cleanedHint}
+                        {isRevealed ? cleanedHint : "???"}
                       </p>
                     </div>
                   );
