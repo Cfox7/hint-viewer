@@ -1,3 +1,9 @@
+@font-face {
+  font-family: 'VTC Sunday Komix';
+  src: url('/assets/Fonts/vtcsundaykomixcapsbold.ttf') format('truetype');
+  font-style: normal;
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -59,19 +65,22 @@ h1 {
 
 /* Carousel styles */
 .carousel-container .carousel-item img {
-  height: 400px;
+  width: 100%;
+  max-width: 1024px;
+  height: auto;
+  aspect-ratio: 3 / 2;
   object-fit: cover;
+  display: block;
+  max-height: 350px;
 }
 
 .carousel-container .hints-list {
   text-align: left;
-  max-height: 300px;
   overflow-y: auto;
 }
 
 .carousel-container .hint-item {
   text-align: center;
-  margin-bottom: 10px;
 }
 
 .carousel-container .hint-location {
@@ -79,8 +88,53 @@ h1 {
 }
 
 .carousel-container .hint-text {
-  margin-top: 5px;
-  margin-left: 10px;
+  font-size: 14px; /* 16px is safer, but 14px is still readable */
+  min-height: 3em;
+  font-family: 'VTC Sunday Komix', Arial, sans-serif !important;
+}
+
+.carousel-control-next,
+.carousel-control-prev {
+  opacity: 1 !important;
+  transition: opacity 0.15s;
+}
+
+.carousel-control-next:active,
+.carousel-control-prev:active {
+  transform: translateY(4px) scale(0.95);
+  transition: transform 0.1s, opacity 0.1s;
+}
+
+.carousel-caption {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transform: none;
+}
+
+.carousel-bg-container {
+  background-image: url('/assets/bgfinal.webp');
+  background-size: cover;
+  background-position: center;
+  padding: 32px 0;
+  border-radius: 16px;
+  max-width: 1024px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.level-title {
+  text-align: center;
+  color: #fff;
+  text-shadow: 0 2px 8px #000;
+  font-size: 2rem;
 }
 
 @media (prefers-color-scheme: light) {

@@ -1,3 +1,9 @@
+@font-face {
+  font-family: 'VTC Sunday Komix';
+  src: url('/assets/Fonts/vtcsundaykomixcapsbold.ttf') format('truetype');
+  font-style: normal;
+}
+
 .app-layout {
   min-height: 100vh;
   width: 100%;
@@ -94,8 +100,7 @@
 }
 
 .container {
-  max-width: 600px;
-  width: 100%;
+  max-width: 800px;
   margin: 0 auto;
 }
 
@@ -104,7 +109,6 @@
   border-radius: 0;
   padding: 0;
   box-shadow: none;
-  width: 100%;
 }
 
 h1 {
@@ -390,19 +394,21 @@ small a:hover {
 
 /* Carousel styles */
 .carousel-container .carousel-item img {
-  height: 400px;
+  width: 100%;
+  max-width: 1024px;
+  height: auto;
+  aspect-ratio: 3 / 2;
   object-fit: cover;
+  display: block;
 }
 
 .carousel-container .hints-list {
   text-align: left;
-  max-height: 300px;
   overflow-y: auto;
 }
 
 .carousel-container .hint-item {
   text-align: center;
-  margin-bottom: 10px;
 }
 
 .carousel-container .hint-location {
@@ -411,8 +417,62 @@ small a:hover {
 }
 
 .carousel-container .hint-text {
-  margin-top: 5px;
-  margin-left: 10px;
+  font-size: 14px;
+  min-height: 3em;
+  font-family: 'VTC Sunday Komix', Arial, sans-serif !important;
+  margin-bottom: 0rem;
+}
+
+.carousel-control-next,
+.carousel-control-prev {
+  opacity: 1 !important;
+  transition: opacity 0.15s;
+}
+
+.carousel-control-next:active,
+.carousel-control-prev:active {
+  transform: translateY(4px) scale(0.95);
+  transition: transform 0.1s, opacity 0.1s;
+}
+
+.carousel-caption {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transform: none;
+}
+
+.carousel-caption .hints-list {
+  max-width: 675px;
+  min-width: 675px;
+  margin: 0 auto;
+  padding-left: 8vw;
+  padding-right: 8vw;
+}
+
+.carousel-bg-container {
+  background-image: url('/assets/bgfinal.webp');
+  background-size: cover;
+  background-position: center;
+  padding: 32px 0;
+  border-radius: 16px;
+  max-width: 1024px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.level-title {
+  text-align: center;
+  color: #fff;
+  text-shadow: 0 2px 8px #000;
+  font-size: 2rem;
 }
 
 .clear-btn {

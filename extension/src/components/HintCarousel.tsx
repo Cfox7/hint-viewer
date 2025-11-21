@@ -1,5 +1,6 @@
 import { Carousel } from 'react-bootstrap';
 import type { SpoilerLog } from '@hint-viewer/shared';
+import { useState } from 'react';
 
 export interface HintCarouselProps {
   spoilerData: SpoilerLog;
@@ -22,6 +23,7 @@ export function HintCarousel({ spoilerData, className = '', revealedHints }: Hin
   });
 
   const levelDisplayNames: Record<string, string> = {
+    Isles: "DK Isles",
     Japes: "Jungle Japes",
     Aztec: "Angry Aztec",
     Factory: "Frantic Factory",
@@ -29,7 +31,6 @@ export function HintCarousel({ spoilerData, className = '', revealedHints }: Hin
     Fungi: "Fungi Forest",
     Caves: "Crystal Caves",
     Castle: "Creepy Castle",
-    Isles: "DK Isles",
     Helm: "Hideout Helm"
   };
 
@@ -38,18 +39,30 @@ export function HintCarousel({ spoilerData, className = '', revealedHints }: Hin
     .filter(level => levelOrder.includes(level)) // only include known levels
     .sort((a, b) => levelOrder.indexOf(a) - levelOrder.indexOf(b));
 
+  const [activeIndex, setActiveIndex] = useState(0);
+
   return (
-    <div className={className}>
-      <Carousel interval={null}>
+    <div className={`carousel-bg-container ${className}`}>
+      <h3 className="level-title">Hints</h3>
+      <h3 className="level-title">
+        {levelDisplayNames[levels[activeIndex]] || levels[activeIndex]}
+      </h3>
+      <Carousel
+        interval={null}
+        activeIndex={activeIndex}
+        onSelect={setActiveIndex}
+        slide={false}
+        nextIcon={<img src="/assets/C_Right.svg" alt="Next" style={{ width: 64, height: 64 }} />}
+        prevIcon={<img src="/assets/C_Left.svg" alt="Prev" style={{ width: 64, height: 64 }} />}
+      >
         {levels.map((level) => (
           <Carousel.Item key={level}>
             <img
-              className="d-block w-100"
-              src="/assets/bgfinal.webp"
+              src="/assets/C_Left.svg"
               alt={`${level} background`}
+              style={{ opacity: 0.3 }}
             />
             <Carousel.Caption>
-              <h3>{levelDisplayNames[level] || level}</h3>
               <div className="hints-list">
                 {groupedHints[level].sort().map((location) => {
                   const cleanedHint = hints[location].split('|')[0].trim();
