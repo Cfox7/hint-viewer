@@ -1,7 +1,40 @@
 @font-face {
+  font-family: 'Tekton Bold';
+  src: url('/assets/Fonts/tektonbold.ttf') format('truetype');
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Jumpman';
+  src: url('/assets/Fonts/Jumpman.ttf') format('truetype');
+  font-style: normal;
+}
+
+@font-face {
   font-family: 'VTC Sunday Komix';
   src: url('/assets/Fonts/vtcsundaykomixcapsbold.ttf') format('truetype');
   font-style: normal;
+}
+
+body, .app-layout {
+  background: #181c18 !important;
+  color: #ffe066 !important;
+  font-family: 'Jumpman', Arial, sans-serif;
+}
+
+.gradient-jumpman {
+  font-family: 'Jumpman', Arial, sans-serif;
+  background: linear-gradient(
+    to bottom,
+    #c0392b 15%,      /* subtle red at top */
+    #eec00a 40%,     /* your yellow in the middle */
+    #7fff8c 95%      /* subtle light green at bottom */
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: 0.5px #000; /* Black outline */
+  background-clip: text;
+  color: transparent;
 }
 
 .app-layout {
@@ -12,8 +45,9 @@
 }
 
 .app-header {
-  background: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: #101510 !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.7);
+  opacity: 1;
   padding: 20px 0;
   position: sticky;
   top: 0;
@@ -34,15 +68,16 @@
   flex: 1;
 }
 
-.header-title h1 {
-  color: #333;
-  font-size: 32px;
+.header-title h1,
+.header-title h2 {
+  color: #ffe066 !important;
+  text-shadow: 2px 2px 0 #000;
   margin: 0 0 4px 0;
   text-align: left;
 }
 
 .header-title h2 {
-  color: #666;
+  color: #dee2e6;
   font-size: 18px;
   margin: 0;
   text-align: left;
@@ -54,7 +89,7 @@
   align-items: center;
   gap: 12px;
   padding: 12px 20px;
-  background: #f8f9fa;
+  background: #222a22 !important;
   border-radius: 8px;
 }
 
@@ -71,13 +106,18 @@
   gap: 2px;
 }
 
+.user-info-header strong,
+.user-info-header small {
+  color: #dee2e6 !important;
+}
+
 .user-info-header strong {
-  color: #333;
+  color: #dee2e6;
   font-size: 15px;
 }
 
 .user-info-header small {
-  color: #666;
+  color: #dee2e6;
   font-size: 12px;
   margin: 0;
 }
@@ -87,16 +127,17 @@
   display: flex;
   justify-content: center;
   padding: 40px 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #181c18 !important;
 }
 
 .content-card {
   max-width: 1200px;
   width: 100%;
-  background: white;
+  background: #222a22 !important;
+  color: #dee2e6 !important;
   border-radius: 16px;
   padding: 40px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.7);
 }
 
 .container {
@@ -105,21 +146,24 @@
 }
 
 .card {
-  background: transparent;
-  border-radius: 0;
+  background: transparent !important;
+  border: 2px solid #ffd700 !important;
+  border-radius: 16px;
+  color: #dee2e6 !important;
   padding: 0;
   box-shadow: none;
+  border: none;
 }
 
 h1 {
-  color: #333;
+  color: #dee2e6;
   font-size: 32px;
   margin-bottom: 8px;
   text-align: center;
 }
 
 h2 {
-  color: #666;
+  color: #dee2e6;
   font-size: 20px;
   margin-bottom: 32px;
   text-align: center;
@@ -133,23 +177,27 @@ h2 {
 label {
   display: block;
   margin-bottom: 8px;
-  color: #333;
+  color: #dee2e6;
   font-weight: 600;
   font-size: 14px;
 }
 
-input[type="text"] {
+input[type="text"],
+input[type="file"] {
   width: 100%;
   padding: 12px 16px;
-  border: 2px solid #e0e0e0;
+  border: 2px solid #ffe066 !important;
   border-radius: 8px;
   font-size: 16px;
   transition: border-color 0.2s;
+  background: #181c18 !important;
+  color: #dee2e6 !important;
 }
 
-input[type="text"]:focus {
-  outline: none;
-  border-color: #667eea;
+input[type="text"]:focus,
+input[type="file"]:focus {
+  border-color: #ffd700 !important;
+  background: #222a22 !important;
 }
 
 input[type="text"]:disabled {
@@ -167,8 +215,8 @@ input[type="file"] {
 }
 
 input[type="file"]:hover:not(:disabled) {
-  border-color: #667eea;
-  background-color: #f8f9ff;
+  border-color: #ffd700 !important;
+  background-color: #222a22 !important;
 }
 
 input[type="file"]:disabled {
@@ -240,12 +288,12 @@ small a:hover {
   padding: 12px;
   background: #f8f9fa;
   border-radius: 8px;
-  color: #495057;
+  color: #dee2e6;
   font-size: 14px;
 }
 
 .file-info strong {
-  color: #212529;
+  color: #dee2e6;
 }
 
 .auth-section {
@@ -259,23 +307,28 @@ small a:hover {
   font-size: 16px;
 }
 
-.twitch-login-btn {
-  background: #9146FF;
-  color: white;
-  border: none;
+.twitch-login-btn,
+.clear-btn,
+.logout-btn,
+.close-preview-btn {
+  background: #048243 !important;
+  color: #ffe066 !important;
+  border: 2px solid #ffd700 !important;
+  box-shadow: 0 2px 8px #000;
   padding: 14px 32px;
   border-radius: 8px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.2s, transform 0.1s;
-  box-shadow: 0 4px 12px rgba(145, 70, 255, 0.3);
 }
 
-.twitch-login-btn:hover {
-  background: #7d3ad1;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(145, 70, 255, 0.4);
+.twitch-login-btn:hover,
+.clear-btn:hover,
+.logout-btn:hover,
+.close-preview-btn:hover {
+  background: #036a32 !important;
+  color: #ffd700 !important;
 }
 
 .twitch-login-btn:active {
@@ -318,8 +371,8 @@ small a:hover {
 }
 
 .logout-btn {
-  background: #e0e0e0;
-  color: #333;
+  background: #048243;
+  color: #dee2e6;
   border: none;
   padding: 8px 16px;
   border-radius: 6px;
@@ -336,21 +389,6 @@ small a:hover {
 .hints-preview {
   width: 100%;
   margin-bottom: 30px;
-}
-
-.hints-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  padding-bottom: 10px;
-  border-bottom: 2px solid #e0e0e0;
-}
-
-.hints-header h3 {
-  margin: 0;
-  color: #333;
-  font-size: 18px;
 }
 
 .close-preview-btn {
@@ -373,23 +411,10 @@ small a:hover {
   overflow-y: auto;
 }
 
-.level-section {
-  margin-bottom: 24px;
-}
-
-.level-section h4 {
-  color: #667eea;
-  font-size: 16px;
-  margin-bottom: 12px;
-  padding: 8px 12px;
-  background: #f8f9ff;
-  border-radius: 6px;
-}
-
 .hints-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  color: #dee2e6 !important;
 }
 
 /* Carousel styles */
@@ -402,31 +427,34 @@ small a:hover {
   display: block;
 }
 
-.carousel-container .hints-list {
-  text-align: left;
-  overflow-y: auto;
-}
-
 .carousel-container .hint-item {
   text-align: center;
 }
 
 .carousel-container .hint-location {
-  text-align: center;
-  color: #4CAF50;
+  color: #ffd700;
+  letter-spacing: 0.01em;
+  margin-right: 8px;
 }
 
 .carousel-container .hint-text {
-  font-size: 14px;
+  font-size: 20px;
   min-height: 3em;
-  font-family: 'VTC Sunday Komix', Arial, sans-serif !important;
-  margin-bottom: 0rem;
+  margin-bottom: 0;
+  font-family: 'Tekton Bold', Arial, sans-serif !important;
+  font-weight: bold;
+  line-height: 1.5;
 }
 
 .carousel-control-next,
 .carousel-control-prev {
   opacity: 1 !important;
   transition: opacity 0.15s;
+  width: 40px !important;
+  min-width: 0 !important;
+  max-width: 48px !important;
+  margin: 0 16px;
+  justify-content: center;
 }
 
 .carousel-control-next:active,
@@ -436,32 +464,34 @@ small a:hover {
 }
 
 .carousel-caption {
-  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 0;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
+  position: absolute;
   transform: none;
 }
 
 .carousel-caption .hints-list {
-  max-width: 675px;
+  flex: 1 1 auto;
   min-width: 675px;
+  max-width: 675px;
   margin: 0 auto;
-  padding-left: 8vw;
-  padding-right: 8vw;
+  padding-left: 3vw;
+  padding-right: 3vw;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .carousel-bg-container {
   background-image: url('/assets/bgfinal.webp');
   background-size: cover;
   background-position: center;
-  padding: 32px 0;
   border-radius: 16px;
   max-width: 1024px;
   margin: 0 auto;
@@ -470,9 +500,31 @@ small a:hover {
 
 .level-title {
   text-align: center;
-  color: #fff;
-  text-shadow: 0 2px 8px #000;
+  color: #ffd700 !important;
   font-size: 2rem;
+}
+
+.level-title.gradient-jumpman:first-of-type {
+  font-size: 3rem;
+  margin-bottom: 0;
+}
+
+.hint-toggle-btn {
+  background: none;
+  border: none;
+  padding: 2px 10px;
+  font-size: 1.2em;
+  box-shadow: none;
+  color: #ffd700;
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+  display: flex;
+  align-items: center;
+}
+
+.hint-toggle-btn:hover {
+  color: #ffe066;
+  background: rgba(255,255,255,0.07);
 }
 
 .clear-btn {

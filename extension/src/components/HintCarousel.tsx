@@ -1,6 +1,7 @@
 import { Carousel } from 'react-bootstrap';
 import type { SpoilerLog } from '@hint-viewer/shared';
 import { useState } from 'react';
+import { colorizeHints } from '../utils/colorizeHints';
 
 export interface HintCarouselProps {
   spoilerData: SpoilerLog;
@@ -43,8 +44,8 @@ export function HintCarousel({ spoilerData, className = '', revealedHints }: Hin
 
   return (
     <div className={`carousel-bg-container ${className}`}>
-      <h3 className="level-title">Hints</h3>
-      <h3 className="level-title">
+      <h3 className="level-title gradient-jumpman">Hints</h3>
+      <h3 className="level-title gradient-jumpman">
         {levelDisplayNames[levels[activeIndex]] || levels[activeIndex]}
       </h3>
       <Carousel
@@ -58,9 +59,9 @@ export function HintCarousel({ spoilerData, className = '', revealedHints }: Hin
         {levels.map((level) => (
           <Carousel.Item key={level}>
             <img
-              src="/assets/C_Left.svg"
+              src="/assets/bgfinal.webp"
               alt={`${level} background`}
-              style={{ opacity: 0.3 }}
+              style={{ opacity: 0 }}
             />
             <Carousel.Caption>
               <div className="hints-list">
@@ -71,7 +72,7 @@ export function HintCarousel({ spoilerData, className = '', revealedHints }: Hin
                   return (
                     <div key={location} className="hint-item">
                       <p className="hint-text">
-                        {isRevealed ? cleanedHint : "???"}
+                        {isRevealed ? colorizeHints(cleanedHint) : "???"}
                       </p>
                     </div>
                   );

@@ -1,66 +1,57 @@
 @font-face {
-  font-family: 'VTC Sunday Komix';
-  src: url('/assets/Fonts/vtcsundaykomixcapsbold.ttf') format('truetype');
+  font-family: 'Tekton Bold';
+  src: url('/assets/Fonts/tektonbold.ttf') format('truetype');
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Jumpman';
+  src: url('/assets/Fonts/Jumpman.ttf') format('truetype');
   font-style: normal;
 }
 
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: 'Jumpman', 'Tekton Bold', Arial, sans-serif;
+  color: #ffe066;
+  background-color: #181c18;
 }
 
 body {
-  margin: 0;
-  min-width: 320px;
-  min-height: 100vh;
-  background-color: #242424 !important;
-  color: rgba(255, 255, 255, 0.87) !important;
+  background-color: #181c18 !important;
+  color: #ffe066 !important;
+  font-family: 'Jumpman';
 }
 
 #root {
-  background-color: #242424;
-  color: rgba(255, 255, 255, 0.87);
-  min-height: 100vh;
+  background-color: #181c18;
+  color: #ffe066;
+}
+
+.gradient-jumpman {
+  font-family: 'Jumpman', Arial, sans-serif;
+  background: linear-gradient(
+    to bottom,
+    #c0392b 15%,      /* subtle red at top */
+    #eec00a 40%,     /* your yellow in the middle */
+    #7fff8c 95%      /* subtle light green at bottom */
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: 0.5px #000; /* Black outline */
+  background-clip: text;
+  color: transparent;
 }
 
 a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
+  color: #ffd700;
 }
 a:hover {
-  color: #535bf2;
+  color: #fffde4;
 }
 
+/* Headings */
 h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-/* Only style custom buttons, not Bootstrap carousel buttons */
-.btn-custom {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-.btn-custom:hover {
-  border-color: #646cff;
+  color: #ffe066;
 }
 
 /* Carousel styles */
@@ -74,29 +65,40 @@ h1 {
   max-height: 350px;
 }
 
-.carousel-container .hints-list {
-  text-align: left;
+.carousel-caption .hints-list {
+  flex: 1 1 auto;
+  min-width: 500px;
+  max-width: 500px;
+  margin: 0 auto;
+  padding-left: 3vw;
+  padding-right: 3vw;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .carousel-container .hint-item {
   text-align: center;
 }
 
-.carousel-container .hint-location {
-  color: #4CAF50;
-}
-
 .carousel-container .hint-text {
-  font-size: 14px; /* 16px is safer, but 14px is still readable */
+  font-size: 18px;
   min-height: 3em;
-  font-family: 'VTC Sunday Komix', Arial, sans-serif !important;
+  margin-bottom: 0;
+  font-family: 'Tekton Bold', Arial, sans-serif !important;
+  font-weight: bold;
+  line-height: 1.5;
 }
 
 .carousel-control-next,
 .carousel-control-prev {
   opacity: 1 !important;
   transition: opacity 0.15s;
+  width: 40px !important;
+  min-width: 0 !important;
+  max-width: 48px !important;
+  margin: 0 16px;
+  justify-content: center;
 }
 
 .carousel-control-next:active,
@@ -106,16 +108,15 @@ h1 {
 }
 
 .carousel-caption {
-  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 0;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
+  position: absolute;
   transform: none;
 }
 
@@ -132,28 +133,11 @@ h1 {
 
 .level-title {
   text-align: center;
-  color: #fff;
-  text-shadow: 0 2px 8px #000;
+  color: #ffd700 !important;
   font-size: 2rem;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  body {
-    background-color: #ffffff !important;
-    color: #213547 !important;
-  }
-  #root {
-    background-color: #ffffff;
-    color: #213547;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  .btn-custom {
-    background-color: #f9f9f9;
-  }
+.level-title.gradient-jumpman:first-of-type {
+  font-size: 3rem;
+  margin-bottom: 0;
 }
