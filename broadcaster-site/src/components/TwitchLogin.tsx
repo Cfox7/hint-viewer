@@ -1,3 +1,4 @@
+import Header from './Header';
 import { useTwitchOAuth } from '../hooks/useTwitchOAuth';
 
 interface TwitchUser {
@@ -8,58 +9,28 @@ interface TwitchUser {
 }
 
 interface TwitchLoginProps {
-  children: (user: TwitchUser, logout: () => void) => React.ReactNode;
+  children: (user: TwitchUser | null, logout: () => void, loginButton: React.ReactNode) => React.ReactNode;
 }
 
 function TwitchLogin({ children }: TwitchLoginProps) {
-  const { user, loading, error: authError, login, logout, isAuthenticated } = useTwitchOAuth();
+  const { user, error: authError, login, logout, isAuthenticated } = useTwitchOAuth();
 
-  if (loading) {
-    return (
-      <div className="app-layout">
-        <header className="app-header">
-          <div className="header-content">
-            <div className="header-title">
-              <h1>🍌 DK64 Randomizer</h1>
-              <h2>Broadcaster Upload</h2>
-            </div>
-          </div>
-        </header>
-        <main className="main-content">
-          <div className="content-card">
-            <div className="container">
-              <div className="card">
-                <div className="message uploading">
-                  <span className="spinner">⏳</span> Loading...
-                </div>
-              </div>
-            </div>
-          </div>
-        </main>
-      </div>
-    );
-  }
+  const loginButton = (
+    <button onClick={login} className="twitch-btn">
+      Login with Twitch
+    </button>
+  );
 
   if (!isAuthenticated || !user) {
     return (
       <div className="app-layout">
-        <header className="app-header">
-          <div className="header-content">
-            <div className="header-title">
-              <h1>🍌 DK64 Randomizer</h1>
-              <h2>Broadcaster Upload</h2>
-            </div>
-          </div>
-        </header>
+        <Header loginButton={loginButton} />
         <main className="main-content">
           <div className="content-card">
             <div className="container">
               <div className="card">
                 <div className="auth-section">
                   <p>Please log in with your Twitch account to upload spoiler logs.</p>
-                  <button onClick={login} className="twitch-login-btn">
-                    Login with Twitch
-                  </button>
                   {authError && (
                     <div className="message error">
                       ✗ {authError}
@@ -74,7 +45,7 @@ function TwitchLogin({ children }: TwitchLoginProps) {
     );
   }
 
-  return <>{children(user, logout)}</>;
+  return <>{children(user, logout, loginButton)}</>;
 }
 
 export default TwitchLogin;
