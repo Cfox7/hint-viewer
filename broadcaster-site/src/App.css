@@ -187,6 +187,23 @@ body, .app-layout {
 .clear-btn:hover { background: #d84c5a; }
 .clear-btn:disabled { background: #6c757d; cursor: not-allowed; opacity: 0.6; }
 
+.reveal-btn {
+  background: #3f49a8;            /* darker indigo base */
+  color: #ffe066;                 /* site accent (banana) for contrast */
+  border: none;
+  padding: 10px 14px;
+  border-radius: 0px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.18s ease, transform 0.08s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+}
+
+.reveal-btn:hover {
+  background: #5969e0;            /* lighter / brighter hover */
+  color: #ffffff;
+}
+
 h1 {
   color: #dee2e6;
   font-size: clamp(1.4rem, 2.6vw, 2.4rem); /* replaces previous 32px */

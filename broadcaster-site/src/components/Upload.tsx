@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Modal, Spinner, Button } from 'react-bootstrap';
 import type { SpoilerLog } from '../types';
 import { HintCarousel } from './HintCarousel';
@@ -17,6 +17,38 @@ function Upload({ channelId }: UploadProps) {
   const [showClearModal, setShowClearModal] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [revealedHints, setRevealedHints] = useState<Set<string>>(new Set());
+
+  // keep a ref to the latest revealedHints for reliable POST payloads
+  const revealedRef = useRef(revealedHints);
+  useEffect(() => {
+    revealedRef.current = revealedHints;
+  }, [revealedHints]);
+
+  // debounce timer for syncing reveals to the server
+  const syncTimerRef = useRef<number | null>(null);
+
+  const syncRevealedHints = () => {
+    fetch(`${API_URL}/api/hints/reveal`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ channelId, revealedHints: Array.from(revealedRef.current) }),
+    }).catch((err) => console.error('Sync reveal error:', err));
+  };
+
+  const scheduleSync = (delay = 250) => {
+    if (syncTimerRef.current) window.clearTimeout(syncTimerRef.current);
+    syncTimerRef.current = window.setTimeout(() => {
+      syncRevealedHints();
+      syncTimerRef.current = null;
+    }, delay);
+  };
+
+  // clear timer on unmount
+  useEffect(() => {
+    return () => {
+      if (syncTimerRef.current) window.clearTimeout(syncTimerRef.current);
+    };
+  }, []);
 
   const deleteResources = (channel: string) =>
     Promise.all([
@@ -44,9 +76,47 @@ function Upload({ channelId }: UploadProps) {
       const json: SpoilerLog = JSON.parse(text);
 
       if (json['Wrinkly Hints']) {
-        Object.keys(json['Wrinkly Hints']).forEach((key) => {
-          if (key.startsWith('First')) delete json['Wrinkly Hints'][key];
-        });
+        // snapshot keys so adding new "Foolish ..." entries doesn't affect iteration
+        const keys = Object.keys(json['Wrinkly Hints']);
+        let foolishCount = 1;
+        let wothCount = 1;
+        for (const key of keys) {
+          const val = json['Wrinkly Hints'][key];
+          if (key.startsWith('First')) {
+            delete json['Wrinkly Hints'][key];
+            continue;
+          }
+
+          // if the hint text contains "foolish", also add a "Foolish <key>" entry
+          if (typeof val === 'string' && val.toLowerCase().includes('foolish')) {
+            const foolishKey = `Foolish ${foolishCount++}`;
+            if (!(foolishKey in json['Wrinkly Hints'])) {
+              json['Wrinkly Hints'][foolishKey] = val;
+            }
+          }
+
+          // if the hint text contains "way of the hoard", also add a "WOTH <key>" entry
+          if (typeof val === 'string' && val.toLowerCase().includes('way of the hoard')) {
+            const wothKey = `WOTH ${wothCount++}`;
+            if (!(wothKey in json['Wrinkly Hints'])) {
+              json['Wrinkly Hints'][wothKey] = val;
+            }
+          }
+        }
+      } else {
+        json['Wrinkly Hints'] = {};
+      }
+
+      // merge Direct Item Hints into Wrinkly Hints as "Direct <Key>" (if present)
+      const direct = json['Direct Item Hints'];
+      if (direct && typeof direct === 'object') {
+        for (const [k, v] of Object.entries(direct)) {
+          const syntheticKey = `Direct ${k}`;
+          if (!(syntheticKey in json['Wrinkly Hints'])) {
+            json['Wrinkly Hints'][syntheticKey] = `${k}: ` + v;
+          }
+        }
+        delete (json as any)['Direct Item Hints'];
       }
 
       const response = await fetch(`${API_URL}/api/spoiler/${channelId}`, {
@@ -62,6 +132,12 @@ function Upload({ channelId }: UploadProps) {
       setUploadedAt(result.uploadedAt);
       setSpoilerData(json);
       setRevealedHints(new Set());
+      // immediate sync of empty reveals so server state is clean
+      if (syncTimerRef.current) {
+        window.clearTimeout(syncTimerRef.current);
+        syncTimerRef.current = null;
+      }
+      syncRevealedHints();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to upload spoiler log');
       console.error('Upload error:', err);
@@ -86,6 +162,12 @@ function Upload({ channelId }: UploadProps) {
       setSpoilerData(null);
       setRevealedHints(new Set());
       if (fileInputRef.current) fileInputRef.current.value = '';
+      // immediately sync cleared state to server
+      if (syncTimerRef.current) {
+        window.clearTimeout(syncTimerRef.current);
+        syncTimerRef.current = null;
+      }
+      syncRevealedHints();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to clear spoiler log');
       console.error('Clear error:', err);
@@ -98,39 +180,24 @@ function Upload({ channelId }: UploadProps) {
     setRevealedHints((prev) => {
       const newSet = new Set(prev);
       newSet.has(location) ? newSet.delete(location) : newSet.add(location);
-      // fire-and-forget sync
-      fetch(`${API_URL}/api/hints/reveal`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ channelId, revealedHints: Array.from(newSet) }),
-      }).catch((err) => console.error('Sync reveal error:', err));
       return newSet;
     });
+    // schedule a debounced sync so rapid toggles batch into one POST
+    scheduleSync();
   };
 
   return (
     <>
-      <Modal
-        show={uploading}
-        centered
-        backdrop="static"
-        keyboard={false}
-        contentClassName="upload-modal-content"
-      >
+      <Modal show={uploading} centered backdrop="static" keyboard={false} contentClassName="upload-modal-content">
         <Modal.Body className="upload-modal-body text-center py-4">
-          <Spinner animation="border" role="status" variant="primary" className="mb-3 upload-modal-spinner">
+          <Spinner animation="border" role="status" className="mb-3 upload-modal-spinner">
             <span className="visually-hidden">Loading...</span>
           </Spinner>
           <div>Uploading spoiler log...</div>
         </Modal.Body>
       </Modal>
 
-      <Modal
-        show={showClearModal}
-        onHide={() => setShowClearModal(false)}
-        centered
-        contentClassName="clear-modal-content"
-      >
+      <Modal show={showClearModal} onHide={() => setShowClearModal(false)} centered contentClassName="clear-modal-content">
         <Modal.Header closeButton className="clear-modal-header">
           <Modal.Title>Clear Spoiler Log</Modal.Title>
         </Modal.Header>
@@ -163,9 +230,7 @@ function Upload({ channelId }: UploadProps) {
 
       <div className="form-group">
         <label htmlFor="fileUpload">Spoiler Log:</label>
-
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, justifyContent: 'space-between' }}>
-          {/* left side: choose button + filename (takes remaining space) */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1 }}>
             <input
               id="fileUpload"
@@ -186,12 +251,11 @@ function Upload({ channelId }: UploadProps) {
               Choose file
             </button>
 
-            <span className="file-chosen">
+            <span className="file-chosen" style={{ color: '#dee2e6', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {file ? file.name : 'No file chosen'}
             </span>
           </div>
 
-          {/* right side: clear button (visible only when success) */}
           {success && (
             <button
               onClick={() => setShowClearModal(true)}
