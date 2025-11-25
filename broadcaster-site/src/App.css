@@ -16,10 +16,12 @@
   font-style: normal;
 }
 
+:root { --app-header-height: 56px; }
+
 body, .app-layout {
   background: #181c18 !important;
   color: #ffe066 !important;
-  font-family: 'Jumpman', Arial, sans-serif;
+  font-family: 'Tekton Bold', Arial, sans-serif;
 }
 
 .gradient-jumpman {
@@ -42,30 +44,34 @@ body, .app-layout {
   width: 100%;
   display: flex;
   flex-direction: column;
+  padding-top: var(--app-header-height);
 }
 
 .app-header {
   background: #101510 !important;
   box-shadow: 0 2px 8px rgba(0,0,0,0.7);
   opacity: 1;
-  padding: 20px 0;
-  position: sticky;
+  padding: 12px 0;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 100;
 }
 
 .header-content {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 40px;
+  padding: 0 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 40px;
+  gap: 24px;
 }
 
 .header-title {
   flex: 1;
+  font-family: 'Jumpman', Arial, sans-serif; /* header title uses Jumpman */
 }
 
 .header-title h1,
@@ -76,56 +82,55 @@ body, .app-layout {
   text-align: left;
 }
 
+.header-title h1 {
+  font-size: clamp(1.6rem, 3.2vw, 2.6rem); /* slightly smaller for a tighter header */
+  line-height: 1.05;
+}
+
 .header-title h2 {
   color: #dee2e6;
-  font-size: 18px;
+  font-size: clamp(0.95rem, 1.4vw, 1.2rem);
   margin: 0;
   text-align: left;
   font-weight: normal;
+  line-height: 1.05;
 }
 
-.user-info-header {
+.user-info-header,
+.user-info {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 20px;
+  gap: 10px; /* small reduction */
+  padding: 8px 12px; /* reduced padding so the header feels slimmer */
   border-radius: 8px;
+  color: #dee2e6;
 }
 
-.user-info-header img {
+.user-info-header img,
+.user-info img {
   width: 45px;
   height: 45px;
   border-radius: 50%;
   border: 2px solid #9146FF;
 }
 
-.user-info-header > div {
+.user-info-header > div,
+.user-info > div {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
 
 .user-info-header strong,
-.user-info-header small {
-  color: #dee2e6 !important;
-}
-
-.user-info-header strong {
-  color: #dee2e6;
-  font-size: 15px;
-}
-
-.user-info-header small {
-  color: #dee2e6;
-  font-size: 12px;
-  margin: 0;
-}
+.user-info strong { font-size: 1.05rem; color: #dee2e6; }
+.user-info-header small,
+.user-info small { font-size: 0.95rem; color: #dee2e6; }
 
 .main-content {
   flex: 1;
   display: flex;
   justify-content: center;
-  padding: 40px 20px;
+  padding: 10px 20px;
   background: #181c18 !important;
 }
 
@@ -137,33 +142,61 @@ body, .app-layout {
   border-radius: 16px;
   padding: 40px;
   box-shadow: 0 8px 32px rgba(0,0,0,0.7);
+  font-size: 1rem; /* equals html font-size * 1 = 18px */
+  line-height: 1.5;
 }
 
 .container {
-  max-width: 800px;
+  max-width: 850px;
   margin: 0 auto;
 }
 
 .card {
-  background: transparent !important;
-  border: 2px solid #ffd700 !important;
-  border-radius: 16px;
-  color: #dee2e6 !important;
+  background: transparent;
+  color: #dee2e6;
   padding: 0;
   box-shadow: none;
   border: none;
+  margin-bottom: 30px;
 }
+
+/* Unified twitch / primary button */
+.twitch-btn {
+  background: #5010d8;
+  color: #ffe066;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background-color 0.2s;
+}
+.twitch-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.twitch-btn:hover { background: #8956FB; color: #ffd700; }
+
+/* Unified clear button (keeps distinct danger look) */
+.clear-btn {
+  background: #c82333;
+  color: #dee2e6;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.clear-btn:hover { background: #d84c5a; }
+.clear-btn:disabled { background: #6c757d; cursor: not-allowed; opacity: 0.6; }
 
 h1 {
   color: #dee2e6;
-  font-size: 32px;
+  font-size: clamp(1.4rem, 2.6vw, 2.4rem); /* replaces previous 32px */
   margin-bottom: 8px;
   text-align: center;
 }
 
 h2 {
   color: #dee2e6;
-  font-size: 20px;
+  font-size: clamp(1.1rem, 1.8vw, 1.8rem); /* replaces previous 20px */
   margin-bottom: 32px;
   text-align: center;
   font-weight: normal;
@@ -187,7 +220,7 @@ input[type="file"] {
   padding: 12px 16px;
   border: 2px solid #ffe066 !important;
   border-radius: 8px;
-  font-size: 16px;
+  font-size: 1rem;
   transition: border-color 0.2s;
   background: #181c18 !important;
   color: #dee2e6 !important;
@@ -204,15 +237,6 @@ input[type="text"]:disabled {
   cursor: not-allowed;
 }
 
-input[type="file"] {
-  width: 100%;
-  padding: 12px 16px;
-  border: 2px dashed #e0e0e0;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: border-color 0.2s, background-color 0.2s;
-}
-
 input[type="file"]:hover:not(:disabled) {
   border-color: #ffd700 !important;
   background-color: #222a22 !important;
@@ -223,20 +247,12 @@ input[type="file"]:disabled {
   opacity: 0.5;
 }
 
-small {
-  display: block;
-  margin-top: 6px;
-  color: #999;
-  font-size: 12px;
-}
-
-small a {
-  color: #667eea;
-  text-decoration: none;
-}
-
-small a:hover {
-  text-decoration: underline;
+.file-chosen {
+  color: #dee2e6;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 45ch;
 }
 
 .message {
@@ -306,35 +322,6 @@ small a:hover {
   font-size: 16px;
 }
 
-.twitch-btn,
-.clear-btn,
-.logout-btn,
-.close-preview-btn {
-  background: #5010d8 !important;
-  color: #ffe066 !important;
-  border: 2px solid black !important;
-  box-shadow: 0 2px 8px #000;
-  padding: 14px 32px;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s, transform 0.1s;
-  font-family: 'Tekton Bold', Arial, sans-serif !important;
-}
-
-.twitch-btn:hover,
-.clear-btn:hover,
-.logout-btn:hover,
-.close-preview-btn:hover {
-  background: #8956FB !important;
-  color: #ffd700 !important;
-}
-
-.twitch-btn:active {
-  transform: translateY(0);
-}
-
 .user-info {
   display: flex;
   align-items: center;
@@ -359,32 +346,8 @@ small a:hover {
   gap: 4px;
 }
 
-.user-info strong {
-  color: #333;
-  font-size: 16px;
-}
-
-.user-info small {
-  color: #666;
-  font-size: 13px;
-  margin: 0;
-}
-
-.twitch-btn {
-  background: #048243;
-  color: #dee2e6;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
 .hints-preview {
   width: 100%;
-  margin-bottom: 30px;
 }
 
 .close-preview-btn {
@@ -478,8 +441,8 @@ small a:hover {
 
 .carousel-caption .hints-list {
   flex: 1 1 auto;
-  min-width: 675px;
-  max-width: 675px;
+  min-width: 700px;
+  max-width: 700px;
   margin: 0 auto;
   padding-left: 3vw;
   padding-right: 3vw;
@@ -527,25 +490,98 @@ small a:hover {
   background: rgba(255,255,255,0.07);
 }
 
-.clear-btn {
-  background: #dc3545;
-  color: white;
+/* make base text larger and responsive */
+html { font-size: 18px; } /* bump base; use rem units below */
+
+/* Modal theming (upload + clear) */
+.upload-modal-content,
+.clear-modal-content {
+  background: #222a22; /* match content-card */
+  color: #dee2e6;
+  border-radius: 12px;
+  border: 1px solid rgba(145, 70, 255, 0.08);
+  box-shadow: 0 12px 48px rgba(0,0,0,0.65);
+}
+
+/* Header / body / footer inside the modal */
+.upload-modal-content .modal-header,
+.clear-modal-content .modal-header,
+.upload-modal-content .modal-footer,
+.clear-modal-content .modal-footer {
+  background: transparent;
   border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  margin-top: 12px;
+  padding: 0.75rem 1rem;
 }
 
-.clear-btn:hover {
-  background: #c82333;
+.upload-modal-body,
+.clear-modal-body {
+  padding: 1.25rem 1.5rem;
+  color: #dee2e6;
+  background: transparent;
 }
 
-.clear-btn:disabled {
-  background: #6c757d;
-  cursor: not-allowed;
-  opacity: 0.6;
+/* Modal title accent */
+.clear-modal-header .modal-title,
+.upload-modal-content .modal-title {
+  color: #ffe066;
+  font-weight: 700;
+}
+
+/* Close button color */
+.clear-modal-header .btn-close,
+.upload-modal-content .btn-close {
+  filter: none;
+  opacity: 0.85;
+  color: #dee2e6;
+}
+
+/* Spinner color */
+.upload-modal-spinner {
+  color: #ffe066;
+}
+
+/* Modal action buttons */
+.clear-modal-cancel,
+.clear-modal-confirm,
+.upload-modal-content .btn,
+.clear-modal-content .btn {
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-family: inherit;
+}
+
+/* Cancel (secondary) */
+.clear-modal-cancel,
+.clear-modal-content .btn-secondary {
+  background: #2b332b;
+  color: #dee2e6;
+  border: 1px solid rgba(255,255,255,0.03);
+}
+
+/* Confirm / danger (clear) */
+.clear-modal-confirm,
+.clear-modal-content .btn-danger {
+  background: #8b2a3a;
+  color: #fff;
+  border: 1px solid rgba(0,0,0,0.25);
+}
+
+/* Hover states */
+.clear-modal-cancel:hover,
+.clear-modal-content .btn-secondary:hover {
+  background: #3a443a;
+}
+.clear-modal-confirm:hover,
+.clear-modal-content .btn-danger:hover {
+  background: #a33b4b;
+}
+
+/* File chooser inline controls */
+.form-group {
+  margin-bottom: 1rem;
+}
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #dee2e6;
 }

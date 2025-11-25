@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface HeaderProps {
   user?: {
@@ -7,35 +8,52 @@ interface HeaderProps {
     id: string;
   };
   logout?: () => void;
-  loginButton?: React.ReactNode; // Add this prop
+  loginButton?: React.ReactNode;
 }
 
-const Header: React.FC<HeaderProps> = ({ user, logout, loginButton }) => (
-  <header className="app-header">
-    <div className="header-content">
-      <div className="header-title">
-        <h1>🍌 DK64 Randomizer</h1>
-        <h2>Broadcaster Upload</h2>
-      </div>
-      {user && logout && (
-        <div className="user-info-header">
-          <img src={user.profile_image_url} alt={user.display_name} />
-          <div>
-            <strong>{user.display_name}</strong>
-            <small>Channel ID: {user.id}</small>
+const Header: React.FC<HeaderProps> = ({ user, logout, loginButton }) => {
+  const navigate = useNavigate();
+
+  return (
+    <header className="app-header">
+      <div className="header-content">
+        <Link to="/" className="nav-link" style={{ marginRight: '0.5rem' }}>
+          <div className="header-title">
+            <h1>DK64 Randomizer</h1>
+            <h2>Hint Viewer</h2>
           </div>
-          <button onClick={logout} className="twitch-btn">
-            Logout
-          </button>
-        </div>
-      )}
-      {!user && loginButton && (
-        <div className="user-info-header">
-          {loginButton}
-        </div>
-      )}
-    </div>
-  </header>
-);
+        </Link>
+
+        {user && (
+          <div className="user-info-header">
+            <img src={user.profile_image_url} alt={user.display_name} />
+            <div>
+              <strong>{user.display_name}</strong>
+            </div>
+            <button
+              onClick={() => navigate('/upload')}
+              className="twitch-btn"
+              aria-label="Go to upload"
+              style={{ marginRight: '0.5rem' }}
+            >
+              Upload
+            </button>
+            {logout && (
+              <button onClick={logout} className="twitch-btn">
+                Logout
+              </button>
+            )}
+          </div>
+        )}
+
+        {!user && loginButton && (
+          <div className="user-info-header">
+            {loginButton}
+          </div>
+        )}
+      </div>
+    </header>
+  );
+};
 
 export default Header;

@@ -1,4 +1,3 @@
-import Header from './Header';
 import { useTwitchOAuth } from '../hooks/useTwitchOAuth';
 
 interface TwitchUser {
@@ -21,27 +20,18 @@ function TwitchLogin({ children }: TwitchLoginProps) {
     </button>
   );
 
+  // Do not render a separate .app-layout/.main/.card here — let App provide layout.
+  // Always call children so App's Header + card layout control the page structure.
   if (!isAuthenticated || !user) {
     return (
-      <div className="app-layout">
-        <Header loginButton={loginButton} />
-        <main className="main-content">
-          <div className="content-card">
-            <div className="container">
-              <div className="card">
-                <div className="auth-section">
-                  <p>Please log in with your Twitch account to upload spoiler logs.</p>
-                  {authError && (
-                    <div className="message error">
-                      ✗ {authError}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
+      <>
+        {children(null, logout, loginButton)}
+        {authError && (
+          <div className="message error" style={{ marginTop: '1rem' }}>
+            ✗ {authError}
           </div>
-        </main>
-      </div>
+        )}
+      </>
     );
   }
 

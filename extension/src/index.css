@@ -49,11 +49,6 @@ a:hover {
   color: #fffde4;
 }
 
-/* Headings */
-h1 {
-  color: #ffe066;
-}
-
 /* Carousel styles */
 .carousel {
   position: static !important;
