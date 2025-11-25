@@ -6,6 +6,7 @@ interface Props {
   groupedHints: Record<string, string[]>;
   revealedHints: Set<string>;
   onToggleHint: (location: string) => void;
+  onBulkToggle: (locations: string[], reveal: boolean) => void;
   selectedLevelIndex?: number;
 }
 
@@ -15,6 +16,7 @@ export default function RevealButtons({
   groupedHints,
   revealedHints,
   onToggleHint,
+  onBulkToggle,
   selectedLevelIndex,
 }: Props) {
   const selectedLevel = selectedLevelIndex != null ? levels[selectedLevelIndex] : undefined;
@@ -29,14 +31,11 @@ export default function RevealButtons({
     const levelLocations = groupedHints[lvl] || [];
     const hasUnrevealed = levelLocations.some((loc) => !revealedHints.has(loc));
 
+    // use bulk handler so linked hints are expanded using the current revealedHints snapshot
     if (hasUnrevealed) {
-      levelLocations.forEach((location) => {
-        if (!revealedHints.has(location)) onToggleHint(location);
-      });
+      onBulkToggle(levelLocations, true);
     } else {
-      levelLocations.forEach((location) => {
-        if (revealedHints.has(location)) onToggleHint(location);
-      });
+      onBulkToggle(levelLocations, false);
     }
   };
 
@@ -45,13 +44,9 @@ export default function RevealButtons({
     const hasUnrevealed = allLocations.some((loc) => !revealedHints.has(loc));
 
     if (hasUnrevealed) {
-      allLocations.forEach((location) => {
-        if (!revealedHints.has(location)) onToggleHint(location);
-      });
+      onBulkToggle(allLocations, true);
     } else {
-      allLocations.forEach((location) => {
-        if (revealedHints.has(location)) onToggleHint(location);
-      });
+      onBulkToggle(allLocations, false);
     }
   };
 
