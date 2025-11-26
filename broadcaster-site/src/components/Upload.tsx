@@ -2,9 +2,10 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Modal, Spinner, Button } from 'react-bootstrap';
 import type { SpoilerLog } from '../types';
 import { HintCarousel } from './HintCarousel';
+import { uploadSpoiler, deleteSpoiler, deleteHints, postRevealedHints } from '../api/spoilerApi';
+import { normalizeSpoiler } from '../utils/normalizeSpoiler';
 
 interface UploadProps { channelId: string; }
-const API_URL = 'https://hint-viewer-production.up.railway.app';
 
 function Upload({ channelId }: UploadProps) {
   const [file, setFile] = useState<File | null>(null);
@@ -28,11 +29,9 @@ function Upload({ channelId }: UploadProps) {
   const syncTimerRef = useRef<number | null>(null);
 
   const syncRevealedHints = () => {
-    fetch(`${API_URL}/api/hints/reveal`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ channelId, revealedHints: Array.from(revealedRef.current) }),
-    }).catch((err) => console.error('Sync reveal error:', err));
+    postRevealedHints(channelId, Array.from(revealedRef.current)).catch((err) =>
+      console.error('Sync reveal error:', err),
+    );
   };
 
   const scheduleSync = (delay = 250) => {
@@ -51,10 +50,7 @@ function Upload({ channelId }: UploadProps) {
   }, []);
 
   const deleteResources = (channel: string) =>
-    Promise.all([
-      fetch(`${API_URL}/api/spoiler/${channel}`, { method: 'DELETE' }),
-      fetch(`${API_URL}/api/hints/${channel}`, { method: 'DELETE' }),
-    ]);
+    Promise.all([deleteSpoiler(channel), deleteHints(channel)]);
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -73,61 +69,10 @@ function Upload({ channelId }: UploadProps) {
       await deleteResources(channelId);
 
       const text = await selectedFile.text();
-      const json: SpoilerLog = JSON.parse(text);
+      const parsed: SpoilerLog = JSON.parse(text);
+      const json = normalizeSpoiler(parsed);
+      const result = await uploadSpoiler(channelId, json);
 
-      if (json['Wrinkly Hints']) {
-        // snapshot keys so adding new "Foolish ..." entries doesn't affect iteration
-        const keys = Object.keys(json['Wrinkly Hints']);
-        let foolishCount = 1;
-        let wothCount = 1;
-        for (const key of keys) {
-          const val = json['Wrinkly Hints'][key];
-          if (key.startsWith('First')) {
-            delete json['Wrinkly Hints'][key];
-            continue;
-          }
-
-          // if the hint text contains "foolish", also add a "Foolish <key>" entry
-          if (typeof val === 'string' && val.toLowerCase().includes('foolish')) {
-            const foolishKey = `Foolish ${foolishCount++}`;
-            if (!(foolishKey in json['Wrinkly Hints'])) {
-              json['Wrinkly Hints'][foolishKey] = val;
-            }
-          }
-
-          // if the hint text contains "way of the hoard", also add a "WOTH <key>" entry
-          if (typeof val === 'string' && val.toLowerCase().includes('way of the hoard')) {
-            const wothKey = `WOTH ${wothCount++}`;
-            if (!(wothKey in json['Wrinkly Hints'])) {
-              json['Wrinkly Hints'][wothKey] = val;
-            }
-          }
-        }
-      } else {
-        json['Wrinkly Hints'] = {};
-      }
-
-      // merge Direct Item Hints into Wrinkly Hints as "Direct <Key>" (if present)
-      const direct = json['Direct Item Hints'];
-      if (direct && typeof direct === 'object') {
-        for (const [k, v] of Object.entries(direct)) {
-          const syntheticKey = `Direct ${k}`;
-          if (!(syntheticKey in json['Wrinkly Hints'])) {
-            json['Wrinkly Hints'][syntheticKey] = `${k}: ` + v;
-          }
-        }
-        delete (json as any)['Direct Item Hints'];
-      }
-
-      const response = await fetch(`${API_URL}/api/spoiler/${channelId}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(json),
-      });
-
-      if (!response.ok) throw new Error('Upload failed');
-
-      const result = await response.json();
       setSuccess(true);
       setUploadedAt(result.uploadedAt);
       setSpoilerData(json);

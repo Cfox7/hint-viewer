@@ -39,7 +39,12 @@ export function HintCarousel({ spoilerData, className = '', revealedHints }: Hin
     WOTH: "WOTH Hints",
   };
 
-  const levelOrder = Object.keys(levelDisplayNames);
+  // include up to 10 optional "Batch N" entries without hardcoding each one
+  const BATCH_COUNT = 10;
+  const batchNames = Array.from({ length: BATCH_COUNT }, (_, i) => `Batch${i + 1}`);
+  const baseOrder = Object.keys(levelDisplayNames);
+  baseOrder.splice(8, 0, ...batchNames);
+  const levelOrder = baseOrder;
   const levels = Object.keys(groupedHints)
     .filter(level => levelOrder.includes(level))
     .sort((a, b) => levelOrder.indexOf(a) - levelOrder.indexOf(b));

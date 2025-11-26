@@ -15,12 +15,16 @@ export default function RevealButtons({
   levelDisplayNames,
   groupedHints,
   revealedHints,
-  onToggleHint,
   onBulkToggle,
-  selectedLevelIndex,
+  selectedLevelIndex
 }: Props) {
   const selectedLevel = selectedLevelIndex != null ? levels[selectedLevelIndex] : undefined;
   const selectedLevelLocations = selectedLevel ? groupedHints[selectedLevel] || [] : [];
+
+  // disable Reveal Level for Foolish and WOTH pages
+  const disableLevelButton =
+    selectedLevelIndex == null ||
+    ['foolish', 'woth'].includes((selectedLevel || '').toLowerCase());
 
   const isLevelRevealed =
     selectedLevelLocations.length > 0 && selectedLevelLocations.every((loc) => revealedHints.has(loc));
@@ -56,7 +60,7 @@ export default function RevealButtons({
       <div style={{ display: 'flex', justifyContent: 'center' }}>
         <Button
           onClick={handleRevealLevel}
-          disabled={selectedLevelIndex == null}
+          disabled={disableLevelButton}
           aria-label={isLevelRevealed ? 'Hide current level' : 'Reveal current level'}
           className="reveal-btn"
           style={{ minWidth: 250 }}

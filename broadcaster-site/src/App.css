@@ -204,6 +204,12 @@ body, .app-layout {
   color: #ffffff;
 }
 
+.reveal-btn:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 h1 {
   color: #dee2e6;
   font-size: clamp(1.4rem, 2.6vw, 2.4rem); /* replaces previous 32px */

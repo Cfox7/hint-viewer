@@ -27,7 +27,12 @@ const levelDisplayNames: Record<string, string> = {
   WOTH: "WOTH Hints",
 };
 
-const levelOrder = Object.keys(levelDisplayNames);
+// include up to 10 optional "Batch N" entries without hardcoding each one
+const BATCH_COUNT = 10;
+const batchNames = Array.from({ length: BATCH_COUNT }, (_, i) => `Batch${i + 1}`);
+const baseOrder = Object.keys(levelDisplayNames);
+baseOrder.splice(8, 0, ...batchNames);
+const levelOrder = baseOrder;
 const DIRECT_HINTS_PER_PAGE = 4;
 const FOOLISH_HINTS_PER_PAGE = 5;
 const WOTH_HINTS_PER_PAGE = 5;
