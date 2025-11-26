@@ -29,6 +29,9 @@ export default function RevealButtons({
   const isLevelRevealed =
     selectedLevelLocations.length > 0 && selectedLevelLocations.every((loc) => revealedHints.has(loc));
 
+  const allLocations = Object.values(groupedHints).flat();
+  const isAllRevealed = allLocations.length > 0 && allLocations.every((loc) => revealedHints.has(loc));
+
   const handleRevealLevel = () => {
     if (selectedLevelIndex == null) return;
     const lvl = levels[selectedLevelIndex];
@@ -44,19 +47,15 @@ export default function RevealButtons({
   };
 
   const handleRevealAll = () => {
-    const allLocations = Object.values(groupedHints).flat();
-    const hasUnrevealed = allLocations.some((loc) => !revealedHints.has(loc));
-
-    if (hasUnrevealed) {
-      onBulkToggle(allLocations, true);
-    } else {
+    if (isAllRevealed) {
       onBulkToggle(allLocations, false);
+    } else {
+      onBulkToggle(allLocations, true);
     }
   };
 
   return (
     <div style={{ marginTop: 16 }}>
-      {/* top row: Reveal Level / Reveal All (centered) */}
       <div style={{ display: 'flex', justifyContent: 'center' }}>
         <Button
           onClick={handleRevealLevel}
@@ -73,10 +72,11 @@ export default function RevealButtons({
 
         <Button
           onClick={handleRevealAll}
-          aria-label="Reveal or hide all hints"
+          aria-label={isAllRevealed ? 'Hide all hints' : 'Reveal all hints'}
           className="reveal-btn"
+          style={{ minWidth: 100 }}
         >
-          Reveal All
+          {isAllRevealed ? 'Hide All' : 'Reveal All'}
         </Button>
       </div>
     </div>
