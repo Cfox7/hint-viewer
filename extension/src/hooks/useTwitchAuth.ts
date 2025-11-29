@@ -18,7 +18,7 @@ export function useTwitchAuth() {
       });
 
       window.Twitch.ext.onContext((context: Twitch.ext.Context) => {
-        console.log('Context updated:', context);
+        // console.log('Context updated:', context);
         if (context.game) {
           setGame(context.game);
         }

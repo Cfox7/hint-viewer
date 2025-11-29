@@ -1,12 +1,12 @@
 @font-face {
   font-family: 'Tekton Bold';
-  src: url('/assets/Fonts/tektonbold.ttf') format('truetype');
+  src: url('../assets/Fonts/tektonbold.ttf') format('truetype');
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Jumpman';
-  src: url('/assets/Fonts/Jumpman.ttf') format('truetype');
+  src: url('../assets/Fonts/Jumpman.ttf') format('truetype');
   font-style: normal;
 }
 
@@ -120,7 +120,7 @@ a:hover {
 }
 
 .carousel-bg-container {
-  background-image: url('/assets/bgfinal.webp');
+  background-image: url('../assets/bgfinal.webp');
   background-size: cover;
   background-position: center;
   padding: 32px 0;

@@ -2,14 +2,22 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/svg+xml" href="./vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="Content-Security-Policy" content="img-src data: w3.org/svg/2000 https://ngrok.com https://*.ngrok-free.dev;">
+    <meta http-equiv="Content-Security-Policy"
+      content="
+        default-src 'self' 'unsafe-inline' 'unsafe-eval' https://dashboard.twitch.tv https://supervisor.ext-twitch.tv https://extension-files.twitch.tv https://www.twitch.tv;
+        script-src 'self' https://extension-files.twitch.tv 'unsafe-inline' 'unsafe-eval' https://dashboard.twitch.tv https://supervisor.ext-twitch.tv https://www.twitch.tv;
+        script-src-elem 'self' https://extension-files.twitch.tv https://dashboard.twitch.tv https://supervisor.ext-twitch.tv https://www.twitch.tv;
+        img-src 'self' data: https://ngrok.com https://*.ngrok-free.dev https://dashboard.twitch.tv https://supervisor.ext-twitch.tv https://www.twitch.tv;
+        font-src 'self' https://fonts.gstatic.com https://extension-files.twitch.tv https://nbgm3tlff6yg3labvl73y4cnztkxyj.ext-twitch.tv;
+        connect-src 'self' https://hint-viewer-production.up.railway.app https://dashboard.twitch.tv https://supervisor.ext-twitch.tv https://extension-files.twitch.tv https://www.twitch.tv https://ngrok.com https://*.ngrok-free.dev wss://pubsub-edge.twitch.tv;
+      ">
     <title>hint-viewer</title>
     <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <script type="module" src="./src/main.tsx"></script>
   </body>
 </html>

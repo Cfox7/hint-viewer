@@ -85,13 +85,13 @@ export function HintCarousel({ spoilerData, className = '', revealedHints }: Hin
         activeIndex={activeIndex}
         onSelect={(idx) => setActiveIndex(idx ?? 0)}
         slide={false}
-        nextIcon={<img src="/assets/C_Right.svg" alt="Next" style={{ width: 64, height: 64 }} />}
-        prevIcon={<img src="/assets/C_Left.svg" alt="Prev" style={{ width: 64, height: 64 }} />}
+        nextIcon={<img src="assets/C_Right.svg" alt="Next" style={{ width: 64, height: 64 }} />}
+        prevIcon={<img src="assets/C_Left.svg" alt="Prev" style={{ width: 64, height: 64 }} />}
       >
         {slides.map((slide, sIdx) => (
           <Carousel.Item key={`${slide.level}-p${slide.pageIndex}-${sIdx}`}>
             <img
-              src="/assets/bgfinal.webp"
+              src="assets/bgfinal.webp"
               alt={`${slide.level} background`}
               style={{ opacity: 0 }}
             />
