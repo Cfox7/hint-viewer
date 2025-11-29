@@ -15,7 +15,6 @@ echo "output zip: $OUT_ZIP"
 # Build client
 cd "$EXT_DIR"
 echo "Installing deps and building..."
-npm ci
 npm run build
 
 DIST_DIR="$EXT_DIR/dist"

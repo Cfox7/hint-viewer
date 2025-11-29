@@ -76,8 +76,15 @@ function ProcessHints({ channelId }: ProcessHintsProps) {
 
   if (!spoilerData) {
     return (
-      <div style={{ fontSize: '10px', opacity: 0.7 }}>
-        <p>No spoiler log uploaded yet. Broadcaster should upload via the broadcaster site.</p>
+      <div className="no-spoiler-container">
+        <div>
+          <h2 className="gradient-jumpman" style={{ fontSize: '2rem', marginBottom: '8px' }}>
+            No spoiler log uploaded
+          </h2>
+          <p className="no-spoiler-message">
+            Broadcaster should upload the spoiler log via the broadcaster site to populate hints here.
+          </p>
+        </div>
       </div>
     );
   }

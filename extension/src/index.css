@@ -123,7 +123,7 @@ a:hover {
   background-image: url('../assets/bgfinal.webp');
   background-size: cover;
   background-position: center;
-  padding: 32px 0;
+  padding: 32px 0px 0px;
   border-radius: 16px;
   max-width: 1024px;
   margin: 0 auto;
@@ -139,4 +139,23 @@ a:hover {
 .level-title.gradient-jumpman:first-of-type {
   font-size: 3rem;
   margin-bottom: 0;
+}
+
+.no-spoiler-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 320px; /* adjust as needed */
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.no-spoiler-message {
+  font-size: 1.125rem;
+  max-width: 820px;
+  color: #ffd700;
+  opacity: 0.95;
+  text-align: center;
+  margin: 0;
+  line-height: 1.4;
 }
