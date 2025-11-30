@@ -22,11 +22,15 @@ const revealedStore: Record<string, string[]> = {};
 // Get spoiler for channel
 app.get('/api/spoiler/:channelId', (req, res) => {
   const { channelId } = req.params;
-  const body = spoilerStore[channelId] ?? null;
+  const stored = spoilerStore[channelId];
+  if (!stored) {
+    // no spoiler stored -> 404 so clients can treat this as "not found"
+    return res.status(404).json({ error: 'Not found' });
+  }
   const revealed = revealedStore[channelId] ?? [];
-  res.json({
-    spoilerData: body?.spoilerData ?? null,
-    uploadedAt: body?.uploadedAt ?? null,
+  return res.json({
+    spoilerData: stored.spoilerData,
+    uploadedAt: stored.uploadedAt ?? null,
     revealed,
   });
 });
@@ -49,7 +53,9 @@ app.post('/api/spoiler/:channelId', (req, res) => {
 app.delete('/api/spoiler/:channelId', (req, res) => {
   const { channelId } = req.params;
   delete spoilerStore[channelId];
-  return res.json({ ok: true });
+  delete revealedStore[channelId];
+  // return 204 No Content; subsequent GET will return 404
+  return res.status(204).end();
 });
 
 // Get revealed hints for channel

@@ -10,12 +10,6 @@
   font-style: normal;
 }
 
-@font-face {
-  font-family: 'VTC Sunday Komix';
-  src: url('/assets/Fonts/vtcsundaykomixcapsbold.ttf') format('truetype');
-  font-style: normal;
-}
-
 :root { --app-header-height: 56px; }
 
 body, .app-layout {
@@ -294,14 +288,6 @@ input[type="file"]:disabled {
   gap: 8px;
 }
 
-.spinner {
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
 
 .message.success {
   background: #d4edda;
@@ -319,19 +305,6 @@ input[type="file"]:disabled {
   margin-top: 8px;
   font-size: 12px;
   opacity: 0.8;
-}
-
-.file-info {
-  margin-top: 16px;
-  padding: 12px;
-  background: #f8f9fa;
-  border-radius: 8px;
-  color: #dee2e6;
-  font-size: 14px;
-}
-
-.file-info strong {
-  color: #dee2e6;
 }
 
 .auth-section {
@@ -373,20 +346,6 @@ input[type="file"]:disabled {
   width: 100%;
 }
 
-.close-preview-btn {
-  background: #667eea;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.close-preview-btn:hover {
-  background: #5568d3;
-}
 
 .hints-content {
   max-height: 500px;
