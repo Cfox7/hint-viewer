@@ -4,90 +4,81 @@ import cors from 'cors';
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors({
-  origin: '*',
-  methods: ['GET', 'POST', 'DELETE'],
-  allowedHeaders: ['Content-Type']
-}));
-
+app.use(cors()); // allow all origins; tighten if needed
+app.options('*', cors());
 app.use(express.json());
 
-interface SpoilerLog {
-  [key: string]: any;
-}
+type SpoilerLog = { [k: string]: any };
 
-interface SpoilerResponse {
-  data: SpoilerLog;
+interface StoredSpoiler {
+  spoilerData: SpoilerLog;
   uploadedAt: string;
 }
 
-const spoilerLogs = new Map<string, SpoilerResponse>();
+// In-memory stores (will be lost if server restarts)
+const spoilerStore: Record<string, StoredSpoiler> = {};
+const revealedStore: Record<string, string[]> = {};
 
-// Store revealed hints per channel
-const revealedHints = new Map<string, string[]>();
-
-// POST - Upload spoiler log
-app.post('/api/spoiler/:channelId', (req, res) => {
-  const { channelId } = req.params;
-  const spoilerData: SpoilerLog = req.body;
-  
-  const response: SpoilerResponse = {
-    data: spoilerData,
-    uploadedAt: new Date().toISOString()
-  };
-  
-  spoilerLogs.set(channelId, response);
-  res.json(response);
-});
-
-// GET - Retrieve spoiler log
+// Get spoiler for channel
 app.get('/api/spoiler/:channelId', (req, res) => {
   const { channelId } = req.params;
-  const spoilerLog = spoilerLogs.get(channelId);
-  
-  if (!spoilerLog) {
-    return res.status(404).json({ error: 'No spoiler log found for this channel' });
-  }
-  
-  res.json(spoilerLog);
+  const body = spoilerStore[channelId] ?? null;
+  const revealed = revealedStore[channelId] ?? [];
+  res.json({
+    spoilerData: body?.spoilerData ?? null,
+    uploadedAt: body?.uploadedAt ?? null,
+    revealed,
+  });
 });
 
-// DELETE - Clear spoiler log
+// Upload or replace spoiler
+app.post('/api/spoiler/:channelId', (req, res) => {
+  const { channelId } = req.params;
+  const spoilerData = req.body;
+  if (!spoilerData) {
+    return res.status(400).json({ error: 'Missing spoiler data' });
+  }
+  const uploadedAt = new Date().toISOString();
+  spoilerStore[channelId] = { spoilerData, uploadedAt };
+  // reset revealed hints on new upload
+  revealedStore[channelId] = [];
+  return res.json({ ok: true, uploadedAt });
+});
+
+// Delete spoiler
 app.delete('/api/spoiler/:channelId', (req, res) => {
   const { channelId } = req.params;
-  
-  if (spoilerLogs.has(channelId)) {
-    spoilerLogs.delete(channelId);
-    res.json({ success: true, message: 'Spoiler log deleted' });
-  } else {
-    res.status(404).json({ error: 'No spoiler log found for this channel' });
-  }
+  delete spoilerStore[channelId];
+  return res.json({ ok: true });
 });
 
-// POST - Update revealed hints
-app.post('/api/hints/reveal', (req, res) => {
-  const { channelId, revealedHints: hints } = req.body;
-  if (!channelId || !Array.isArray(hints)) {
-    return res.status(400).json({ error: 'channelId and revealedHints are required' });
-  }
-  revealedHints.set(channelId, hints);
-  res.json({ success: true });
-});
-
-// GET - Retrieve revealed hints
+// Get revealed hints for channel
 app.get('/api/hints/:channelId', (req, res) => {
   const { channelId } = req.params;
-  const hints = revealedHints.get(channelId) || [];
-  res.json({ revealedHints: hints });
+  return res.json({ revealed: revealedStore[channelId] ?? [] });
 });
 
-// DELETE - Clear revealed hints for a channel
+// Delete revealed hints for channel
 app.delete('/api/hints/:channelId', (req, res) => {
   const { channelId } = req.params;
-  revealedHints.delete(channelId);
-  res.json({ success: true });
+  revealedStore[channelId] = [];
+  return res.json({ ok: true });
+});
+
+// Set revealed hints (replace)
+app.post('/api/hints/reveal', (req, res) => {
+  const { channelId, revealedHints } = req.body as {
+    channelId?: string;
+    revealedHints?: string[];
+  };
+  if (!channelId || !Array.isArray(revealedHints)) {
+    return res.status(400).json({ error: 'Invalid payload' });
+  }
+  revealedStore[channelId] = revealedHints;
+  return res.json({ ok: true });
 });
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  // eslint-disable-next-line no-console
+  console.log(`Server listening on ${PORT}`);
 });

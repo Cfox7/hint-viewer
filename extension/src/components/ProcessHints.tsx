@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { HintCarousel } from './HintCarousel';
-import type { SpoilerLog, SpoilerResponse } from '@hint-viewer/shared';
+import type { SpoilerLog } from '@hint-viewer/shared';
 
 interface ProcessHintsProps {
   channelId: string | undefined;
@@ -38,12 +38,16 @@ function ProcessHints({ channelId }: ProcessHintsProps) {
           throw new Error('Failed to fetch spoiler data. API error occurred.');
         }
 
-        const data: SpoilerResponse = await response.json();
-        setSpoilerData(data.data);
-        setLastFetch(data.uploadedAt);
-        setLoading(false);
-        setError(null);
-      } catch (err) {
+        const body = (await response.json()) as unknown;
+        const obj = typeof body === 'object' && body !== null ? (body as Record<string, unknown>) : {};
+
+        const spoiler = (obj['spoilerData'] ?? obj['data'] ?? body) as SpoilerLog | null;
+        const uploadedAt = (obj['uploadedAt'] ?? obj['uploaded_at'] ?? null) as string | null;
+        setSpoilerData(spoiler);
+        setLastFetch(uploadedAt);
+         setLoading(false);
+         setError(null);
+       } catch (err) {
         setError('Failed to load spoiler data');
         setLoading(false);
         console.error('Fetch error:', err);
@@ -52,10 +56,15 @@ function ProcessHints({ channelId }: ProcessHintsProps) {
       // Fetch revealed hints
       try {
         const res = await fetch(`${API_URL}/api/hints/${channelId}`);
-        const data = await res.json();
-        if (Array.isArray(data.revealedHints)) {
-          setRevealedHints(new Set(data.revealedHints));
-        }
+        const hintsBody = (await res.json()) as unknown;
+        const hintsObj = typeof hintsBody === 'object' && hintsBody !== null ? (hintsBody as Record<string, unknown>) : {};
+        const arr =
+          Array.isArray(hintsObj['revealed']) ? (hintsObj['revealed'] as string[]) :
+          Array.isArray(hintsObj['revealedHints']) ? (hintsObj['revealedHints'] as string[]) :
+          [];
+         if (arr.length) {
+           setRevealedHints(new Set(arr));
+         }
       } catch {
         // Optionally handle error
       }

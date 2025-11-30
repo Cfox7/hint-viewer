@@ -9,9 +9,9 @@
         default-src 'self' 'unsafe-inline' 'unsafe-eval' https://dashboard.twitch.tv https://supervisor.ext-twitch.tv https://extension-files.twitch.tv https://www.twitch.tv;
         script-src 'self' https://extension-files.twitch.tv 'unsafe-inline' 'unsafe-eval' https://dashboard.twitch.tv https://supervisor.ext-twitch.tv https://www.twitch.tv;
         script-src-elem 'self' https://extension-files.twitch.tv https://dashboard.twitch.tv https://supervisor.ext-twitch.tv https://www.twitch.tv;
-        img-src 'self' data: https://ngrok.com https://*.ngrok-free.dev https://dashboard.twitch.tv https://supervisor.ext-twitch.tv https://www.twitch.tv;
+        img-src 'self' data: https://ngrok.com https://*.ngrok-free.dev https://dashboard.twitch.tv https://supervisor.ext-twitch.tv https://www.twitch.tv https://hint-viewer.vercel.app https://*.vercel.app;
         font-src 'self' https://fonts.gstatic.com https://extension-files.twitch.tv https://nbgm3tlff6yg3labvl73y4cnztkxyj.ext-twitch.tv;
-        connect-src 'self' https://hint-viewer-production.up.railway.app https://dashboard.twitch.tv https://supervisor.ext-twitch.tv https://extension-files.twitch.tv https://www.twitch.tv https://ngrok.com https://*.ngrok-free.dev wss://pubsub-edge.twitch.tv;
+        connect-src 'self' https://hint-viewer-production.up.railway.app https://hint-viewer.vercel.app https://*.vercel.app https://dashboard.twitch.tv https://supervisor.ext-twitch.tv https://extension-files.twitch.tv https://www.twitch.tv https://ngrok.com https://*.ngrok-free.dev wss://pubsub-edge.twitch.tv;
       ">
     <title>hint-viewer</title>
     <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
