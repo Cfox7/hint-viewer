@@ -1,9 +1,9 @@
-import { useState } from 'react';
 import { Carousel, Button } from 'react-bootstrap';
 import type { SpoilerLog } from '../types';
 import { colorizeHints } from '../utils/colorizeHints';
 import RevealButtons from './RevealButtons';
-import { levelDisplayNames, levelOrder } from '@hint-viewer/shared/level_utils';
+import { buildSlides } from '../utils/buildSlides';
+import { levelDisplayNames } from '@hint-viewer/shared/level_utils';
 
 export interface HintCarouselProps {
   spoilerData: SpoilerLog;
@@ -11,16 +11,17 @@ export interface HintCarouselProps {
   channelId: string;
   revealedHints: Set<string>;
   onToggleHint: (location: string) => void;
+  activeIndex: number;
+  onSelect: (idx: number) => void;
 }
-const DIRECT_HINTS_PER_PAGE = 4;
-const FOOLISH_HINTS_PER_PAGE = 5;
-const WOTH_HINTS_PER_PAGE = 5;
 
 export function HintCarousel({
   spoilerData,
   className = '',
   revealedHints,
   onToggleHint,
+  activeIndex,
+  onSelect,
 }: HintCarouselProps) {
   const hints = spoilerData["Wrinkly Hints"] || {};
 
@@ -73,60 +74,38 @@ export function HintCarousel({
   };
 
   // Group hints by level (extract level name from location)
-  const groupedHints: Record<string, string[]> = {};
-  Object.keys(hints).forEach((location) => {
-    const level = location.split(' ')[0];
-    if (!groupedHints[level]) {
-      groupedHints[level] = [];
-    }
-    groupedHints[level].push(location);
-  });
-
-  const levels = Object.keys(groupedHints)
-    .filter((level) => levelOrder.includes(level))
-    .sort((a, b) => levelOrder.indexOf(a) - levelOrder.indexOf(b));
-
-  // Build slides: each slide is a { level, pageIndex, locations[] }
-  const slides: { level: string; pageIndex: number; locations: string[] }[] = [];
-  levels.forEach((level) => {
-    // natural numeric-aware sort (e.g. "1, 2, 10") on a copy to avoid mutating groupedHints
-    const locs = (groupedHints[level] || []).slice().sort((a, b) =>
-      a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' })
-    );
-    // paginate only for specific levels
-    let perPage = locs.length || 1;
-    if (level === 'Direct') perPage = DIRECT_HINTS_PER_PAGE;
-    else if (level === 'Foolish') perPage = FOOLISH_HINTS_PER_PAGE;
-    else if (level.toLowerCase() === 'woth' || level === 'WOTH') perPage = WOTH_HINTS_PER_PAGE;
-    for (let i = 0; i < locs.length; i += perPage) {
-      slides.push({
-        level,
-        pageIndex: Math.floor(i / perPage) + 1,
-        locations: locs.slice(i, i + perPage),
-      });
-    }
-  });
-
-  const [activeIndex, setActiveIndex] = useState(0);
+  const { slides, levels, groupedHints } = buildSlides(spoilerData);
 
   const currentSlide = slides[activeIndex];
   const currentLevel = currentSlide ? currentSlide.level : undefined;
   const currentLevelSelectedIndex = currentLevel ? levels.indexOf(currentLevel) : undefined;
 
+  const slideCountByLevel = Object.fromEntries(
+    levels.map((level) => [level, slides.filter((s) => s.level === level).length])
+  );
+
+  const levelTitle = currentSlide
+    ? (() => {
+        const displayName = levelDisplayNames[currentSlide.level] || currentSlide.level;
+        const total = slideCountByLevel[currentSlide.level] ?? 1;
+        return total > 1
+          ? `${displayName}  ·  ${currentSlide.pageIndex} / ${total}`
+          : displayName;
+      })()
+    : 'Hints';
+
   return (
     <>
       <div className={`carousel-bg-container ${className}`}>
-        <h3 className="level-title gradient-jumpman">Hints</h3>
-        <h3 className="level-title gradient-jumpman">
-          {currentSlide ? (levelDisplayNames[currentSlide.level] || currentSlide.level) : ''}
-        </h3>
+        <h3 className="level-title gradient-jumpman">{levelTitle}</h3>
 
         {slides.length > 0 ? (
           <Carousel
             interval={null}
             activeIndex={activeIndex}
-            onSelect={(idx) => setActiveIndex(idx ?? 0)}
+            onSelect={(idx) => onSelect(idx ?? 0)}
             slide={false}
+            indicators={false}
             nextIcon={<img src="/assets/C_Right.svg" alt="Next" style={{ width: 64, height: 64 }} />}
             prevIcon={<img src="/assets/C_Left.svg" alt="Prev" style={{ width: 64, height: 64 }} />}
           >

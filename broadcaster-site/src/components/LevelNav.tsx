@@ -12,6 +12,7 @@ export interface LevelNavProps {
   activeIndex: number;
   onSelect: (index: number) => void;
   levelDisplayNames: Record<string, string>;
+  mode?: 'offcanvas' | 'sidebar';
 }
 
 const SECTION_LABELS: Record<LevelCategory, string> = {
@@ -23,7 +24,7 @@ const SECTION_LABELS: Record<LevelCategory, string> = {
 
 const SECTION_ORDER: LevelCategory[] = ['levels', 'direct', 'foolish', 'woth'];
 
-export function LevelNav({ slides, activeIndex, onSelect, levelDisplayNames }: LevelNavProps) {
+export function LevelNav({ slides, activeIndex, onSelect, levelDisplayNames, mode = 'offcanvas' }: LevelNavProps) {
   const [show, setShow] = useState(false);
   const isProgressive = slides.some((s) => s.level.startsWith('Batch'));
   const sectionLabels = { ...SECTION_LABELS, levels: isProgressive ? 'Batches' : 'Levels' };
@@ -33,7 +34,6 @@ export function LevelNav({ slides, activeIndex, onSelect, levelDisplayNames }: L
     slideCountByLevel[s.level] = (slideCountByLevel[s.level] || 0) + 1;
   });
 
-  // Group slide indices by category
   const sections: Record<LevelCategory, { label: string; idx: number }[]> = {
     levels: [], direct: [], foolish: [], woth: [],
   };
@@ -46,13 +46,39 @@ export function LevelNav({ slides, activeIndex, onSelect, levelDisplayNames }: L
     sections[cat].push({ label, idx });
   });
 
-  // Which accordion section should start open (the one containing the active slide)
   const activeCategory = getLevelCategory(slides[activeIndex]?.level ?? '');
 
-  const handleSelect = (idx: number) => {
-    onSelect(idx);
-    setShow(false);
-  };
+  const accordionContent = (
+    <Accordion defaultActiveKey={activeCategory} flush>
+      {SECTION_ORDER.filter((cat) => sections[cat].length > 0).map((cat) => (
+        <Accordion.Item key={cat} eventKey={cat}>
+          <Accordion.Header>{sectionLabels[cat]}</Accordion.Header>
+          <Accordion.Body className="p-1">
+            <Nav className="flex-column">
+              {sections[cat].map(({ label, idx }) => (
+                <Nav.Link
+                  key={idx}
+                  active={idx === activeIndex}
+                  onClick={() => { onSelect(idx); setShow(false); }}
+                >
+                  {label}
+                </Nav.Link>
+              ))}
+            </Nav>
+          </Accordion.Body>
+        </Accordion.Item>
+      ))}
+    </Accordion>
+  );
+
+  if (mode === 'sidebar') {
+    return (
+      <div className="level-nav-sidebar level-nav-offcanvas">
+        <div className="level-nav-sidebar-title">Quick Nav</div>
+        {accordionContent}
+      </div>
+    );
+  }
 
   return (
     <>
@@ -67,29 +93,10 @@ export function LevelNav({ slides, activeIndex, onSelect, levelDisplayNames }: L
         className="level-nav-offcanvas"
       >
         <Offcanvas.Header closeButton>
-          <Offcanvas.Title>HINTS</Offcanvas.Title>
+          <Offcanvas.Title>Levels</Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body className="p-0">
-          <Accordion defaultActiveKey={activeCategory} flush>
-            {SECTION_ORDER.filter((cat) => sections[cat].length > 0).map((cat) => (
-              <Accordion.Item key={cat} eventKey={cat}>
-                <Accordion.Header>{sectionLabels[cat]}</Accordion.Header>
-                <Accordion.Body className="p-1">
-                  <Nav className="flex-column">
-                    {sections[cat].map(({ label, idx }) => (
-                      <Nav.Link
-                        key={idx}
-                        active={idx === activeIndex}
-                        onClick={() => handleSelect(idx)}
-                      >
-                        {label}
-                      </Nav.Link>
-                    ))}
-                  </Nav>
-                </Accordion.Body>
-              </Accordion.Item>
-            ))}
-          </Accordion>
+          {accordionContent}
         </Offcanvas.Body>
       </Offcanvas>
     </>

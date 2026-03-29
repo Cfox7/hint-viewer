@@ -14,6 +14,7 @@ interface UseUploadReturn {
   fileInputRef: RefObject<HTMLInputElement | null>;
   file: File | null;
   uploading: boolean;
+  initialLoading: boolean;
   success: boolean;
   error: string | null;
   uploadedAt: string | null;
@@ -36,6 +37,7 @@ export function useUpload(channelId: string | undefined): UseUploadReturn {
   const [clearing, setClearing] = useState(false);
   const [spoilerData, setSpoilerData] = useState<SpoilerLog | null>(null);
   const [showClearModal, setShowClearModal] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [revealedHints, setRevealedHints] = useState<Set<string>>(new Set());
 
@@ -72,6 +74,8 @@ export function useUpload(channelId: string | undefined): UseUploadReturn {
         }
       } catch (err) {
         console.warn('Failed to fetch persisted spoiler from server', err);
+      } finally {
+        if (mounted) setInitialLoading(false);
       }
     })();
     return () => { mounted = false; };
@@ -170,6 +174,7 @@ export function useUpload(channelId: string | undefined): UseUploadReturn {
     fileInputRef,
     file,
     uploading,
+    initialLoading,
     success,
     error,
     uploadedAt,

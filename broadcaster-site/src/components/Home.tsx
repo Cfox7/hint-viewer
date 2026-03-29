@@ -9,6 +9,12 @@ function Home() {
       <p>
         After logging in, you can view and manage your hints on the Hints page.
       </p>
+      <p>
+        Currently we support Standard hints with or without progressive hints. Future updates may include additional hint types and customization options.
+      </p>
+      <p>
+        This is still in early development, so expect some bugs and missing features. Feedback is welcome!
+      </p>
     </>
   );
 }

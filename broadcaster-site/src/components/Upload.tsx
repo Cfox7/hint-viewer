@@ -1,6 +1,9 @@
+import { useEffect } from 'react';
 import { HintCarousel } from './HintCarousel';
 import { useUpload } from '../hooks/useUpload';
 import { UploadModals } from './UploadModals';
+import { buildSlides } from '../utils/buildSlides';
+import { useNav } from '../contexts/NavContext';
 
 interface UploadProps { channelId: string; }
 
@@ -9,6 +12,7 @@ function Upload({ channelId }: UploadProps) {
     fileInputRef,
     file,
     uploading,
+    initialLoading,
     success,
     error,
     uploadedAt,
@@ -22,6 +26,15 @@ function Upload({ channelId }: UploadProps) {
     handleToggleHint,
   } = useUpload(channelId);
 
+  const { slides, activeIndex, setActiveIndex, setSlides } = useNav();
+
+  // Sync slides into nav context whenever spoilerData changes
+  useEffect(() => {
+    const { slides: newSlides } = spoilerData ? buildSlides(spoilerData) : { slides: [] };
+    setSlides(newSlides);
+    setActiveIndex(0);
+  }, [spoilerData]);
+
   return (
     <>
       <UploadModals
@@ -32,7 +45,13 @@ function Upload({ channelId }: UploadProps) {
         onClear={handleClear}
       />
 
-      {spoilerData && (
+      {initialLoading ? (
+        <div className="d-flex justify-content-center py-5">
+          <div className="spinner-border text-warning" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      ) : spoilerData && slides.length > 0 && (
         <div className="card">
           <div className="hints-preview">
             <HintCarousel
@@ -41,6 +60,8 @@ function Upload({ channelId }: UploadProps) {
               channelId={channelId}
               revealedHints={revealedHints}
               onToggleHint={handleToggleHint}
+              activeIndex={activeIndex}
+              onSelect={setActiveIndex}
             />
           </div>
         </div>
