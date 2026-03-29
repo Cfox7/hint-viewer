@@ -1,6 +1,7 @@
 include .env.make
 
 BROADCASTER_DIR = broadcaster-site
+export AWS_PAGER =
 
 # ── Infrastructure ────────────────────────────────────────────────────────────
 
