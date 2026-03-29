@@ -6,7 +6,7 @@ interface ProcessHintsProps {
   channelId: string | undefined;
 }
 
-const API_URL = 'https://hint-viewer-production.up.railway.app';
+const API_URL = 'https://nsehzumuu9.execute-api.us-east-2.amazonaws.com';
 
 function ProcessHints({ channelId }: ProcessHintsProps) {
   const [spoilerData, setSpoilerData] = useState<SpoilerLog | null>(null);
@@ -62,9 +62,7 @@ function ProcessHints({ channelId }: ProcessHintsProps) {
           Array.isArray(hintsObj['revealed']) ? (hintsObj['revealed'] as string[]) :
           Array.isArray(hintsObj['revealedHints']) ? (hintsObj['revealedHints'] as string[]) :
           [];
-         if (arr.length) {
-           setRevealedHints(new Set(arr));
-         }
+         setRevealedHints(new Set(arr));
       } catch {
         // Optionally handle error
       }

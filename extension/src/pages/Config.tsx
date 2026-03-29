@@ -11,7 +11,7 @@ function Config() {
 
           <ol className="no-spoiler-list">
             <li>
-              Visit <a href="https://hint-viewer.vercel.app" target="_blank" rel="noopener noreferrer">the broadcaster site</a> and sign in with your Twitch account.
+              Visit <a href="https://d3j74gnf7jwu19.cloudfront.net" target="_blank" rel="noopener noreferrer">the broadcaster site</a> and sign in with your Twitch account.
             </li>
             <li>
               Upload a spoiler log on the broadcaster site. Everything you see in your Hint Viewer will be mirrored to your viewers.

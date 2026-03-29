@@ -1,66 +1,71 @@
 # DK64 Randomizer Hint Viewer
 
-A monorepo containing the Twitch extension and broadcaster website for DK64 Randomizer hint viewing.
+Twitch extension + broadcaster site for DK64 Randomizer hint viewing. Hosted on AWS (S3 + CloudFront + API Gateway + Lambda + DynamoDB).
 
 ## Structure
 
-- **extension/** - Twitch extension for viewers to see hints
-- **broadcaster-site/** - Web app for broadcasters to upload spoiler logs
-- **backend/** - Express API server that stores and serves spoiler logs
-- **shared/** - Shared TypeScript types used across all apps
+- **extension/** — Twitch extension panel and config page (viewers)
+- **broadcaster-site/** — Web app for uploading spoiler logs (broadcasters)
+- **infra/** — AWS CDK infrastructure (Python)
+- **shared/** — Shared TypeScript types
 
-## Getting Started
+## Local Development
 
-### 1. Install Dependencies
+### Broadcaster site
 
 ```bash
+cd broadcaster-site
 npm install
+npm run dev
 ```
 
-This will install dependencies for all workspaces.
+Runs on `http://localhost:5173` against `http://localhost:3000` by default.
 
-### 2. Start the Backend API
+### Extension
 
 ```bash
-npm run dev:backend
+cd extension
+npm install
+npm run build:serve   # builds then serves dist/ on port 8081
 ```
 
-The API will run on `http://localhost:3001`
+Point ngrok at port 8081 and set that URL as the Asset Hosting URL in the Twitch developer console.
 
-### 3. Start the Broadcaster Site
+## AWS Deployment
+
+Requires AWS CLI configured and CDK bootstrapped (`cd infra && cdk bootstrap`).
+
+### Infrastructure (first time or after stack changes)
 
 ```bash
-npm run dev:broadcaster
+make infra-dev    # deploy HintViewerDev + HintViewerApiDev stacks
+make infra-prod   # deploy HintViewerProd + HintViewerApiProd stacks
+make infra-all    # deploy all four stacks
 ```
 
-The broadcaster site will run on `http://localhost:3000`
-
-### 4. Start the Extension (for development)
+### Broadcaster site
 
 ```bash
-npm run dev:extension
+make deploy-dev   # build with dev-aws env + sync to S3 + invalidate CloudFront
+make deploy-prod  # build with prod-aws env + sync to S3 + invalidate CloudFront
 ```
 
-The extension will run on `http://localhost:5173` (or configured port)
-
-## Usage
-
-### For Broadcasters
-
-1. Go to the broadcaster website
-2. Enter your Twitch Channel ID
-3. Upload your DK64 Randomizer spoiler log JSON file
-4. The hints will be pushed to all viewers watching your stream
-
-### For Viewers
-
-The Twitch extension will automatically poll the API and display hints when available.
-
-## Building for Production
+### Extension
 
 ```bash
-npm run build:all
+cd extension
+./zip_assets.sh   # builds and produces hint-viewer-bundle.zip
 ```
 
-This builds all workspaces.
+Upload `hint-viewer-bundle.zip` to the Twitch developer console.
+
+## Architecture
+
+```
+Broadcaster Site  ──POST/DELETE──►  API Gateway  ──►  Lambda  ──►  DynamoDB
+(S3 + CloudFront)                                                      ▲
+                                                                       │
+Extension Panel   ──GET (poll 10s)──►  API Gateway  ──►  Lambda  ──────┘
+(Twitch hosted)
+```
 

@@ -1,0 +1,34 @@
+import json
+import os
+
+import boto3
+
+from utils import decimals_to_floats
+
+dynamodb = boto3.resource("dynamodb")
+TABLE_NAME = os.environ["TABLE_NAME"]
+
+
+def handler(event, context):
+    channel_id = event["pathParameters"]["channelId"]
+
+    table = dynamodb.Table(TABLE_NAME)
+    response = table.get_item(Key={"channelId": channel_id})
+    item = response.get("Item")
+
+    if not item:
+        return {
+            "statusCode": 404,
+            "headers": {"Content-Type": "application/json"},
+            "body": json.dumps({"error": "Not found"}),
+        }
+
+    return {
+        "statusCode": 200,
+        "headers": {"Content-Type": "application/json"},
+        "body": json.dumps({
+            "spoilerData": decimals_to_floats(item.get("spoilerData")),
+            "uploadedAt": item.get("uploadedAt"),
+            "revealed": item.get("revealedHints", []),
+        }),
+    }
