@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      '@hint-viewer/shared': resolve(__dirname, '../shared/types.ts'),
+      '@hint-viewer/shared': resolve(__dirname, '../shared'),
     },
   },
   build: {

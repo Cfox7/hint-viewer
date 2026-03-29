@@ -1,7 +1,9 @@
 import { Carousel } from 'react-bootstrap';
 import type { SpoilerLog } from '@hint-viewer/shared';
+import { levelDisplayNames, levelOrder } from '@hint-viewer/shared/level_utils';
 import { useState } from 'react';
 import { colorizeHints } from '../utils/colorizeHints';
+import { LevelNav } from './LevelNav';
 
 export interface HintCarouselProps {
   spoilerData: SpoilerLog;
@@ -24,27 +26,6 @@ export function HintCarousel({ spoilerData, className = '', revealedHints }: Hin
     groupedHints[level].push(location);
   });
 
-  const levelDisplayNames: Record<string, string> = {
-    Isles: "DK Isles",
-    Japes: "Jungle Japes",
-    Aztec: "Angry Aztec",
-    Factory: "Frantic Factory",
-    Galleon: "Gloomy Galleon",
-    Fungi: "Fungi Forest",
-    Caves: "Crystal Caves",
-    Castle: "Creepy Castle",
-    Helm: "Hideout Helm",
-    Direct: "Direct Hints",
-    Foolish: "Foolish Hints",
-    WOTH: "WOTH Hints",
-  };
-
-  // include up to 10 optional "Batch N" entries without hardcoding each one
-  const BATCH_COUNT = 10;
-  const batchNames = Array.from({ length: BATCH_COUNT }, (_, i) => `Batch${i + 1}`);
-  const baseOrder = Object.keys(levelDisplayNames);
-  baseOrder.splice(8, 0, ...batchNames);
-  const levelOrder = baseOrder;
   const levels = Object.keys(groupedHints)
     .filter(level => levelOrder.includes(level))
     .sort((a, b) => levelOrder.indexOf(a) - levelOrder.indexOf(b));
@@ -52,11 +33,9 @@ export function HintCarousel({ spoilerData, className = '', revealedHints }: Hin
   // Build paged slides: each slide is { level, pageIndex, locations: string[] }
   const slides: { level: string; pageIndex: number; locations: string[] }[] = [];
   levels.forEach((level) => {
-    // natural numeric-aware sort (e.g. "1, 2, 10") on a copy to avoid mutating groupedHints
     const locs = (groupedHints[level] || []).slice().sort((a, b) =>
       a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' })
     );
-    // paginate only for specific levels
     let perPage = locs.length || 1;
     if (level === 'Direct') perPage = DIRECT_HINTS_PER_PAGE;
     else if (level === 'Foolish') perPage = FOOLISH_HINTS_PER_PAGE;
@@ -73,18 +52,36 @@ export function HintCarousel({ spoilerData, className = '', revealedHints }: Hin
   const [activeIndex, setActiveIndex] = useState(0);
   const currentSlide = slides[activeIndex];
 
+  const slideCountByLevel = Object.fromEntries(
+    levels.map((level) => [level, slides.filter((s) => s.level === level).length])
+  );
+
+  const levelTitle = currentSlide
+    ? (() => {
+        const displayName = levelDisplayNames[currentSlide.level] || currentSlide.level;
+        const total = slideCountByLevel[currentSlide.level] ?? 1;
+        return total > 1
+          ? `${displayName}  ·  ${currentSlide.pageIndex} / ${total}`
+          : displayName;
+      })()
+    : 'Hints';
+
   return (
     <div className={`carousel-bg-container ${className}`}>
-      <h3 className="level-title gradient-jumpman">Hints</h3>
-      <h3 className="level-title gradient-jumpman">
-        {currentSlide ? (levelDisplayNames[currentSlide.level] || currentSlide.level) : ''}
-      </h3>
+      <h3 className="level-title gradient-jumpman">{levelTitle}</h3>
+      <LevelNav
+        slides={slides}
+        activeIndex={activeIndex}
+        onSelect={setActiveIndex}
+        levelDisplayNames={levelDisplayNames}
+      />
 
       <Carousel
         interval={null}
         activeIndex={activeIndex}
         onSelect={(idx) => setActiveIndex(idx ?? 0)}
         slide={false}
+        indicators={false}
         nextIcon={<img src="assets/C_Right.svg" alt="Next" style={{ width: 64, height: 64 }} />}
         prevIcon={<img src="assets/C_Left.svg" alt="Prev" style={{ width: 64, height: 64 }} />}
       >

@@ -26,7 +26,8 @@
 
     /* Path mapping for shared types */
     "paths": {
-      "@hint-viewer/shared": ["../shared/types.ts"]
+      "@hint-viewer/shared": ["../shared/types.ts"],
+      "@hint-viewer/shared/*": ["../shared/*"]
     }
   },
   "include": ["src"]

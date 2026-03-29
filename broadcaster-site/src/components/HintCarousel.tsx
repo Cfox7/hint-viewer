@@ -3,6 +3,7 @@ import { Carousel, Button } from 'react-bootstrap';
 import type { SpoilerLog } from '../types';
 import { colorizeHints } from '../utils/colorizeHints';
 import RevealButtons from './RevealButtons';
+import { levelDisplayNames, levelOrder } from '@hint-viewer/shared/level_utils';
 
 export interface HintCarouselProps {
   spoilerData: SpoilerLog;
@@ -11,28 +12,6 @@ export interface HintCarouselProps {
   revealedHints: Set<string>;
   onToggleHint: (location: string) => void;
 }
-
-const levelDisplayNames: Record<string, string> = {
-  Isles: "DK Isles",
-  Japes: "Jungle Japes",
-  Aztec: "Angry Aztec",
-  Factory: "Frantic Factory",
-  Galleon: "Gloomy Galleon",
-  Fungi: "Fungi Forest",
-  Caves: "Crystal Caves",
-  Castle: "Creepy Castle",
-  Helm: "Hideout Helm",
-  Direct: "Direct Hints",
-  Foolish: "Foolish Hints",
-  WOTH: "WOTH Hints",
-};
-
-// include up to 10 optional "Batch N" entries without hardcoding each one
-const BATCH_COUNT = 10;
-const batchNames = Array.from({ length: BATCH_COUNT }, (_, i) => `Batch${i + 1}`);
-const baseOrder = Object.keys(levelDisplayNames);
-baseOrder.splice(8, 0, ...batchNames);
-const levelOrder = baseOrder;
 const DIRECT_HINTS_PER_PAGE = 4;
 const FOOLISH_HINTS_PER_PAGE = 5;
 const WOTH_HINTS_PER_PAGE = 5;
