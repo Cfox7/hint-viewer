@@ -47,4 +47,3 @@ echo "Contents to be zipped:"
 
 echo "Bundle created: $OUT_ZIP"
 ls -lh "$OUT_ZIP"
-```# filepath: /home/cfox/hint-

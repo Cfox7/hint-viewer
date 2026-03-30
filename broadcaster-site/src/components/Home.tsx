@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 function Home() {
   return (
     <>
@@ -7,7 +9,7 @@ function Home() {
         Log in with your Twitch account to access the hint viewer and upload your spoiler log.
       </p>
       <p>
-        After logging in, you can view and manage your hints on the Hints page.
+        After logging in, you can view and manage your hints on the <Link to="/upload">Upload page</Link>.
       </p>
       <p>
         Currently we support Standard hints with or without progressive hints. Future updates may include additional hint types and customization options.
