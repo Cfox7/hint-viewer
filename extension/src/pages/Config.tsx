@@ -6,12 +6,12 @@ function Config() {
 
         <div className="no-spoiler-message">
           <p>
-            This extension displays hints to your viewers. To set it up:
+            This extension displays hints from your spoiler log to your viewers. To set it up:
           </p>
 
           <ol className="no-spoiler-list">
             <li>
-              Visit <a href="https://d3j74gnf7jwu19.cloudfront.net" target="_blank" rel="noopener noreferrer">the broadcaster site</a> and sign in with your Twitch account.
+              Visit <a href="https://hintviewer.com" target="_blank" rel="noopener noreferrer">the broadcaster site</a> and sign in with your Twitch account.
             </li>
             <li>
               Upload a spoiler log on the broadcaster site. Everything you see in your Hint Viewer will be mirrored to your viewers.
