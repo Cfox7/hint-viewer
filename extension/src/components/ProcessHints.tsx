@@ -6,7 +6,7 @@ interface ProcessHintsProps {
   channelId: string | undefined;
 }
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://nsehzumuu9.execute-api.us-east-2.amazonaws.com';
+const API_URL = import.meta.env.VITE_API_URL || 'https://dulrvobi1xht4.cloudfront.net';
 
 function ProcessHints({ channelId }: ProcessHintsProps) {
   const [spoilerData, setSpoilerData] = useState<SpoilerLog | null>(null);

@@ -198,19 +198,6 @@ body, .app-layout {
 .twitch-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 .twitch-btn:hover { background: #8956FB; color: #ffd700; }
 
-/* Unified clear button (keeps distinct danger look) */
-.clear-btn {
-  background: #c82333;
-  color: #dee2e6;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-.clear-btn:hover { background: #d84c5a; }
-.clear-btn:disabled { background: #6c757d; cursor: not-allowed; opacity: 0.6; }
-
 .reveal-btn {
   background: #3f49a8;            /* darker indigo base */
   color: #ffe066;                 /* site accent (banana) for contrast */
@@ -625,9 +612,8 @@ input[type="file"]:disabled {
 /* make base text larger and responsive */
 html { font-size: 18px; } /* bump base; use rem units below */
 
-/* Modal theming (upload + clear) */
-.upload-modal-content,
-.clear-modal-content {
+/* Modal theming (upload only) */
+.upload-modal-content {
   background: #222a22; /* match content-card */
   color: #dee2e6;
   border-radius: 12px;
@@ -637,30 +623,25 @@ html { font-size: 18px; } /* bump base; use rem units below */
 
 /* Header / body / footer inside the modal */
 .upload-modal-content .modal-header,
-.clear-modal-content .modal-header,
-.upload-modal-content .modal-footer,
-.clear-modal-content .modal-footer {
+.upload-modal-content .modal-footer {
   background: transparent;
   border: none;
   padding: 0.75rem 1rem;
 }
 
-.upload-modal-body,
-.clear-modal-body {
+.upload-modal-body {
   padding: 1.25rem 1.5rem;
   color: #dee2e6;
   background: transparent;
 }
 
 /* Modal title accent */
-.clear-modal-header .modal-title,
 .upload-modal-content .modal-title {
   color: #ffe066;
   font-weight: 700;
 }
 
 /* Close button color */
-.clear-modal-header .btn-close,
 .upload-modal-content .btn-close {
   filter: none;
   opacity: 0.85;
@@ -673,39 +654,10 @@ html { font-size: 18px; } /* bump base; use rem units below */
 }
 
 /* Modal action buttons */
-.clear-modal-cancel,
-.clear-modal-confirm,
-.upload-modal-content .btn,
-.clear-modal-content .btn {
+.upload-modal-content .btn {
   border-radius: 8px;
   padding: 8px 14px;
   font-family: inherit;
-}
-
-/* Cancel (secondary) */
-.clear-modal-cancel,
-.clear-modal-content .btn-secondary {
-  background: #2b332b;
-  color: #dee2e6;
-  border: 1px solid rgba(255,255,255,0.03);
-}
-
-/* Confirm / danger (clear) */
-.clear-modal-confirm,
-.clear-modal-content .btn-danger {
-  background: #8b2a3a;
-  color: #fff;
-  border: 1px solid rgba(0,0,0,0.25);
-}
-
-/* Hover states */
-.clear-modal-cancel:hover,
-.clear-modal-content .btn-secondary:hover {
-  background: #3a443a;
-}
-.clear-modal-confirm:hover,
-.clear-modal-content .btn-danger:hover {
-  background: #a33b4b;
 }
 
 /* File chooser inline controls */

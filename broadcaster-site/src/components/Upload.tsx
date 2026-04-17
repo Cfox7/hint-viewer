@@ -16,13 +16,9 @@ function Upload({ channelId }: UploadProps) {
     success,
     error,
     uploadedAt,
-    clearing,
     spoilerData,
     revealedHints,
-    showClearModal,
-    setShowClearModal,
     handleUpload,
-    handleClear,
     handleToggleHint,
   } = useUpload(channelId);
 
@@ -37,13 +33,7 @@ function Upload({ channelId }: UploadProps) {
 
   return (
     <>
-      <UploadModals
-        uploading={uploading}
-        showClearModal={showClearModal}
-        setShowClearModal={setShowClearModal}
-        clearing={clearing}
-        onClear={handleClear}
-      />
+      <UploadModals uploading={uploading} />
 
       {initialLoading ? (
         <div className="d-flex justify-content-center py-5">
@@ -95,16 +85,6 @@ function Upload({ channelId }: UploadProps) {
             </span>
           </div>
 
-          {success && (
-            <button
-              onClick={() => setShowClearModal(true)}
-              disabled={clearing}
-              className="clear-btn"
-              style={{ marginLeft: 8 }}
-            >
-              Clear Spoiler Log
-            </button>
-          )}
         </div>
       </div>
 

@@ -6,6 +6,8 @@ from aws_cdk import (
     aws_lambda as lambda_,
     aws_apigatewayv2 as apigatewayv2,
     aws_apigatewayv2_integrations as integrations,
+    aws_cloudfront as cloudfront,
+    aws_cloudfront_origins as origins,
 )
 from constructs import Construct
 
@@ -91,3 +93,55 @@ class ApiStack(cdk.Stack):
         )
 
         cdk.CfnOutput(self, "ApiUrl", value=api.api_endpoint)
+
+        # CloudFront in front of API Gateway — caches GET responses for 10s
+        # Authorization must live in the CachePolicy (not OriginRequestPolicy) per CloudFront rules.
+        cache_policy = cloudfront.CachePolicy(
+            self, "ApiCachePolicy",
+            default_ttl=cdk.Duration.seconds(10),
+            min_ttl=cdk.Duration.seconds(0),
+            max_ttl=cdk.Duration.seconds(30),
+            cookie_behavior=cloudfront.CacheCookieBehavior.none(),
+            header_behavior=cloudfront.CacheHeaderBehavior.allow_list("Authorization"),
+            query_string_behavior=cloudfront.CacheQueryStringBehavior.none(),
+        )
+
+        # Forward Content-Type so POST body is correctly interpreted by API Gateway
+        origin_request_policy = cloudfront.OriginRequestPolicy(
+            self, "ApiOriginRequestPolicy",
+            header_behavior=cloudfront.OriginRequestHeaderBehavior.allow_list("Content-Type"),
+            cookie_behavior=cloudfront.OriginRequestCookieBehavior.none(),
+            query_string_behavior=cloudfront.OriginRequestQueryStringBehavior.none(),
+        )
+
+        # CloudFront injects CORS headers into every response — no need to forward Origin to API GW
+        response_headers_policy = cloudfront.ResponseHeadersPolicy(
+            self, "ApiResponseHeadersPolicy",
+            cors_behavior=cloudfront.ResponseHeadersCorsBehavior(
+                access_control_allow_credentials=False,
+                access_control_allow_headers=["Authorization", "Content-Type"],
+                access_control_allow_methods=["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE"],
+                access_control_allow_origins=["*"],
+                origin_override=True,
+            ),
+        )
+
+        api_domain = f"{api.api_id}.execute-api.{self.region}.amazonaws.com"
+
+        api_distribution = cloudfront.Distribution(
+            self, "ApiDistribution",
+            default_behavior=cloudfront.BehaviorOptions(
+                origin=origins.HttpOrigin(
+                    api_domain,
+                    protocol_policy=cloudfront.OriginProtocolPolicy.HTTPS_ONLY,
+                ),
+                allowed_methods=cloudfront.AllowedMethods.ALLOW_ALL,
+                cached_methods=cloudfront.CachedMethods.CACHE_GET_HEAD,
+                cache_policy=cache_policy,
+                origin_request_policy=origin_request_policy,
+                response_headers_policy=response_headers_policy,
+                viewer_protocol_policy=cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+            ),
+        )
+
+        cdk.CfnOutput(self, "ApiCfUrl", value=f"https://{api_distribution.distribution_domain_name}")
