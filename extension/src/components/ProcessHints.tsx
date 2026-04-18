@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { HintCarousel } from './HintCarousel';
 import type { SpoilerLog } from '@hint-viewer/shared';
 
@@ -14,64 +14,75 @@ function ProcessHints({ channelId }: ProcessHintsProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastFetch, setLastFetch] = useState<string | null>(null);
+  const [lastPolled, setLastPolled] = useState<Date | null>(null);
+  const [canRefresh, setCanRefresh] = useState(true);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const fetchAll = useCallback(async () => {
+    if (!channelId) return;
+    // Fetch spoiler data
+    try {
+      const response = await fetch(`${API_URL}/api/spoiler/${channelId}`);
+
+      if (response.status === 404) {
+        setSpoilerData(null);
+        setLoading(false);
+        setError(null);
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch spoiler data. API error occurred.');
+      }
+
+      const body = (await response.json()) as unknown;
+      const obj = typeof body === 'object' && body !== null ? (body as Record<string, unknown>) : {};
+
+      const spoiler = (obj['spoilerData'] ?? obj['data'] ?? body) as SpoilerLog | null;
+      const uploadedAt = (obj['uploadedAt'] ?? obj['uploaded_at'] ?? null) as string | null;
+      setSpoilerData(spoiler);
+      setLastFetch(uploadedAt);
+      setLoading(false);
+      setError(null);
+    } catch (err) {
+      setError('Failed to load spoiler data');
+      setLoading(false);
+      console.error('Fetch error:', err);
+    }
+
+    // Fetch revealed hints
+    try {
+      const res = await fetch(`${API_URL}/api/hints/${channelId}`);
+      const hintsBody = (await res.json()) as unknown;
+      const hintsObj = typeof hintsBody === 'object' && hintsBody !== null ? (hintsBody as Record<string, unknown>) : {};
+      const arr =
+        Array.isArray(hintsObj['revealed']) ? (hintsObj['revealed'] as string[]) :
+        Array.isArray(hintsObj['revealedHints']) ? (hintsObj['revealedHints'] as string[]) :
+        [];
+      setRevealedHints(new Set(arr));
+    } catch {
+      // Optionally handle error
+    }
+
+    setLastPolled(new Date());
+  }, [channelId]);
+
+  const restartInterval = useCallback(() => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    intervalRef.current = setInterval(fetchAll, 60000);
+  }, [fetchAll]);
 
   useEffect(() => {
     if (!channelId) {
       setLoading(false);
       return;
     }
-
-    const fetchAll = async () => {
-      // Fetch spoiler data
-      try {
-        const response = await fetch(`${API_URL}/api/spoiler/${channelId}`);
-        
-        if (response.status === 404) {
-          // No spoiler log uploaded yet
-          setSpoilerData(null);
-          setLoading(false);
-          setError(null);
-          return;
-        }
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch spoiler data. API error occurred.');
-        }
-
-        const body = (await response.json()) as unknown;
-        const obj = typeof body === 'object' && body !== null ? (body as Record<string, unknown>) : {};
-
-        const spoiler = (obj['spoilerData'] ?? obj['data'] ?? body) as SpoilerLog | null;
-        const uploadedAt = (obj['uploadedAt'] ?? obj['uploaded_at'] ?? null) as string | null;
-        setSpoilerData(spoiler);
-        setLastFetch(uploadedAt);
-         setLoading(false);
-         setError(null);
-       } catch (err) {
-        setError('Failed to load spoiler data');
-        setLoading(false);
-        console.error('Fetch error:', err);
-      }
-
-      // Fetch revealed hints
-      try {
-        const res = await fetch(`${API_URL}/api/hints/${channelId}`);
-        const hintsBody = (await res.json()) as unknown;
-        const hintsObj = typeof hintsBody === 'object' && hintsBody !== null ? (hintsBody as Record<string, unknown>) : {};
-        const arr =
-          Array.isArray(hintsObj['revealed']) ? (hintsObj['revealed'] as string[]) :
-          Array.isArray(hintsObj['revealedHints']) ? (hintsObj['revealedHints'] as string[]) :
-          [];
-         setRevealedHints(new Set(arr));
-      } catch {
-        // Optionally handle error
-      }
-    };
-
     fetchAll();
-    const interval = setInterval(fetchAll, 10000);
-    return () => clearInterval(interval);
-  }, [channelId]);
+    restartInterval();
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [channelId, fetchAll, restartInterval]);
 
   if (loading) {
     return <p style={{ fontSize: '12px', color: '#999' }}>Loading hints...</p>;
@@ -105,9 +116,24 @@ function ProcessHints({ channelId }: ProcessHintsProps) {
           revealedHints={revealedHints}
         />
       )}
-      {lastFetch && (
-        <div style={{ fontSize: '10px', opacity: 0.7, marginTop: '10px' }}>
-          <p>Last updated: {new Date(lastFetch).toLocaleTimeString()}</p>
+      {lastPolled && (
+        <div className="refresh-bar">
+          {lastFetch && <span>Uploaded: {new Date(lastFetch).toLocaleTimeString()}</span>}
+          <span>
+            Last Updated: {lastPolled.toLocaleTimeString()}{' '}
+            <button
+              className="refresh-btn"
+              disabled={!canRefresh}
+              onClick={() => {
+                setCanRefresh(false);
+                void fetchAll();
+                restartInterval();
+                setTimeout(() => setCanRefresh(true), 10000);
+              }}
+            >
+              ↻
+            </button>
+          </span>
         </div>
       )}
     </>
