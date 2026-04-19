@@ -10,7 +10,9 @@ export interface HintCarouselProps {
   className?: string;
   channelId: string;
   revealedHints: Set<string>;
+  completedHints: Set<string>;
   onToggleHint: (location: string) => void;
+  onToggleComplete: (location: string) => void;
   activeIndex: number;
   onSelect: (idx: number) => void;
 }
@@ -19,7 +21,9 @@ export function HintCarousel({
   spoilerData,
   className = '',
   revealedHints,
+  completedHints,
   onToggleHint,
+  onToggleComplete,
   activeIndex,
   onSelect,
 }: HintCarouselProps) {
@@ -117,25 +121,39 @@ export function HintCarousel({
                     {slide.locations.map((location) => {
                       const cleanedHint = (hints[location] || '').split('|')[0].trim();
                       const isRevealed = revealedHints.has(location);
+                      const isCompleted = completedHints.has(location);
                       const hideReveal = ['foolish', 'woth'].includes((slide.level || '').toLowerCase());
 
                       return (
                         <div key={location} className="hint-item">
-                          <div className="d-flex justify-content-between align-items-center mb-1 hint-row-modern">
+                          <div className="d-flex justify-content-between align-items-center mb-1">
                             <span className="hint-location">{location}:</span>
-                            {!hideReveal && (
-                              <Button
-                                size="sm"
-                                variant={isRevealed ? "outline-secondary" : "outline-primary"}
-                                className="hint-toggle-btn"
-                                aria-label={isRevealed ? "Hide hint" : "Reveal hint"}
-                                onClick={() => handleToggleWithLinks(location)}
-                              >
-                                <i className={`bi ${isRevealed ? "bi-eye-slash" : "bi-eye"}`}></i>
-                              </Button>
-                            )}
+                            <div className="d-flex gap-1">
+                              {isRevealed && (
+                                <Button
+                                  size="sm"
+                                  variant={isCompleted ? "success" : "outline-success"}
+                                  className="hint-toggle-btn"
+                                  aria-label={isCompleted ? "Mark uncompleted" : "Mark completed"}
+                                  onClick={() => onToggleComplete(location)}
+                                >
+                                  <i className={`bi ${isCompleted ? "bi-check-circle-fill" : "bi-check-circle"}`}></i>
+                                </Button>
+                              )}
+                              {!hideReveal && (
+                                <Button
+                                  size="sm"
+                                  variant={isRevealed ? "outline-secondary" : "outline-primary"}
+                                  className="hint-toggle-btn"
+                                  aria-label={isRevealed ? "Hide hint" : "Reveal hint"}
+                                  onClick={() => handleToggleWithLinks(location)}
+                                >
+                                  <i className={`bi ${isRevealed ? "bi-eye-slash" : "bi-eye"}`}></i>
+                                </Button>
+                              )}
+                            </div>
                           </div>
-                          <p className="hint-text">
+                          <p className={`hint-text${isCompleted ? ' completed' : ''}`}>
                             {isRevealed ? colorizeHints(cleanedHint) : "???"}
                           </p>
                         </div>

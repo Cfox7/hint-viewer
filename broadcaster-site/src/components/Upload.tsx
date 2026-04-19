@@ -18,8 +18,10 @@ function Upload({ channelId }: UploadProps) {
     uploadedAt,
     spoilerData,
     revealedHints,
+    completedHints,
     handleUpload,
     handleToggleHint,
+    handleToggleComplete,
   } = useUpload(channelId);
 
   const { slides, activeIndex, setActiveIndex, setSlides } = useNav();
@@ -49,7 +51,9 @@ function Upload({ channelId }: UploadProps) {
               className="carousel-container"
               channelId={channelId}
               revealedHints={revealedHints}
+              completedHints={completedHints}
               onToggleHint={handleToggleHint}
+              onToggleComplete={handleToggleComplete}
               activeIndex={activeIndex}
               onSelect={setActiveIndex}
             />

@@ -11,6 +11,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'https://dulrvobi1xht4.cloudfron
 function ProcessHints({ channelId }: ProcessHintsProps) {
   const [spoilerData, setSpoilerData] = useState<SpoilerLog | null>(null);
   const [revealedHints, setRevealedHints] = useState<Set<string>>(new Set());
+  const [completedHints, setCompletedHints] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastFetch, setLastFetch] = useState<string | null>(null);
@@ -20,16 +21,8 @@ function ProcessHints({ channelId }: ProcessHintsProps) {
 
   const fetchAll = useCallback(async () => {
     if (!channelId) return;
-    // Fetch spoiler data
     try {
-      const response = await fetch(`${API_URL}/api/spoiler/${channelId}`);
-
-      if (response.status === 404) {
-        setSpoilerData(null);
-        setLoading(false);
-        setError(null);
-        return;
-      }
+      const response = await fetch(`${API_URL}/api/state/${channelId}`);
 
       if (!response.ok) {
         throw new Error('Failed to fetch spoiler data. API error occurred.');
@@ -38,30 +31,21 @@ function ProcessHints({ channelId }: ProcessHintsProps) {
       const body = (await response.json()) as unknown;
       const obj = typeof body === 'object' && body !== null ? (body as Record<string, unknown>) : {};
 
-      const spoiler = (obj['spoilerData'] ?? obj['data'] ?? body) as SpoilerLog | null;
-      const uploadedAt = (obj['uploadedAt'] ?? obj['uploaded_at'] ?? null) as string | null;
+      const spoiler = (obj['spoilerData'] ?? null) as SpoilerLog | null;
+      const uploadedAt = (obj['uploadedAt'] ?? null) as string | null;
+      const revealed = Array.isArray(obj['revealed']) ? (obj['revealed'] as string[]) : [];
+      const completed = Array.isArray(obj['completed']) ? (obj['completed'] as string[]) : [];
+
       setSpoilerData(spoiler);
       setLastFetch(uploadedAt);
+      setRevealedHints(new Set(revealed));
+      setCompletedHints(new Set(completed));
       setLoading(false);
       setError(null);
     } catch (err) {
       setError('Failed to load spoiler data');
       setLoading(false);
       console.error('Fetch error:', err);
-    }
-
-    // Fetch revealed hints
-    try {
-      const res = await fetch(`${API_URL}/api/hints/${channelId}`);
-      const hintsBody = (await res.json()) as unknown;
-      const hintsObj = typeof hintsBody === 'object' && hintsBody !== null ? (hintsBody as Record<string, unknown>) : {};
-      const arr =
-        Array.isArray(hintsObj['revealed']) ? (hintsObj['revealed'] as string[]) :
-        Array.isArray(hintsObj['revealedHints']) ? (hintsObj['revealedHints'] as string[]) :
-        [];
-      setRevealedHints(new Set(arr));
-    } catch {
-      // Optionally handle error
     }
 
     setLastPolled(new Date());
@@ -114,6 +98,7 @@ function ProcessHints({ channelId }: ProcessHintsProps) {
           spoilerData={spoilerData}
           className="carousel-container"
           revealedHints={revealedHints}
+          completedHints={completedHints}
         />
       )}
       {lastPolled && (

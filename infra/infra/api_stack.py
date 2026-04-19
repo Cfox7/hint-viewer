@@ -43,11 +43,10 @@ class ApiStack(cdk.Stack):
             table.grant_read_write_data(fn)
             return fn
 
-        get_spoiler_fn = make_fn("GetSpoiler", "get_spoiler")
+        get_state_fn = make_fn("GetState", "get_state")
+        post_state_fn = make_fn("PostState", "post_state")
         post_spoiler_fn = make_fn("PostSpoiler", "post_spoiler")
         delete_spoiler_fn = make_fn("DeleteSpoiler", "delete_spoiler")
-        get_hints_fn = make_fn("GetHints", "get_hints")
-        post_revealed_hints_fn = make_fn("PostRevealedHints", "post_revealed_hints")
         delete_revealed_hints_fn = make_fn("DeleteRevealedHints", "delete_revealed_hints")
 
         api = apigatewayv2.HttpApi(
@@ -61,9 +60,14 @@ class ApiStack(cdk.Stack):
         )
 
         api.add_routes(
-            path="/api/spoiler/{channelId}",
+            path="/api/state/{channelId}",
             methods=[apigatewayv2.HttpMethod.GET],
-            integration=integrations.HttpLambdaIntegration("GetSpoilerInt", get_spoiler_fn),
+            integration=integrations.HttpLambdaIntegration("GetStateInt", get_state_fn),
+        )
+        api.add_routes(
+            path="/api/state/{channelId}",
+            methods=[apigatewayv2.HttpMethod.POST],
+            integration=integrations.HttpLambdaIntegration("PostStateInt", post_state_fn),
         )
         api.add_routes(
             path="/api/spoiler/{channelId}",
@@ -77,19 +81,8 @@ class ApiStack(cdk.Stack):
         )
         api.add_routes(
             path="/api/hints/{channelId}",
-            methods=[apigatewayv2.HttpMethod.GET],
-            integration=integrations.HttpLambdaIntegration("GetHintsInt", get_hints_fn),
-        )
-        api.add_routes(
-            path="/api/hints/{channelId}",
             methods=[apigatewayv2.HttpMethod.DELETE],
             integration=integrations.HttpLambdaIntegration("DeleteRevealedHintsInt", delete_revealed_hints_fn),
-        )
-        # Note: /api/hints/reveal is more specific and will be matched before /api/hints/{channelId}
-        api.add_routes(
-            path="/api/hints/reveal",
-            methods=[apigatewayv2.HttpMethod.POST],
-            integration=integrations.HttpLambdaIntegration("PostRevealedHintsInt", post_revealed_hints_fn),
         )
 
         cdk.CfnOutput(self, "ApiUrl", value=api.api_endpoint)

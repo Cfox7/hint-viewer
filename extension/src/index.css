@@ -91,6 +91,11 @@ a:hover {
   line-height: 1.5;
 }
 
+.carousel-container .hint-text.completed {
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+
 .carousel-control-next,
 .carousel-control-prev {
   opacity: 1 !important;

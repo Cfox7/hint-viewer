@@ -9,13 +9,14 @@ export interface HintCarouselProps {
   spoilerData: SpoilerLog;
   className?: string;
   revealedHints: Set<string>;
+  completedHints: Set<string>;
 }
 
 const DIRECT_HINTS_PER_PAGE = 3;
 const FOOLISH_HINTS_PER_PAGE = 5;
 const WOTH_HINTS_PER_PAGE = 5;
 
-export function HintCarousel({ spoilerData, className = '', revealedHints }: HintCarouselProps) {
+export function HintCarousel({ spoilerData, className = '', revealedHints, completedHints }: HintCarouselProps) {
   const hints = spoilerData["Wrinkly Hints"];
 
   // Group hints by level (extract level name from location)
@@ -97,10 +98,11 @@ export function HintCarousel({ spoilerData, className = '', revealedHints }: Hin
                 {slide.locations.map((location) => {
                   const cleanedHint = (hints[location] || '').split('|')[0].trim();
                   const isRevealed = revealedHints.has(location);
+                  const isCompleted = completedHints.has(location);
 
                   return (
                     <div key={location} className="hint-item">
-                      <p className="hint-text">
+                      <p className={`hint-text${isCompleted ? ' completed' : ''}`}>
                         {isRevealed ? colorizeHints(cleanedHint) : "???"}
                       </p>
                     </div>

@@ -15,15 +15,6 @@ export const uploadSpoiler = async (channelId: string, json: unknown) => {
   return res.json();
 };
 
-export const getSpoiler = async (channelId: string) => {
-  const res = await fetch(`${API_URL}/api/spoiler/${channelId}`, {
-    method: 'GET',
-    headers: { 'Content-Type': 'application/json' },
-  });
-  if (!res.ok) return null;
-  return res.json(); // { spoilerData, uploadedAt, revealed }
-};
-
 export const deleteSpoiler = (channelId: string) =>
   fetch(`${API_URL}/api/spoiler/${channelId}`, {
     method: 'DELETE',
@@ -36,12 +27,18 @@ export const deleteHints = (channelId: string) =>
     headers: authHeaders(),
   });
 
-export const getRevealedHints = (channelId: string) =>
-  fetch(`${API_URL}/api/hints/${channelId}`).then((r) => (r.ok ? r.json() : { revealed: [] }));
+export const getState = async (channelId: string) => {
+  const res = await fetch(`${API_URL}/api/state/${channelId}`, {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+  });
+  if (!res.ok) return null;
+  return res.json() as Promise<{ spoilerData: unknown; uploadedAt: string | null; revealed: string[]; completed: string[] }>;
+};
 
-export const postRevealedHints = (channelId: string, revealedHints: string[]) =>
-  fetch(`${API_URL}/api/hints/reveal`, {
+export const postState = (channelId: string, revealedHints: string[], completedHints: string[]) =>
+  fetch(`${API_URL}/api/state/${channelId}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...authHeaders() },
-    body: JSON.stringify({ channelId, revealedHints }),
+    body: JSON.stringify({ channelId, revealedHints, completedHints }),
   });

@@ -55,6 +55,7 @@ def handler(event, context):
         "spoilerData": floats_to_decimals(hints),
         "uploadedAt": uploaded_at,
         "revealedHints": [],
+        "completedHints": [],
     })
 
     return {

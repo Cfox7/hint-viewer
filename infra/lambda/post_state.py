@@ -19,8 +19,9 @@ def handler(event, context):
 
     channel_id = body.get("channelId")
     revealed_hints = body.get("revealedHints")
+    completed_hints = body.get("completedHints")
 
-    if not channel_id or not isinstance(revealed_hints, list):
+    if not channel_id or not isinstance(revealed_hints, list) or not isinstance(completed_hints, list):
         return {
             "statusCode": 400,
             "headers": {"Content-Type": "application/json"},
@@ -30,8 +31,11 @@ def handler(event, context):
     table = dynamodb.Table(TABLE_NAME)
     table.update_item(
         Key={"channelId": channel_id},
-        UpdateExpression="SET revealedHints = :hints",
-        ExpressionAttributeValues={":hints": revealed_hints},
+        UpdateExpression="SET revealedHints = :revealed, completedHints = :completed",
+        ExpressionAttributeValues={
+            ":revealed": revealed_hints,
+            ":completed": completed_hints,
+        },
     )
 
     return {

@@ -13,7 +13,7 @@ def handler(event, context):
     table = dynamodb.Table(TABLE_NAME)
     table.update_item(
         Key={"channelId": channel_id},
-        UpdateExpression="SET revealedHints = :empty",
+        UpdateExpression="SET revealedHints = :empty, completedHints = :empty",
         ExpressionAttributeValues={":empty": []},
     )
 
