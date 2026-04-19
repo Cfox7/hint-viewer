@@ -1,0 +1,4 @@
+.env.dev-aws
+.env.prod-aws
+.env.local
+.env.*.local

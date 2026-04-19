@@ -90,7 +90,8 @@ export function HintCarousel({
 
   const levelTitle = currentSlide
     ? (() => {
-        const displayName = levelDisplayNames[currentSlide.level] || currentSlide.level;
+        const displayName = (levelDisplayNames[currentSlide.level] || currentSlide.level)
+          .replace(/([A-Za-z])(\d)/, '$1 $2');
         const total = slideCountByLevel[currentSlide.level] ?? 1;
         return total > 1
           ? `${displayName}  ·  ${currentSlide.pageIndex} / ${total}`
@@ -123,11 +124,15 @@ export function HintCarousel({
                       const isRevealed = revealedHints.has(location);
                       const isCompleted = completedHints.has(location);
                       const hideReveal = ['foolish', 'woth'].includes((slide.level || '').toLowerCase());
+                      const isProgressive = slide.level.startsWith('Batch');
+                      const locationLabel = isProgressive
+                        ? `Hint ${location.slice(slide.level.length).trim()}`
+                        : location;
 
                       return (
                         <div key={location} className="hint-item">
                           <div className="d-flex justify-content-between align-items-center mb-1">
-                            <span className="hint-location">{location}:</span>
+                            <span className="hint-location">{locationLabel}:</span>
                             <div className="d-flex gap-1">
                               {isRevealed && (
                                 <Button

@@ -22,6 +22,14 @@ build-dev:
 build-prod:
 	cd $(BROADCASTER_DIR) && npm run build -- --mode prod-aws
 
+# ── Extension bundle ─────────────────────────────────────────────────────────
+
+bundle-dev:
+	bash extension/zip_assets.sh $(PWD)/extension/hint-viewer-bundle-dev.zip dev-aws
+
+bundle-prod:
+	bash extension/zip_assets.sh $(PWD)/extension/hint-viewer-bundle-prod.zip prod-aws
+
 # ── Deploy site ───────────────────────────────────────────────────────────────
 
 deploy-dev: build-dev
@@ -55,4 +63,4 @@ lambda-on-prod:
 	aws lambda delete-function-concurrency --function-name HintViewerApiProd-GetHints58039557-UqyfNeEYcoHI
 	@echo "Prod read Lambdas restored"
 
-.PHONY: infra-dev infra-prod infra-all build-dev build-prod deploy-dev deploy-prod outputs-dev outputs-prod lambda-off-prod lambda-on-prod
+.PHONY: infra-dev infra-prod infra-all build-dev build-prod deploy-dev deploy-prod bundle-dev bundle-prod outputs-dev outputs-prod lambda-off-prod lambda-on-prod

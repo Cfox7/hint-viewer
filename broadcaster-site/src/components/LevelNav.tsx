@@ -40,9 +40,12 @@ export function LevelNav({ slides, activeIndex, onSelect, levelDisplayNames, mod
   slides.forEach((slide, idx) => {
     const cat = getLevelCategory(slide.level);
     const displayName = levelDisplayNames[slide.level] || slide.level;
-    const label = slideCountByLevel[slide.level] > 1
-      ? `${displayName} ${slide.pageIndex}`
+    const formattedName = isProgressive
+      ? displayName.replace(/([A-Za-z])(\d)/, '$1 $2')
       : displayName;
+    const label = slideCountByLevel[slide.level] > 1
+      ? `${formattedName} ${slide.pageIndex}`
+      : formattedName;
     sections[cat].push({ label, idx });
   });
 

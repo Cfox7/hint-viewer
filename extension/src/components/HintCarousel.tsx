@@ -59,7 +59,8 @@ export function HintCarousel({ spoilerData, className = '', revealedHints, compl
 
   const levelTitle = currentSlide
     ? (() => {
-        const displayName = levelDisplayNames[currentSlide.level] || currentSlide.level;
+        const displayName = (levelDisplayNames[currentSlide.level] || currentSlide.level)
+          .replace(/([A-Za-z])(\d)/, '$1 $2');
         const total = slideCountByLevel[currentSlide.level] ?? 1;
         return total > 1
           ? `${displayName}  ·  ${currentSlide.pageIndex} / ${total}`

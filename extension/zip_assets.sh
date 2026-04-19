@@ -4,6 +4,9 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 EXT_DIR="$REPO_ROOT/hint-viewer/extension"
 OUT_ZIP="${1:-$EXT_DIR/hint-viewer-bundle.zip}"
+BUILD_MODE="${2:-}"
+# Resolve OUT_ZIP to absolute path before any directory changes
+[[ "$OUT_ZIP" = /* ]] || OUT_ZIP="$(pwd)/$OUT_ZIP"
 TMP_DIR="$(mktemp -d)"
 trap 'rm -rf "$TMP_DIR"' EXIT
 
@@ -15,7 +18,11 @@ echo "output zip: $OUT_ZIP"
 # Build client
 cd "$EXT_DIR"
 echo "Installing deps and building..."
-npm run build
+if [ -n "$BUILD_MODE" ]; then
+  npm run build -- --mode "$BUILD_MODE"
+else
+  npm run build
+fi
 
 DIST_DIR="$EXT_DIR/dist"
 if [ ! -d "$DIST_DIR" ]; then
@@ -29,13 +36,6 @@ cp -a "$DIST_DIR/." "$TMP_DIR/"
 # Include public assets (if you keep fonts/images in public)
 if [ -d "$EXT_DIR/public" ]; then
   cp -a "$EXT_DIR/public/." "$TMP_DIR/" || true
-fi
-
-# If you created a separate assets zip, merge its contents (optional)
-ASSET_ZIP="$EXT_DIR/hint-viewer-assets.zip"
-if [ -f "$ASSET_ZIP" ]; then
-  echo "Merging existing assets zip into bundle..."
-  unzip -o "$ASSET_ZIP" -d "$TMP_DIR" >/dev/null
 fi
 
 # Safety: ensure assets are under assets/ path in the staging dir

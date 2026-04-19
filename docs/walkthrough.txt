@@ -1,0 +1,48 @@
+https://www.twitch.tv/cfox_codes
+
+Changelog v
+
+New
+-
+
+Changed
+-
+
+Fixed
+-
+
+---
+
+DK64 Randomizer Hint Viewer: Broadcaster Guide
+
+
+First-time setup
+
+1. Go to hintviewer.com and log in with your Twitch account
+2. Upload your spoiler log JSON file using the upload button
+3. The spoiler log is saved to the server; viewers can now see the ??? placeholders in the extension
+
+
+During a run
+
+Revealing a hint
+
+Use the eye button next to any hint location to reveal it to viewers. Hints with the same text across locations are revealed together automatically. Use the Reveal All / Hide All buttons to bulk-toggle entire sections.
+
+Marking a hint as completed
+
+Once a hint is revealed, a checkmark button appears next to it. Click it to mark the hint completed and it will appear struck through for both you and viewers. Un-revealing a hint automatically clears its completed state.
+
+Navigating levels
+
+Use the carousel arrows or the Quick Nav sidebar to jump between level pages.
+
+
+What viewers see
+
+Viewers see ??? for unrevealed hints and the hint text for revealed ones. Completed hints appear with a strikethrough and reduced opacity. The extension auto-refreshes every 60 seconds; viewers can also hit the refresh button to update immediately.
+
+
+Starting a new run
+
+Upload a new spoiler log to replace the current one and reset all hints.
