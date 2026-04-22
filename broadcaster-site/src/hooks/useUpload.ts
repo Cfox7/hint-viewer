@@ -8,7 +8,7 @@ import {
   getState,
   postState,
 } from '../api/spoilerApi';
-import { normalizeSpoiler } from '../utils/normalizeSpoiler';
+import { useGame } from '../contexts/GameContext';
 
 interface UseUploadReturn {
   fileInputRef: RefObject<HTMLInputElement | null>;
@@ -31,6 +31,7 @@ interface UseUploadReturn {
 }
 
 export function useUpload(channelId: string | undefined): UseUploadReturn {
+  const { game } = useGame();
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -75,9 +76,11 @@ export function useUpload(channelId: string | undefined): UseUploadReturn {
         const data = await getState(channelId);
         if (!mounted || !data) return;
         if (data.spoilerData) {
-          setSpoilerData(data.spoilerData as SpoilerLog);
+          const raw = data.spoilerData as Record<string, unknown>;
+          const normalized = game.fromServerPayload(raw);
+          setSpoilerData(normalized);
           setUploadedAt(data.uploadedAt ?? null);
-          setSuccess(Boolean(data.spoilerData));
+          setSuccess(true);
           setRevealedHints(new Set(data.revealed ?? []));
           setCompletedHints(new Set(data.completed ?? []));
         }
@@ -109,28 +112,30 @@ export function useUpload(channelId: string | undefined): UseUploadReturn {
       await deleteResources(channelId);
 
       const text = await selectedFile.text();
-      const parsed: SpoilerLog = JSON.parse(text);
-      const json = normalizeSpoiler(parsed);
-      const result = await uploadSpoiler(channelId, json);
+      const parsed = JSON.parse(text) as Record<string, unknown>;
+      const normalized = game.normalize(parsed);
+      const result = await uploadSpoiler(channelId, game.toServerPayload(normalized.hints));
 
       // authoritative read-back
       try {
         const server = await getState(channelId);
         if (server && server.spoilerData) {
-          setSpoilerData(server.spoilerData as SpoilerLog);
+          const raw = server.spoilerData as Record<string, unknown>;
+          const serverNormalized = game.fromServerPayload(raw);
+          setSpoilerData(serverNormalized);
           setUploadedAt(server.uploadedAt ?? result.uploadedAt ?? new Date().toISOString());
           setSuccess(true);
           setRevealedHints(new Set(server.revealed ?? []));
           setCompletedHints(new Set(server.completed ?? []));
         } else {
-          setSpoilerData(json);
+          setSpoilerData(normalized);
           setUploadedAt(result.uploadedAt ?? new Date().toISOString());
           setSuccess(true);
           setRevealedHints(new Set());
           setCompletedHints(new Set());
         }
       } catch {
-        setSpoilerData(json);
+        setSpoilerData(normalized);
         setUploadedAt(result.uploadedAt ?? new Date().toISOString());
         setSuccess(true);
         setRevealedHints(new Set());

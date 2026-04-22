@@ -6,11 +6,12 @@ import Header from './components/Header';
 import Home from './components/Home';
 import { LevelNav } from './components/LevelNav';
 import { NavProvider, useNav } from './contexts/NavContext';
-import { levelDisplayNames } from '@hint-viewer/shared/level_utils';
+import { GameProvider, useGame } from './contexts/GameContext';
 import './App.css';
 
 function AppBody() {
   const { slides, activeIndex, setActiveIndex } = useNav();
+  const { game } = useGame();
   const location = useLocation();
   const showSidebar = location.pathname === '/upload' && slides.length > 0;
 
@@ -37,7 +38,7 @@ function AppBody() {
                 slides={slides}
                 activeIndex={activeIndex}
                 onSelect={setActiveIndex}
-                levelDisplayNames={levelDisplayNames}
+                levelDisplayNames={game.levelDisplayNames}
                 mode={mode}
               />
             )}
@@ -63,11 +64,13 @@ function AppBody() {
 
 function App() {
   return (
-    <NavProvider>
-      <BrowserRouter>
-        <AppBody />
-      </BrowserRouter>
-    </NavProvider>
+    <GameProvider>
+      <NavProvider>
+        <BrowserRouter>
+          <AppBody />
+        </BrowserRouter>
+      </NavProvider>
+    </GameProvider>
   );
 }
 

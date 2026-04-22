@@ -57,16 +57,15 @@ export function HintCarousel({ spoilerData, className = '', revealedHints, compl
     levels.map((level) => [level, slides.filter((s) => s.level === level).length])
   );
 
-  const levelTitle = currentSlide
-    ? (() => {
-        const displayName = (levelDisplayNames[currentSlide.level] || currentSlide.level)
-          .replace(/([A-Za-z])(\d)/, '$1 $2');
-        const total = slideCountByLevel[currentSlide.level] ?? 1;
-        return total > 1
-          ? `${displayName}  ·  ${currentSlide.pageIndex} / ${total}`
-          : displayName;
-      })()
-    : 'Hints';
+  const displayName = currentSlide
+    ? (levelDisplayNames[currentSlide.level] || currentSlide.level).replace(/([A-Za-z])(\d)/, '$1 $2')
+    : '';
+  const total = currentSlide ? slideCountByLevel[currentSlide.level] ?? 1 : 1;
+  const levelTitle = !currentSlide
+    ? 'Hints'
+    : total > 1
+      ? `${displayName}  ·  ${currentSlide.pageIndex} / ${total}`
+      : displayName;
 
   return (
     <div className={`carousel-bg-container ${className}`}>

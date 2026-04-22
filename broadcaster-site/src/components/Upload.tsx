@@ -4,6 +4,7 @@ import { useUpload } from '../hooks/useUpload';
 import { UploadModals } from './UploadModals';
 import { buildSlides } from '../utils/buildSlides';
 import { useNav } from '../contexts/NavContext';
+import { useGame } from '../contexts/GameContext';
 
 interface UploadProps { channelId: string; }
 
@@ -25,10 +26,11 @@ function Upload({ channelId }: UploadProps) {
   } = useUpload(channelId);
 
   const { slides, activeIndex, setActiveIndex, setSlides } = useNav();
+  const { game } = useGame();
 
   // Sync slides into nav context whenever spoilerData changes
   useEffect(() => {
-    const { slides: newSlides } = spoilerData ? buildSlides(spoilerData) : { slides: [] };
+    const { slides: newSlides } = spoilerData ? buildSlides(spoilerData.hints, game.levelOrder) : { slides: [] };
     setSlides(newSlides);
     setActiveIndex(0);
   }, [spoilerData]);
@@ -47,7 +49,7 @@ function Upload({ channelId }: UploadProps) {
         <div className="card">
           <div className="hints-preview">
             <HintCarousel
-              spoilerData={spoilerData}
+              hints={spoilerData.hints}
               className="carousel-container"
               channelId={channelId}
               revealedHints={revealedHints}
@@ -63,8 +65,8 @@ function Upload({ channelId }: UploadProps) {
 
       <div className="form-group">
         <label htmlFor="fileUpload">Spoiler Log:</label>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1 }}>
+        <div className="file-input-row">
+          <div className="file-input-inner">
             <input
               id="fileUpload"
               ref={fileInputRef}
@@ -84,7 +86,7 @@ function Upload({ channelId }: UploadProps) {
               Choose file
             </button>
 
-            <span className="file-chosen" style={{ color: '#dee2e6', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <span className="file-chosen">
               {file ? file.name : 'No file chosen'}
             </span>
           </div>

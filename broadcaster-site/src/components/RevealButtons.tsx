@@ -54,6 +54,14 @@ export default function RevealButtons({
     }
   };
 
+  const levelName = selectedLevelIndex != null
+    ? (levelDisplayNames[levels[selectedLevelIndex]] || levels[selectedLevelIndex])
+    : null;
+
+  const levelButtonLabel = levelName
+    ? (isLevelRevealed ? `Hide Level (${levelName})` : `Reveal Level (${levelName})`)
+    : 'Reveal Level';
+
   return (
     <div style={{ marginTop: 16 }}>
       <div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -64,10 +72,7 @@ export default function RevealButtons({
           className="reveal-btn"
           style={{ minWidth: 250 }}
         >
-          {selectedLevelIndex != null
-            ? (isLevelRevealed ? `Hide Level (${levelDisplayNames[levels[selectedLevelIndex]] || levels[selectedLevelIndex]})`
-                               : `Reveal Level (${levelDisplayNames[levels[selectedLevelIndex]] || levels[selectedLevelIndex]})`)
-            : 'Reveal Level'}
+          {levelButtonLabel}
         </Button>
 
         <Button
