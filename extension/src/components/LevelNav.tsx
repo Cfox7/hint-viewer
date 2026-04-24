@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Offcanvas, Accordion, Nav } from 'react-bootstrap';
 import { getLevelCategory, type LevelCategory } from '@hint-viewer/shared/level_utils';
+import { useGame } from '../contexts/GameContext';
 
 export interface LevelSlide {
   level: string;
@@ -14,28 +15,21 @@ export interface LevelNavProps {
   levelDisplayNames: Record<string, string>;
 }
 
-const SECTION_LABELS: Record<LevelCategory, string> = {
-  levels: 'Levels',
-  direct: 'Direct',
-  foolish: 'Foolish',
-  woth: 'Way of the Hoard',
-};
-
-const SECTION_ORDER: LevelCategory[] = ['levels', 'direct', 'foolish', 'woth'];
+const SECTION_ORDER: LevelCategory[] = ['regions', 'direct', 'foolish', 'woth'];
 
 export function LevelNav({ slides, activeIndex, onSelect, levelDisplayNames }: LevelNavProps) {
   const [show, setShow] = useState(false);
+  const { game } = useGame();
   const isProgressive = slides.some((s) => s.level.startsWith('Batch'));
-  const sectionLabels = { ...SECTION_LABELS, levels: isProgressive ? 'Batches' : 'Levels' };
+  const sectionLabels = { ...game.sectionLabels, regions: isProgressive ? 'Batches' : 'Levels' };
   const slideCountByLevel: Record<string, number> = {};
   
   slides.forEach((s) => {
     slideCountByLevel[s.level] = (slideCountByLevel[s.level] || 0) + 1;
   });
 
-  // Group slide indices by category
   const sections: Record<LevelCategory, { label: string; idx: number }[]> = {
-    levels: [], direct: [], foolish: [], woth: [],
+    regions: [], direct: [], foolish: [], woth: [],
   };
   slides.forEach((slide, idx) => {
     const cat = getLevelCategory(slide.level);

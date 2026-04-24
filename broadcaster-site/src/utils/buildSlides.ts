@@ -1,6 +1,3 @@
-import { levelOrder } from '@hint-viewer/shared/level_utils';
-import type { SpoilerLog } from '../types';
-
 const DIRECT_HINTS_PER_PAGE = 4;
 const FOOLISH_HINTS_PER_PAGE = 5;
 const WOTH_HINTS_PER_PAGE = 5;
@@ -11,12 +8,11 @@ export interface Slide {
   locations: string[];
 }
 
-export function buildSlides(spoilerData: SpoilerLog): {
+export function buildSlides(hints: Record<string, string>, levelOrder: string[]): {
   slides: Slide[];
   levels: string[];
   groupedHints: Record<string, string[]>;
 } {
-  const hints = spoilerData['Wrinkly Hints'] || {};
 
   const groupedHints: Record<string, string[]> = {};
   Object.keys(hints).forEach((location) => {

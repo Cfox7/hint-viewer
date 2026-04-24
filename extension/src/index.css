@@ -12,19 +12,12 @@
 
 :root {
   font-family: 'Jumpman', 'Tekton Bold', Arial, sans-serif;
-  color: #ffe066;
-  background-color: #181c18;
 }
 
 body {
-  background-color: #181c18 !important;
-  color: #ffe066 !important;
-  font-family: 'Jumpman';
-}
-
-#root {
   background-color: #181c18;
   color: #ffe066;
+  font-family: 'Jumpman';
 }
 
 .gradient-jumpman {

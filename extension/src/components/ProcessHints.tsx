@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { HintCarousel } from './HintCarousel';
 import type { SpoilerLog } from '@hint-viewer/shared';
+import { useGame } from '../contexts/GameContext';
 
 interface ProcessHintsProps {
   channelId: string | undefined;
@@ -10,6 +11,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'https://dulrvobi1xht4.cloudfron
 
 function ProcessHints({ channelId }: ProcessHintsProps) {
   const [spoilerData, setSpoilerData] = useState<SpoilerLog | null>(null);
+  const { game }= useGame();
   const [revealedHints, setRevealedHints] = useState<Set<string>>(new Set());
   const [completedHints, setCompletedHints] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
@@ -91,11 +93,17 @@ function ProcessHints({ channelId }: ProcessHintsProps) {
     );
   }
 
+  let hints: Record<string, string> | null = null;
+  if (spoilerData && game) {
+    const result = game.fromServerPayload(spoilerData);
+    hints = result.hints;
+  }
+
   return (
     <>
-      {channelId && (
+      {channelId && hints && (
         <HintCarousel
-          spoilerData={spoilerData}
+          hints={hints}
           className="carousel-container"
           revealedHints={revealedHints}
           completedHints={completedHints}

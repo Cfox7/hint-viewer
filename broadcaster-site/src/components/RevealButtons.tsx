@@ -5,7 +5,7 @@ interface Props {
   levelDisplayNames: Record<string, string>;
   groupedHints: Record<string, string[]>;
   revealedHints: Set<string>;
-  onToggleHint: (location: string) => void;
+  onToggleReveal: (location: string) => void;
   onBulkToggle: (locations: string[], reveal: boolean) => void;
   selectedLevelIndex?: number;
 }
@@ -54,25 +54,30 @@ export default function RevealButtons({
     }
   };
 
+  const levelName = selectedLevelIndex != null
+    ? (levelDisplayNames[levels[selectedLevelIndex]] || levels[selectedLevelIndex])
+    : null;
+
+  const levelButtonLabel = levelName
+    ? (isLevelRevealed ? `Hide Area (${levelName})` : `Reveal Area (${levelName})`)
+    : 'Reveal Area';
+
   return (
     <div style={{ marginTop: 16 }}>
       <div style={{ display: 'flex', justifyContent: 'center' }}>
         <Button
           onClick={handleRevealLevel}
           disabled={disableLevelButton}
-          aria-label={isLevelRevealed ? 'Hide current level' : 'Reveal current level'}
+          aria-label={isLevelRevealed ? 'Hide current area' : 'Reveal current area'}
           className="reveal-btn"
           style={{ minWidth: 250 }}
         >
-          {selectedLevelIndex != null
-            ? (isLevelRevealed ? `Hide Level (${levelDisplayNames[levels[selectedLevelIndex]] || levels[selectedLevelIndex]})`
-                               : `Reveal Level (${levelDisplayNames[levels[selectedLevelIndex]] || levels[selectedLevelIndex]})`)
-            : 'Reveal Level'}
+          {levelButtonLabel}
         </Button>
 
         <Button
           onClick={handleRevealAll}
-          aria-label={isAllRevealed ? 'Hide all hints' : 'Reveal all hints'}
+          aria-label={isAllRevealed ? 'Hide all areas' : 'Reveal all areas'}
           className="reveal-btn"
           style={{ minWidth: 100 }}
         >

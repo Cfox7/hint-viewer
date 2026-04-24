@@ -3,14 +3,15 @@ import { useState, useEffect } from 'react';
 import TwitchLogin from './components/TwitchLogin';
 import Upload from './components/Upload';
 import Header from './components/Header';
-import Home from './components/Home';
 import { LevelNav } from './components/LevelNav';
 import { NavProvider, useNav } from './contexts/NavContext';
-import { levelDisplayNames } from '@hint-viewer/shared/level_utils';
+import { GameProvider, useGame } from './contexts/GameContext';
 import './App.css';
 
 function AppBody() {
   const { slides, activeIndex, setActiveIndex } = useNav();
+  const { game } = useGame();
+  const HomeComponent = game.homeComponent;
   const location = useLocation();
   const showSidebar = location.pathname === '/upload' && slides.length > 0;
 
@@ -37,7 +38,7 @@ function AppBody() {
                 slides={slides}
                 activeIndex={activeIndex}
                 onSelect={setActiveIndex}
-                levelDisplayNames={levelDisplayNames}
+                levelDisplayNames={game.levelDisplayNames}
                 mode={mode}
               />
             )}
@@ -45,7 +46,7 @@ function AppBody() {
               <div className="content-card">
                 <div className="container">
                   <Routes>
-                    <Route path="/" element={<Home />} />
+                    <Route path="/" element={<HomeComponent />} />
                     <Route
                       path="/upload"
                       element={user ? <Upload channelId={user.id} /> : <Navigate to="/" replace />}
@@ -63,11 +64,13 @@ function AppBody() {
 
 function App() {
   return (
-    <NavProvider>
-      <BrowserRouter>
-        <AppBody />
-      </BrowserRouter>
-    </NavProvider>
+    <GameProvider>
+      <NavProvider>
+        <BrowserRouter>
+          <AppBody />
+        </BrowserRouter>
+      </NavProvider>
+    </GameProvider>
   );
 }
 

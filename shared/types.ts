@@ -1,10 +1,2 @@
-export interface SpoilerLog {
-  "Wrinkly Hints": {
-    [hintLocation: string]: string;
-  };
-}
+export type { SpoilerLog, SpoilerResponse } from './games/types';
 
-export interface SpoilerResponse {
-  data: SpoilerLog;
-  uploadedAt: string;
-}
