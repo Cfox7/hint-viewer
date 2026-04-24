@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-function Home() {
+function DkHome() {
   return (
     <>
       <h2 className="gradient-jumpman">Welcome to the DK64 Randomizer Hint Viewer!</h2>
@@ -41,4 +41,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default DkHome;

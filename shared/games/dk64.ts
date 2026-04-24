@@ -1,4 +1,5 @@
 import type { GameConfig, LevelCategory, SpoilerLog } from './types';
+import DkHome from '../../broadcaster-site/src/components/DkHome';
 
 const levelDisplayNames: Record<string, string> = {
   Isles: "DK Isles",
@@ -20,6 +21,7 @@ const batchNames = Array.from({ length: BATCH_COUNT }, (_, i) => `Batch${i + 1}`
 const baseOrder = Object.keys(levelDisplayNames);
 baseOrder.splice(8, 0, ...batchNames);
 const levelOrder = baseOrder;
+const backgroundImage = '/assets/bgfinal.webp';
 
 function getLevelCategory(level: string): LevelCategory {
   if (level === 'Direct') return 'direct';
@@ -119,7 +121,7 @@ function normalize(raw: unknown): SpoilerLog {
 
 export const dk64Config: GameConfig = {
   id: 'dk64',
-  displayName: 'DK64 Randomizer',
+  displayName: 'Donkey Kong 64 Randomizer',
   normalize,
   levelDisplayNames,
   levelOrder,
@@ -131,4 +133,6 @@ export const dk64Config: GameConfig = {
     if ('hints' in obj) return obj as unknown as SpoilerLog;
     return { hints: (obj['Wrinkly Hints'] ?? {}) as Record<string, string> };
   },
+  homeComponent: DkHome,
+  backgroundImage,
 };

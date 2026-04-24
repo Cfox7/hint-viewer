@@ -26,7 +26,7 @@ interface UseUploadReturn {
   setShowClearModal: (v: boolean) => void;
   handleUpload: (e: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
   handleClear: () => Promise<void>;
-  handleToggleHint: (location: string) => void;
+  handleToggleReveal: (location: string) => void;
   handleToggleComplete: (location: string) => void;
 }
 
@@ -179,7 +179,7 @@ export function useUpload(channelId: string | undefined): UseUploadReturn {
     }
   };
 
-  const handleToggleHint = (location: string) => {
+  const handleToggleReveal = (location: string) => {
     setRevealedHints((prev) => {
       const newSet = new Set(prev);
       newSet.has(location) ? newSet.delete(location) : newSet.add(location);
@@ -220,7 +220,7 @@ export function useUpload(channelId: string | undefined): UseUploadReturn {
     setShowClearModal,
     handleUpload,
     handleClear,
-    handleToggleHint,
+    handleToggleReveal,
     handleToggleComplete,
   };
 }

@@ -21,7 +21,7 @@ function Upload({ channelId }: UploadProps) {
     revealedHints,
     completedHints,
     handleUpload,
-    handleToggleHint,
+    handleToggleReveal,
     handleToggleComplete,
   } = useUpload(channelId);
 
@@ -54,7 +54,7 @@ function Upload({ channelId }: UploadProps) {
               channelId={channelId}
               revealedHints={revealedHints}
               completedHints={completedHints}
-              onToggleHint={handleToggleHint}
+              onToggleReveal={handleToggleReveal}
               onToggleComplete={handleToggleComplete}
               activeIndex={activeIndex}
               onSelect={setActiveIndex}

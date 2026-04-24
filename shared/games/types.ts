@@ -19,4 +19,6 @@ export interface GameConfig {
   sectionLabels: Record<LevelCategory, string>;
   toServerPayload: (hints: Record<string, string>) => unknown;
   fromServerPayload: (raw: unknown) => SpoilerLog;
+  homeComponent: React.FC;
+  backgroundImage: string;
 }

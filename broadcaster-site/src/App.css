@@ -94,8 +94,11 @@ body, .app-layout {
 }
 
 .header-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
   flex: 1;
-  font-family: 'Jumpman', Arial, sans-serif; /* header title uses Jumpman */
+  font-family: 'Jumpman', Arial, sans-serif;
 }
 
 .header-title h1,

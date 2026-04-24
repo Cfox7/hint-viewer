@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useGame } from '../contexts/GameContext';
 
 interface HeaderProps {
   user?: {
@@ -13,14 +14,17 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ user, logout, loginButton }) => {
   const navigate = useNavigate();
-
+  const { game } = useGame();
   return (
     <header className="app-header">
       <div className="header-content">
         <Link to="/" className="nav-link" style={{ marginRight: '0.5rem' }}>
           <div className="header-title">
-            <h1>DK64 Randomizer</h1>
-            <h2>Hint Viewer</h2>
+            <img src="/hintViewer.png" alt="Hint Viewer Icon" style={{ height: 48, width: 48 }} />
+            <div>
+              <h1>{game.displayName}</h1>
+              <h2>Hint Viewer</h2>
+            </div>
           </div>
         </Link>
 

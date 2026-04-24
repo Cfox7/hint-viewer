@@ -1,12 +1,11 @@
 import { Carousel } from 'react-bootstrap';
-import type { SpoilerLog } from '@hint-viewer/shared';
-import { levelDisplayNames, levelOrder } from '@hint-viewer/shared/level_utils';
 import { useState } from 'react';
 import { colorizeHints } from '../utils/colorizeHints';
 import { LevelNav } from './LevelNav';
+import { useGame } from '../contexts/GameContext';
 
 export interface HintCarouselProps {
-  spoilerData: SpoilerLog;
+  hints: Record<string, string>;
   className?: string;
   revealedHints: Set<string>;
   completedHints: Set<string>;
@@ -16,9 +15,8 @@ const DIRECT_HINTS_PER_PAGE = 3;
 const FOOLISH_HINTS_PER_PAGE = 5;
 const WOTH_HINTS_PER_PAGE = 5;
 
-export function HintCarousel({ spoilerData, className = '', revealedHints, completedHints }: HintCarouselProps) {
-  const hints = spoilerData["Wrinkly Hints"];
-
+export function HintCarousel({ hints, className = '', revealedHints, completedHints }: HintCarouselProps) {
+  const { game } = useGame();
   // Group hints by level (extract level name from location)
   const groupedHints: { [level: string]: string[] } = {};
   Object.keys(hints).forEach((location) => {
@@ -28,8 +26,8 @@ export function HintCarousel({ spoilerData, className = '', revealedHints, compl
   });
 
   const levels = Object.keys(groupedHints)
-    .filter(level => levelOrder.includes(level))
-    .sort((a, b) => levelOrder.indexOf(a) - levelOrder.indexOf(b));
+    .filter(level => game.levelOrder.includes(level))
+    .sort((a, b) => game.levelOrder.indexOf(a) - game.levelOrder.indexOf(b));
 
   // Build paged slides: each slide is { level, pageIndex, locations: string[] }
   const slides: { level: string; pageIndex: number; locations: string[] }[] = [];
@@ -58,7 +56,7 @@ export function HintCarousel({ spoilerData, className = '', revealedHints, compl
   );
 
   const displayName = currentSlide
-    ? (levelDisplayNames[currentSlide.level] || currentSlide.level).replace(/([A-Za-z])(\d)/, '$1 $2')
+    ? (game.levelDisplayNames[currentSlide.level] || currentSlide.level).replace(/([A-Za-z])(\d)/, '$1 $2')
     : '';
   const total = currentSlide ? slideCountByLevel[currentSlide.level] ?? 1 : 1;
   const levelTitle = !currentSlide
@@ -74,7 +72,7 @@ export function HintCarousel({ spoilerData, className = '', revealedHints, compl
         slides={slides}
         activeIndex={activeIndex}
         onSelect={setActiveIndex}
-        levelDisplayNames={levelDisplayNames}
+        levelDisplayNames={game.levelDisplayNames}
       />
 
       <Carousel
@@ -89,7 +87,7 @@ export function HintCarousel({ spoilerData, className = '', revealedHints, compl
         {slides.map((slide, sIdx) => (
           <Carousel.Item key={`${slide.level}-p${slide.pageIndex}-${sIdx}`}>
             <img
-              src="assets/bgfinal.webp"
+              src={game.backgroundImage}
               alt={`${slide.level} background`}
               style={{ opacity: 0 }}
             />

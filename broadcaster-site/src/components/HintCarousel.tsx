@@ -11,23 +11,23 @@ interface HintItemProps {
   isRevealed: boolean;
   isCompleted: boolean;
   hideReveal: boolean;
-  onToggleComplete: (location: string) => void;
-  onToggleWithLinks: (location: string) => void;
+  onCompleteWithLinks: (location: string) => void;
+  onRevealWithLinks: (location: string) => void;
 }
 
-function HintItem({ location, locationLabel, cleanedHint, isRevealed, isCompleted, hideReveal, onToggleComplete, onToggleWithLinks }: HintItemProps) {
+function HintItem({ location, locationLabel, cleanedHint, isRevealed, isCompleted, hideReveal, onCompleteWithLinks, onRevealWithLinks }: HintItemProps) {
   return (
     <div className="hint-item">
       <div className="d-flex justify-content-between align-items-center mb-1">
         <span className="hint-location">{locationLabel}:</span>
         <div className="d-flex gap-1">
           {isRevealed && (
-            <Button size="sm" variant={isCompleted ? "success" : "outline-success"} className="hint-toggle-btn" aria-label={isCompleted ? "Mark uncompleted" : "Mark completed"} onClick={() => onToggleComplete(location)}>
+            <Button size="sm" variant={isCompleted ? "success" : "outline-success"} className="hint-toggle-btn" aria-label={isCompleted ? "Mark uncompleted" : "Mark completed"} onClick={() => onCompleteWithLinks(location)}>
               <i className={`bi ${isCompleted ? "bi-check-circle-fill" : "bi-check-circle"}`}></i>
             </Button>
           )}
           {!hideReveal && (
-            <Button size="sm" variant={isRevealed ? "outline-secondary" : "outline-primary"} className="hint-toggle-btn" aria-label={isRevealed ? "Hide hint" : "Reveal hint"} onClick={() => onToggleWithLinks(location)}>
+            <Button size="sm" variant={isRevealed ? "outline-secondary" : "outline-primary"} className="hint-toggle-btn" aria-label={isRevealed ? "Hide hint" : "Reveal hint"} onClick={() => onRevealWithLinks(location)}>
               <i className={`bi ${isRevealed ? "bi-eye-slash" : "bi-eye"}`}></i>
             </Button>
           )}
@@ -46,7 +46,7 @@ export interface HintCarouselProps {
   channelId: string;
   revealedHints: Set<string>;
   completedHints: Set<string>;
-  onToggleHint: (location: string) => void;
+  onToggleReveal: (location: string) => void;
   onToggleComplete: (location: string) => void;
   activeIndex: number;
   onSelect: (idx: number) => void;
@@ -57,7 +57,7 @@ export function HintCarousel({
   className = '',
   revealedHints,
   completedHints,
-  onToggleHint,
+  onToggleReveal,
   onToggleComplete,
   activeIndex,
   onSelect,
@@ -74,26 +74,45 @@ export function HintCarousel({
   });
 
   // When toggling a location, also toggle any linked locations that have the exact same cleaned hint
-  const handleToggleWithLinks = (location: string) => {
+  const revealLinkedHints = (location: string) => {
     const isCurrentlyRevealed = revealedHints.has(location);
     const cleaned = (hints[location] || '').split('|')[0].trim();
     const linked = cleanedMap.get(cleaned) || [];
 
     // toggle the clicked location
-    onToggleHint(location);
+    onToggleReveal(location);
 
     // for each linked location (excluding the clicked one) toggle if it needs the same action
     linked.forEach((loc) => {
       if (loc === location) return;
       const locRevealed = revealedHints.has(loc);
       // if we're revealing (was not revealed) reveal any linked unrevealed ones
-      if (!isCurrentlyRevealed && !locRevealed) onToggleHint(loc);
+      if (!isCurrentlyRevealed && !locRevealed) onToggleReveal(loc);
       // if we're hiding (was revealed) hide any linked revealed ones
-      if (isCurrentlyRevealed && locRevealed) onToggleHint(loc);
+      if (isCurrentlyRevealed && locRevealed) onToggleReveal(loc);
     });
   };
 
-  // Bulk toggle that expands linked hints based on current revealedHints, then calls onToggleHint
+  const completeLinkedHints = (location: string) => {
+    const isCurrentlyCompleted = completedHints.has(location);
+    const cleaned = (hints[location] || '').split('|')[0].trim();
+    const linked = cleanedMap.get(cleaned) || [];
+
+    // toggle the clicked location
+    onToggleComplete(location);
+
+    // for each linked location (excluding the clicked one) toggle if it needs the same action
+    linked.forEach((loc) => {
+      if (loc === location) return;
+      const locCompleted = completedHints.has(loc);
+      // if we're marking complete, mark any linked uncompleted ones
+      if (!isCurrentlyCompleted && !locCompleted) onToggleComplete(loc);
+      // if we're marking uncomplete, uncomplete any linked completed ones
+      if (isCurrentlyCompleted && locCompleted) onToggleComplete(loc);
+    });
+  };
+
+  // Bulk toggle that expands linked hints based on current revealedHints, then calls onToggleReveal
   const handleBulkToggle = (locations: string[], reveal: boolean) => {
     const toToggle = new Set<string>();
     locations.forEach((loc) => {
@@ -109,7 +128,7 @@ export function HintCarousel({
       }
     });
 
-    toToggle.forEach((l) => onToggleHint(l));
+    toToggle.forEach((l) => onToggleReveal(l));
   };
 
   // Group hints by level (extract level name from location)
@@ -150,7 +169,7 @@ export function HintCarousel({
           >
             {slides.map((slide, sIdx) => (
               <Carousel.Item key={`${slide.level}-p${slide.pageIndex}-${sIdx}`}>
-                <img src="/assets/bgfinal.webp" alt={`${slide.level} background`} style={{ opacity: 0 }} />
+                <img src={game.backgroundImage} alt={`${slide.level} background`} style={{ opacity: 0 }} />
                 <Carousel.Caption>
                   <div className="hints-list">
                     {slide.locations.map((location) => {
@@ -168,8 +187,8 @@ export function HintCarousel({
                           isRevealed={revealedHints.has(location)}
                           isCompleted={completedHints.has(location)}
                           hideReveal={['foolish', 'woth'].includes(slide.level.toLowerCase())}
-                          onToggleComplete={onToggleComplete}
-                          onToggleWithLinks={handleToggleWithLinks}
+                          onCompleteWithLinks={completeLinkedHints}
+                          onRevealWithLinks={revealLinkedHints}
                         />
                       );
                     })}
@@ -188,7 +207,7 @@ export function HintCarousel({
         levelDisplayNames={game.levelDisplayNames}
         groupedHints={groupedHints}
         revealedHints={revealedHints}
-        onToggleHint={handleToggleWithLinks}
+        onToggleReveal={revealLinkedHints}
         onBulkToggle={handleBulkToggle}
         selectedLevelIndex={currentLevelSelectedIndex}
       />
