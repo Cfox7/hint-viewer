@@ -11,7 +11,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'https://dulrvobi1xht4.cloudfron
 
 function ProcessHints({ channelId }: ProcessHintsProps) {
   const [spoilerData, setSpoilerData] = useState<SpoilerLog | null>(null);
-  const { game }= useGame();
+  const { game, setGame, games }= useGame();
   const [revealedHints, setRevealedHints] = useState<Set<string>>(new Set());
   const [completedHints, setCompletedHints] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
@@ -32,6 +32,14 @@ function ProcessHints({ channelId }: ProcessHintsProps) {
 
       const body = (await response.json()) as unknown;
       const obj = typeof body === 'object' && body !== null ? (body as Record<string, unknown>) : {};
+
+      const gameId = (obj['game'] ?? null) as string | null;
+      
+      // Update the current game context if the loaded gameId differs
+      if (gameId && gameId !== game.id) {
+        const found = games.find(g => g.id === gameId);
+        if (found) setGame(found);
+      }
 
       const spoiler = (obj['spoilerData'] ?? null) as SpoilerLog | null;
       const uploadedAt = (obj['uploadedAt'] ?? null) as string | null;

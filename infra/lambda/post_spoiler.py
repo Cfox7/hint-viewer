@@ -31,11 +31,11 @@ def handler(event, context):
             "body": json.dumps({"error": "Invalid JSON"}),
         }
 
-    if not body:
+    if not isinstance(body, dict) or not body:
         return {
             "statusCode": 400,
             "headers": {"Content-Type": "application/json"},
-            "body": json.dumps({"error": "Missing spoiler data"}),
+            "body": json.dumps({"error": "Missing or invalid spoiler data"}),
         }
 
     hint_fields = ["Wrinkly Hints"]
@@ -52,6 +52,7 @@ def handler(event, context):
     table = dynamodb.Table(TABLE_NAME)
     table.put_item(Item={
         "channelId": channel_id,
+        "game": body.get("game", None),
         "spoilerData": floats_to_decimals(hints),
         "uploadedAt": uploaded_at,
         "revealedHints": [],

@@ -5,11 +5,11 @@ function authHeaders(): Record<string, string> {
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
-export const uploadSpoiler = async (channelId: string, json: unknown) => {
+export const uploadSpoiler = async (channelId: string, game: string, json: Record<string, unknown>) => {
   const res = await fetch(`${API_URL}/api/spoiler/${channelId}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...authHeaders() },
-    body: JSON.stringify(json),
+    body: JSON.stringify({ game, ...json }),
   });
   if (!res.ok) throw new Error('Upload failed');
   return res.json();

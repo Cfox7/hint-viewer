@@ -127,7 +127,7 @@ export const dk64Config: GameConfig = {
   levelOrder,
   getLevelCategory,
   sectionLabels,
-  toServerPayload: (hints) => ({ "Wrinkly Hints": hints }),
+  toServerPayload: (hints): Record<string, unknown> => ({ "Wrinkly Hints": hints }),
   fromServerPayload: (raw) => {
     const obj = raw as Record<string, unknown>;
     if ('hints' in obj) return obj as unknown as SpoilerLog;

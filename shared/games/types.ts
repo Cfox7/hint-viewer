@@ -17,7 +17,7 @@ export interface GameConfig {
   levelOrder: string[];
   getLevelCategory: (level: string) => LevelCategory;
   sectionLabels: Record<LevelCategory, string>;
-  toServerPayload: (hints: Record<string, string>) => unknown;
+  toServerPayload: (hints: Record<string, string>) => Record<string, unknown>;
   fromServerPayload: (raw: unknown) => SpoilerLog;
   homeComponent: React.FC;
   backgroundImage: string;

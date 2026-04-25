@@ -114,7 +114,7 @@ export function useUpload(channelId: string | undefined): UseUploadReturn {
       const text = await selectedFile.text();
       const parsed = JSON.parse(text) as Record<string, unknown>;
       const normalized = game.normalize(parsed);
-      const result = await uploadSpoiler(channelId, game.toServerPayload(normalized.hints));
+      const result = await uploadSpoiler(channelId, game.id, game.toServerPayload(normalized.hints));
 
       // authoritative read-back
       try {
