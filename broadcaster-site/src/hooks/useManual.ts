@@ -43,7 +43,7 @@ export function useManual(channelId: string | undefined): UseManualReturn {
         channelId,
         Array.from(revealedRef.current),
         Array.from(completedRef.current),
-      ).catch((err) => setError('Failed to sync hints'));
+      ).catch(() => setError('Failed to sync hints'));
       syncTimerRef.current = null;
     }, delayMs);
   };

@@ -1,6 +1,6 @@
 import { Carousel } from 'react-bootstrap';
 import { useState } from 'react';
-import { colorizeHints } from '../utils/colorizeHints';
+import { colorizeHints } from '@hint-viewer/shared/colorizeHints';
 import { LevelNav } from './LevelNav';
 import { buildSlides } from '@hint-viewer/shared/buildSlides';
 import { useGame } from '../contexts/GameContext';

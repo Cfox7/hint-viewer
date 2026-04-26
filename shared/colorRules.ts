@@ -1,6 +1,7 @@
 const colorMap: Record<string, string> = {
   // Orange section
   "Way of the hoard": "#FFA010",
+  woth: "#FFA010",
   keys: "#FFA010",
   key: "#FFA010",
   donkey: "#FFA010",

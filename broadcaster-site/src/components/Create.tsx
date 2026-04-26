@@ -50,7 +50,7 @@ function Create({ channelId }: CreateProps) {
         const existingWoth = Object.keys(newHints).filter((k) => k.startsWith('WOTH'));
         let wothCount = existingWoth.length + 1;
 
-        Object.entries(editHints).forEach(([key, value]) => {
+        Object.entries(editHints).forEach(([, value]) => {
           if (value) {
             const hint = value.toLowerCase();
             // Foolish

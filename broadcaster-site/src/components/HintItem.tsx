@@ -1,6 +1,6 @@
 import { ReactNode, useState, useEffect } from 'react';
 import { Button } from 'react-bootstrap';
-import { colorizeHints } from '../utils/colorizeHints';
+import { colorizeHints } from '@hint-viewer/shared/colorizeHints';
 
 interface HintItemProps {
   location: string;

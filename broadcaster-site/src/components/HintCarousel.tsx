@@ -1,5 +1,5 @@
 import { Carousel } from 'react-bootstrap';
-import { colorizeHints } from '../utils/colorizeHints';
+import { colorizeHints } from '@hint-viewer/shared/colorizeHints';
 import RevealButtons from './RevealButtons';
 import { buildSlides } from '@hint-viewer/shared/buildSlides';
 import { useGame } from '../contexts/GameContext';
