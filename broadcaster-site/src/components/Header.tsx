@@ -30,7 +30,7 @@ const Header: React.FC<HeaderProps> = ({ user, logout, loginButton }) => {
 
         {user && (
           <div className="user-info-header">
-            <img src={user.profile_image_url} alt={user.display_name} />
+            <a href={`https://twitch.tv/${user.display_name}`} target="_blank" rel="noopener noreferrer"><img src={user.profile_image_url} alt={user.display_name} /></a>
             <div>
               <strong>{user.display_name}</strong>
             </div>

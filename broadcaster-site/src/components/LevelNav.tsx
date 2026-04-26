@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Offcanvas, Accordion, Nav } from 'react-bootstrap';
-import { getLevelCategory, type LevelCategory } from '@hint-viewer/shared/level_utils';
 import { useGame } from '../contexts/GameContext';
+import type { LevelCategory } from '@hint-viewer/shared/games/types';
 
 export interface LevelSlide {
   level: string;
@@ -33,7 +33,7 @@ export function LevelNav({ slides, activeIndex, onSelect, levelDisplayNames, mod
     regions: [], direct: [], foolish: [], woth: [],
   };
   slides.forEach((slide, idx) => {
-    const cat = getLevelCategory(slide.level);
+    const cat = game.getLevelCategory(slide.level);
     const displayName = levelDisplayNames[slide.level] || slide.level;
     const formattedName = isProgressive
       ? displayName.replace(/([A-Za-z])(\d)/, '$1 $2')
@@ -44,7 +44,7 @@ export function LevelNav({ slides, activeIndex, onSelect, levelDisplayNames, mod
     sections[cat].push({ label, idx });
   });
 
-  const activeCategory = getLevelCategory(slides[activeIndex]?.level ?? '');
+  const activeCategory = game.getLevelCategory(slides[activeIndex]?.level ?? '');
 
   const accordionContent = (
     <Accordion defaultActiveKey={activeCategory} flush>

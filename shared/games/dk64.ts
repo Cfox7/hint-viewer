@@ -12,6 +12,8 @@ const levelDisplayNames: Record<string, string> = {
   Castle: "Creepy Castle",
   Helm: "Hideout Helm",
   Direct: "Direct Hints",
+  Direct_Instrument: "Direct Instrument Hints",
+  Direct_Shop: "Direct Shop Hints",
   Foolish: "Foolish Hints",
   WOTH: "Way Of The Hoard",
 };
@@ -23,19 +25,20 @@ baseOrder.splice(8, 0, ...batchNames);
 const levelOrder = baseOrder;
 const backgroundImage = '/assets/bgfinal.webp';
 
-function getLevelCategory(level: string): LevelCategory {
-  if (level === 'Direct') return 'direct';
-  if (level === 'Foolish') return 'foolish';
-  if (level === 'WOTH') return 'woth';
-  return 'regions';
-}
-
 const sectionLabels: Record<LevelCategory, string> = {
   regions: 'Levels',
   direct: 'Direct',
   foolish: 'Foolish',
   woth: 'Way of the Hoard',
 };
+
+const hintOrder: string[] = [
+  "DK",
+  "Diddy",
+  "Lanky",
+  "Tiny",
+  "Chunky"
+];
 
 interface DKSpoilerLog {
   "Wrinkly Hints": Record<string, string>;
@@ -47,6 +50,13 @@ interface DKSpoilerLog {
     "Progressive Hint Cap"?: number | string;
     [key: string]: unknown;
   };
+}
+
+function getLevelCategory(level: string): LevelCategory {
+  if (level.startsWith('Direct')) return 'direct';
+  if (level === 'Foolish') return 'foolish';
+  if (level === 'WOTH') return 'woth';
+  return 'regions';
 }
 
 function getProgressiveHintValues(raw: DKSpoilerLog) {
@@ -109,30 +119,81 @@ function normalize(raw: unknown): SpoilerLog {
   }
 
   const direct = input['Direct Item Hints'];
+  const shopKeys = ["Cranky", "Candy", "Funky", "Snide"];
+  const instrumentKeys = ["Bongos", "Guitar", "Trombone", "Saxophone", "Triangle"];
   if (direct && typeof direct === 'object') {
     for (const [k, v] of Object.entries(direct)) {
-      const syntheticKey = `Direct ${k}`;
-      if (!(syntheticKey in wrinkly)) wrinkly[syntheticKey] = `${k}: ${v}`;
+      let syntheticKey;
+      let value = `${v}`;
+      if (shopKeys.includes(k)) {
+        syntheticKey = `Direct_Shop ${k}`;
+      } else if (instrumentKeys.includes(k)) {
+        syntheticKey = `Direct_Instrument ${k}`;
+        value = `${k}: ${v}`;
+      }
+      if (syntheticKey && !(syntheticKey in wrinkly)) wrinkly[syntheticKey] = value;
     }
   }
 
   return { hints: wrinkly };
 }
 
+function sortHints(groupedHints: Record<string, string[]>): Record<string, string[]> {
+  const orderMap = Object.fromEntries(hintOrder.map((k, i) => [k, i]));
+  const sorted: Record<string, string[]> = {};
+  Object.keys(groupedHints).forEach(level => {
+    sorted[level] = groupedHints[level].slice().sort((a, b) => {
+      const aKong = a.split(' ')[1] || a;
+      const bKong = b.split(' ')[1] || b;
+      const aOrder = orderMap[aKong];
+      const bOrder = orderMap[bKong];
+      if (aOrder !== undefined && bOrder !== undefined) {
+        return aOrder - bOrder;
+      }
+      // Numeric sort for WOTH and Foolish
+      const aNum = Number(aKong);
+      const bNum = Number(bKong);
+      if (!isNaN(aNum) && !isNaN(bNum)) {
+        return aNum - bNum;
+      }
+      // Fallback: alphabetical
+      return aKong.localeCompare(bKong, undefined, { numeric: true, sensitivity: 'base' });
+    });
+  });
+  return sorted;
+}
+
+function getLevelTitle(
+  slide: { level: string; pageIndex: number } | undefined,
+  slideCountByLevel: Record<string, number>,
+  levelDisplayNames: Record<string, string>
+) {
+  if (!slide) return 'Hints';
+  const displayName = (levelDisplayNames[slide.level] || slide.level).replace(/([A-Za-z])(\d)/, '$1 $2');
+  const total = slideCountByLevel[slide.level] ?? 1;
+  if (total > 1) {
+    return `${displayName}  ·  ${slide.pageIndex} / ${total}`;
+  }
+  return displayName;
+}
+
 export const dk64Config: GameConfig = {
   id: 'dk64',
   displayName: 'Donkey Kong 64 Randomizer',
-  normalize,
   levelDisplayNames,
   levelOrder,
-  getLevelCategory,
+  backgroundImage,
   sectionLabels,
+  hintOrder,
+  getLevelCategory,
+  normalize,
+  sortHints,
+  getLevelTitle,
+  homeComponent: DkHome,
   toServerPayload: (hints): Record<string, unknown> => ({ "Wrinkly Hints": hints }),
   fromServerPayload: (raw) => {
     const obj = raw as Record<string, unknown>;
     if ('hints' in obj) return obj as unknown as SpoilerLog;
     return { hints: (obj['Wrinkly Hints'] ?? {}) as Record<string, string> };
   },
-  homeComponent: DkHome,
-  backgroundImage,
 };

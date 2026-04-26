@@ -2,6 +2,7 @@ import { Carousel } from 'react-bootstrap';
 import { useState } from 'react';
 import { colorizeHints } from '../utils/colorizeHints';
 import { LevelNav } from './LevelNav';
+import { buildSlides } from '@hint-viewer/shared/buildSlides';
 import { useGame } from '../contexts/GameContext';
 
 export interface HintCarouselProps {
@@ -11,42 +12,15 @@ export interface HintCarouselProps {
   completedHints: Set<string>;
 }
 
-const DIRECT_HINTS_PER_PAGE = 3;
-const FOOLISH_HINTS_PER_PAGE = 5;
-const WOTH_HINTS_PER_PAGE = 5;
+const DIRECT_PER_PAGE = 5;
+const FOOLISH_PER_PAGE = 5;
+const WOTH_PER_PAGE = 5;
 
 export function HintCarousel({ hints, className = '', revealedHints, completedHints }: HintCarouselProps) {
   const { game } = useGame();
   // Group hints by level (extract level name from location)
-  const groupedHints: { [level: string]: string[] } = {};
-  Object.keys(hints).forEach((location) => {
-    const level = location.split(' ')[0];
-    if (!groupedHints[level]) groupedHints[level] = [];
-    groupedHints[level].push(location);
-  });
-
-  const levels = Object.keys(groupedHints)
-    .filter(level => game.levelOrder.includes(level))
-    .sort((a, b) => game.levelOrder.indexOf(a) - game.levelOrder.indexOf(b));
-
-  // Build paged slides: each slide is { level, pageIndex, locations: string[] }
-  const slides: { level: string; pageIndex: number; locations: string[] }[] = [];
-  levels.forEach((level) => {
-    const locs = (groupedHints[level] || []).slice().sort((a, b) =>
-      a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' })
-    );
-    let perPage = locs.length || 1;
-    if (level === 'Direct') perPage = DIRECT_HINTS_PER_PAGE;
-    else if (level === 'Foolish') perPage = FOOLISH_HINTS_PER_PAGE;
-    else if (level.toLowerCase() === 'woth' || level === 'WOTH') perPage = WOTH_HINTS_PER_PAGE;
-    for (let i = 0; i < locs.length; i += perPage) {
-      slides.push({
-        level,
-        pageIndex: Math.floor(i / perPage) + 1,
-        locations: locs.slice(i, i + perPage),
-      });
-    }
-  });
+  const { slides, levels } = buildSlides(hints, game.levelOrder, game.sortHints, DIRECT_PER_PAGE, FOOLISH_PER_PAGE, WOTH_PER_PAGE);
+  
 
   const [activeIndex, setActiveIndex] = useState(0);
   const currentSlide = slides[activeIndex];
@@ -55,15 +29,7 @@ export function HintCarousel({ hints, className = '', revealedHints, completedHi
     levels.map((level) => [level, slides.filter((s) => s.level === level).length])
   );
 
-  const displayName = currentSlide
-    ? (game.levelDisplayNames[currentSlide.level] || currentSlide.level).replace(/([A-Za-z])(\d)/, '$1 $2')
-    : '';
-  const total = currentSlide ? slideCountByLevel[currentSlide.level] ?? 1 : 1;
-  const levelTitle = !currentSlide
-    ? 'Hints'
-    : total > 1
-      ? `${displayName}  ·  ${currentSlide.pageIndex} / ${total}`
-      : displayName;
+  const levelTitle = game.getLevelTitle(currentSlide, slideCountByLevel, game.levelDisplayNames);
 
   return (
     <div className={`carousel-bg-container ${className}`}>
