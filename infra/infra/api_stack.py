@@ -85,7 +85,6 @@ class ApiStack(cdk.Stack):
             integration=integrations.HttpLambdaIntegration("DeleteRevealedHintsInt", delete_revealed_hints_fn),
         )
 
-        cdk.CfnOutput(self, "ApiUrl", value=api.api_endpoint)
 
         # CloudFront in front of API Gateway — caches GET responses for 10s
         # Authorization must live in the CachePolicy (not OriginRequestPolicy) per CloudFront rules.
@@ -119,13 +118,12 @@ class ApiStack(cdk.Stack):
             ),
         )
 
-        api_domain = f"{api.api_id}.execute-api.{self.region}.amazonaws.com"
 
         api_distribution = cloudfront.Distribution(
             self, "ApiDistribution",
             default_behavior=cloudfront.BehaviorOptions(
                 origin=origins.HttpOrigin(
-                    api_domain,
+                    f"{api.api_id}.execute-api.{self.region}.amazonaws.com",
                     protocol_policy=cloudfront.OriginProtocolPolicy.HTTPS_ONLY,
                 ),
                 allowed_methods=cloudfront.AllowedMethods.ALLOW_ALL,

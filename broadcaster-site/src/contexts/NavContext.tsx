@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from 'react';
-import type { Slide } from '../utils/buildSlides';
+import type { Slide } from '@hint-viewer/shared/buildSlides';
 
 interface NavContextValue {
   slides: Slide[];

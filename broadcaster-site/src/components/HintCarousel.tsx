@@ -1,12 +1,13 @@
+import { ReactNode } from 'react';
 import { Carousel, Button } from 'react-bootstrap';
 import { colorizeHints } from '../utils/colorizeHints';
 import RevealButtons from './RevealButtons';
-import { buildSlides } from '../utils/buildSlides';
+import { buildSlides } from '@hint-viewer/shared/buildSlides';
 import { useGame } from '../contexts/GameContext';
 
 interface HintItemProps {
   location: string;
-  locationLabel: string;
+  locationLabel: ReactNode;
   cleanedHint: string;
   isRevealed: boolean;
   isCompleted: boolean;
@@ -21,7 +22,7 @@ function HintItem({ location, locationLabel, cleanedHint, isRevealed, isComplete
       <div className="d-flex justify-content-between align-items-center mb-1">
         <span className="hint-location">{locationLabel}:</span>
         <div className="d-flex gap-1">
-          {isRevealed && (
+          {isRevealed && !hideReveal && (
             <Button size="sm" variant={isCompleted ? "success" : "outline-success"} className="hint-toggle-btn" aria-label={isCompleted ? "Mark uncompleted" : "Mark completed"} onClick={() => onCompleteWithLinks(location)}>
               <i className={`bi ${isCompleted ? "bi-check-circle-fill" : "bi-check-circle"}`}></i>
             </Button>
@@ -33,7 +34,7 @@ function HintItem({ location, locationLabel, cleanedHint, isRevealed, isComplete
           )}
         </div>
       </div>
-      <p className={`hint-text${isCompleted ? ' completed' : ''}`}>
+      <p className={`hint-text${isRevealed && isCompleted ? ' completed' : ''}`}>
         {isRevealed ? colorizeHints(cleanedHint) : "???"}
       </p>
     </div>
@@ -51,6 +52,10 @@ export interface HintCarouselProps {
   activeIndex: number;
   onSelect: (idx: number) => void;
 }
+
+const DIRECT_PER_PAGE = 5;
+const FOOLISH_PER_PAGE = 5;
+const WOTH_PER_PAGE = 5;
 
 export function HintCarousel({
   hints,
@@ -131,8 +136,8 @@ export function HintCarousel({
     toToggle.forEach((l) => onToggleReveal(l));
   };
 
-  // Group hints by level (extract level name from location)
-  const { slides, levels, groupedHints } = buildSlides(hints, game.levelOrder);
+  // Group hints by level (extract level name from location) using game-specific sorting
+  const { slides, levels, groupedHints } = buildSlides(hints, game.levelOrder, game.sortHints, DIRECT_PER_PAGE, FOOLISH_PER_PAGE, WOTH_PER_PAGE);
 
   const currentSlide = slides[activeIndex];
   const currentLevel = currentSlide ? currentSlide.level : undefined;
@@ -142,15 +147,7 @@ export function HintCarousel({
     levels.map((level) => [level, slides.filter((s) => s.level === level).length])
   );
 
-  const displayName = currentSlide
-    ? (game.levelDisplayNames[currentSlide.level] || currentSlide.level).replace(/([A-Za-z])(\d)/, '$1 $2')
-    : '';
-  const total = currentSlide ? slideCountByLevel[currentSlide.level] ?? 1 : 1;
-  const levelTitle = !currentSlide
-    ? 'Hints'
-    : total > 1
-      ? `${displayName}  ·  ${currentSlide.pageIndex} / ${total}`
-      : displayName;
+  const levelTitle = game.getLevelTitle(currentSlide, slideCountByLevel, game.levelDisplayNames);
 
   return (
     <>
@@ -174,15 +171,20 @@ export function HintCarousel({
                   <div className="hints-list">
                     {slide.locations.map((location) => {
                       const isProgressive = slide.level.startsWith('Batch');
-                      const locationLabel = isProgressive
-                        ? `Hint ${location.slice(slide.level.length).trim()}`
-                        : location;
+                      let locationLabel = location;
+                      if (isProgressive) {
+                        locationLabel = `Hint ${location.slice(slide.level.length).trim()}`;
+                      } else {
+                        // Always grab the last word after the space
+                        const parts = location.split(' ');
+                        locationLabel = parts.length > 1 ? parts[parts.length - 1] : location;
+                      }
 
                       return (
                         <HintItem
                           key={location}
                           location={location}
-                          locationLabel={locationLabel}
+                          locationLabel={colorizeHints(locationLabel)}
                           cleanedHint={(hints[location] || '').split('|')[0].trim()}
                           isRevealed={revealedHints.has(location)}
                           isCompleted={completedHints.has(location)}

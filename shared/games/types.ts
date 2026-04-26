@@ -12,13 +12,16 @@ export type LevelCategory = 'regions' | 'direct' | 'foolish' | 'woth';
 export interface GameConfig {
   id: string;
   displayName: string;
-  normalize: (raw: unknown) => SpoilerLog;
   levelDisplayNames: Record<string, string>;
   levelOrder: string[];
-  getLevelCategory: (level: string) => LevelCategory;
-  sectionLabels: Record<LevelCategory, string>;
-  toServerPayload: (hints: Record<string, string>) => unknown;
-  fromServerPayload: (raw: unknown) => SpoilerLog;
-  homeComponent: React.FC;
   backgroundImage: string;
+  sectionLabels: Record<LevelCategory, string>;
+  hintOrder: string[];
+  getLevelCategory: (level: string) => LevelCategory;
+  normalize: (raw: unknown) => SpoilerLog;
+  sortHints: (groupedHints: Record<string, string[]>) => Record<string, string[]>;
+  getLevelTitle: (slide: { level: string; pageIndex: number } | undefined, slideCountByLevel: Record<string, number>, levelDisplayNames: Record<string, string>) => string;
+  homeComponent: React.FC;
+  toServerPayload: (hints: Record<string, string>) => Record<string, unknown>;
+  fromServerPayload: (raw: unknown) => SpoilerLog;
 }

@@ -20,6 +20,7 @@ def handler(event, context):
         "statusCode": 200,
         "headers": {"Content-Type": "application/json"},
         "body": json.dumps({
+            "game": item.get("game") if item else None,
             "spoilerData": decimals_to_floats(item.get("spoilerData")) if item else None,
             "uploadedAt": item.get("uploadedAt") if item else None,
             "revealed": item.get("revealedHints", []) if item else [],

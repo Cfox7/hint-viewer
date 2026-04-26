@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { HintCarousel } from './HintCarousel';
 import { useUpload } from '../hooks/useUpload';
 import { UploadModals } from './UploadModals';
-import { buildSlides } from '../utils/buildSlides';
+import { buildSlides } from '@hint-viewer/shared/buildSlides';
 import { useNav } from '../contexts/NavContext';
 import { useGame } from '../contexts/GameContext';
 
@@ -30,7 +30,7 @@ function Upload({ channelId }: UploadProps) {
 
   // Sync slides into nav context whenever spoilerData changes
   useEffect(() => {
-    const { slides: newSlides } = spoilerData ? buildSlides(spoilerData.hints, game.levelOrder) : { slides: [] };
+    const { slides: newSlides } = spoilerData ? buildSlides(spoilerData.hints, game.levelOrder, game.sortHints, 5, 5, 5) : { slides: [] };
     setSlides(newSlides);
     setActiveIndex(0);
   }, [spoilerData]);
