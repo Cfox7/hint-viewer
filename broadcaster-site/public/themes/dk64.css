@@ -628,3 +628,7 @@ html { font-size: 18px; } /* bump base; use rem units below */
   margin-bottom: 8px;
   color: #dee2e6;
 }
+
+.hint-edit-input::placeholder {
+  color: #525252 !important;
+}

@@ -22,6 +22,7 @@ export interface GameConfig {
   sortHints: (groupedHints: Record<string, string[]>) => Record<string, string[]>;
   getLevelTitle: (slide: { level: string; pageIndex: number } | undefined, slideCountByLevel: Record<string, number>, levelDisplayNames: Record<string, string>) => string;
   homeComponent: React.FC;
+  getEmptyHintTemplate: () => Record<string, string>;
   toServerPayload: (hints: Record<string, string>) => Record<string, unknown>;
   fromServerPayload: (raw: unknown) => SpoilerLog;
 }

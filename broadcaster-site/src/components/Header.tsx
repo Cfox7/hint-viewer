@@ -42,6 +42,14 @@ const Header: React.FC<HeaderProps> = ({ user, logout, loginButton }) => {
             >
               Upload
             </button>
+            <button
+              onClick={() => navigate('/create')}
+              className="twitch-btn"
+              aria-label="Go to create"
+              style={{ marginRight: '0.5rem' }}
+            >
+              Create
+            </button>
             {logout && (
               <button onClick={logout} className="twitch-btn">
                 Logout

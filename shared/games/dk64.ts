@@ -40,6 +40,21 @@ const hintOrder: string[] = [
   "Chunky"
 ];
 
+const instrumentOrder: string[] = [
+  "Bongos",
+  "Guitar",
+  "Trombone",
+  "Saxophone",
+  "Triangle"
+];
+
+const shopOrder: string[] = [
+  "Cranky",
+  "Candy",
+  "Funky",
+  "Snide"
+];
+
 interface DKSpoilerLog {
   "Wrinkly Hints": Record<string, string>;
   "Direct Item Hints"?: Record<string, string>;
@@ -177,6 +192,40 @@ function getLevelTitle(
   return displayName;
 }
 
+function getEmptyHintTemplate(isProgressive = false): Record<string, string> {
+  const template: Record<string, string> = {};
+  const filteredLevels = Object.keys(levelDisplayNames).filter(
+    key => key !== 'Isles' &&
+      !key.startsWith('Direct') &&
+      key !== 'Helm' &&
+      key !== 'Foolish' &&
+      key !== 'WOTH'
+  );
+  hintOrder.forEach(kong => {
+    filteredLevels.forEach(level => {
+      template[`${level} ${kong}`] = '';
+    });
+  });
+
+  // Add Direct_Instrument keys in instrumentOrder
+  instrumentOrder.forEach(instr => {
+    template[`Direct_Instrument ${instr}`] = '';
+  });
+
+  // Add Direct_Shop keys in shopOrder
+  shopOrder.forEach(shop => {
+    template[`Direct_Shop ${shop}`] = '';
+  });
+
+  if (isProgressive) {
+    const batchNamesLocal = Array.from({ length: BATCH_COUNT }, (_, i) => `Batch${i + 1}`);
+    batchNamesLocal.forEach(batch => {
+      template[batch] = '';
+    });
+  }
+  return template;
+}
+
 export const dk64Config: GameConfig = {
   id: 'dk64',
   displayName: 'Donkey Kong 64 Randomizer',
@@ -189,6 +238,7 @@ export const dk64Config: GameConfig = {
   normalize,
   sortHints,
   getLevelTitle,
+  getEmptyHintTemplate,
   homeComponent: DkHome,
   toServerPayload: (hints): Record<string, unknown> => ({ "Wrinkly Hints": hints }),
   fromServerPayload: (raw) => {
