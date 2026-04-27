@@ -17,6 +17,7 @@ export interface HintCarouselProps {
   onSelect: (idx: number) => void;
   editable?: boolean;
   onEditHint?: (location: string, value: string) => void;
+  showRevealButtons?: boolean;
 }
 
 const DIRECT_PER_PAGE = 5;
@@ -34,6 +35,7 @@ export function HintCarousel({
   onSelect,
   editable = false,
   onEditHint,
+  showRevealButtons = true,
 }: HintCarouselProps) {
   const { game } = useGame();
 
@@ -174,16 +176,17 @@ export function HintCarousel({
           <div className="no-hints">No hints available</div>
         )}
       </div>
-
-      <RevealButtons
-        levels={levels}
-        levelDisplayNames={game.levelDisplayNames}
-        groupedHints={groupedHints}
-        revealedHints={revealedHints}
-        onToggleReveal={revealLinkedHints}
-        onBulkToggle={handleBulkToggle}
-        selectedLevelIndex={currentLevelSelectedIndex}
-      />
+      {showRevealButtons !== false && (
+        <RevealButtons
+          levels={levels}
+          levelDisplayNames={game.levelDisplayNames}
+          groupedHints={groupedHints}
+          revealedHints={revealedHints}
+          onToggleReveal={revealLinkedHints}
+          onBulkToggle={handleBulkToggle}
+          selectedLevelIndex={currentLevelSelectedIndex}
+        />
+      )}
     </>
   );
 }

@@ -1,4 +1,5 @@
 import React from 'react';
+import { FaUpload, FaTasks, FaSignOutAlt } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import { useGame } from '../contexts/GameContext';
 
@@ -40,7 +41,7 @@ const Header: React.FC<HeaderProps> = ({ user, logout, loginButton }) => {
               aria-label="Go to upload"
               style={{ marginRight: '0.5rem' }}
             >
-              Upload
+              <FaUpload style={{ marginRight: 4, verticalAlign: 'middle' }} /> Upload
             </button>
             <button
               onClick={() => navigate('/create')}
@@ -48,11 +49,11 @@ const Header: React.FC<HeaderProps> = ({ user, logout, loginButton }) => {
               aria-label="Go to create"
               style={{ marginRight: '0.5rem' }}
             >
-              Create
+              <FaTasks style={{ marginRight: 4, verticalAlign: 'middle' }} /> Create
             </button>
             {logout && (
               <button onClick={logout} className="twitch-btn">
-                Logout
+                <FaSignOutAlt style={{ marginRight: 4, verticalAlign: 'middle' }} /> Logout
               </button>
             )}
           </div>

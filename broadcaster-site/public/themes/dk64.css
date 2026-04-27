@@ -84,7 +84,6 @@ body, .app-layout {
 }
 
 .header-content {
-  max-width: 1200px;
   margin: 0 auto;
   padding: 0 24px;
   display: flex;
@@ -374,7 +373,6 @@ input[type="file"]:disabled {
 }
 
 .carousel-container .hint-text.completed {
-  text-decoration: line-through;
   opacity: 0.5;
 }
 

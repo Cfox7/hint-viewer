@@ -374,7 +374,6 @@ input[type="file"]:disabled {
 }
 
 .carousel-container .hint-text.completed {
-  text-decoration: line-through;
   opacity: 0.5;
 }
 

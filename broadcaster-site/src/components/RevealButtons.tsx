@@ -1,4 +1,5 @@
 import { Button } from 'react-bootstrap';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 interface Props {
   levels: string[];
@@ -72,6 +73,7 @@ export default function RevealButtons({
           className="reveal-btn"
           style={{ minWidth: 250 }}
         >
+          {isLevelRevealed ? <FaEyeSlash style={{ marginRight: 6, verticalAlign: 'middle' }} /> : <FaEye style={{ marginRight: 6, verticalAlign: 'middle' }} />}
           {levelButtonLabel}
         </Button>
 
@@ -81,6 +83,7 @@ export default function RevealButtons({
           className="reveal-btn"
           style={{ minWidth: 100 }}
         >
+          {isAllRevealed ? <FaEyeSlash style={{ marginRight: 6, verticalAlign: 'middle' }} /> : <FaEye style={{ marginRight: 6, verticalAlign: 'middle' }} />}
           {isAllRevealed ? 'Hide All' : 'Reveal All'}
         </Button>
       </div>

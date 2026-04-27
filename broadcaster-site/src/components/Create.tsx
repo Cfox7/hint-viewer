@@ -1,4 +1,7 @@
+import Toast from 'react-bootstrap/Toast';
+import ToastContainer from 'react-bootstrap/ToastContainer';
 import { useEffect, useState } from 'react';
+import { FaTrash, FaEdit, FaSave, FaTasks } from 'react-icons/fa';
 import { HintCarousel } from './HintCarousel';
 import { buildSlides } from '@hint-viewer/shared/buildSlides';
 import { useNav } from '../contexts/NavContext';
@@ -13,6 +16,8 @@ function Create({ channelId }: CreateProps) {
   const [editHints, setEditHints] = useState<Record<string, string> | null>(null);
   const [showClearModal, setShowClearModal] = useState(false);
   const [clearing, setClearing] = useState(false);
+  const [showClearedToast, setShowClearedToast] = useState(false);
+  const [showSavedToast, setShowSavedToast] = useState(false);
   const {
     initialLoading,
     hints,
@@ -117,6 +122,7 @@ function Create({ channelId }: CreateProps) {
           changedKeys.forEach((key) => {
             if (!revealedHints.has(key)) handleToggleReveal(key);
           });
+          setShowSavedToast(true);
         }
 
         saveSpoiler();
@@ -135,6 +141,8 @@ function Create({ channelId }: CreateProps) {
     try {
       await clearAll();
       setShowClearModal(false);
+      setShowClearedToast(true);
+      setActiveIndex(0);
     } finally {
       setClearing(false);
     }
@@ -142,12 +150,43 @@ function Create({ channelId }: CreateProps) {
 
   return (
     <>
+      {/* Header */}
+      <div className="upload-header d-flex align-items-center gap-3 mb-3 p-3" style={{ background: '#cce4fa', borderRadius: 8 }}>
+        <FaTasks size={60} style={{ color: '#007bff' }} />
+        <div>
+          <h2 className="mb-1" style={{ color: '#007bff', fontWeight: 700 }}>Create Your Hints</h2>
+          <div style={{ fontSize: '1rem', color: '#222' }}>
+            Manually enter or edit hints for your seed. Use this page to create custom hint sets, no file upload required! Then mark them as complete as you go for your viewers.
+          </div>
+        </div>
+      </div>
+
       <ClearModal
         show={showClearModal}
         loading={clearing}
         onCancel={() => setShowClearModal(false)}
         onConfirm={handleClear}
       />
+
+      <ToastContainer position="bottom-end" className="p-3" style={{ zIndex: 9999, position: 'fixed', bottom: 0, right: 0 }}>
+        <Toast show={showClearedToast} onClose={() => setShowClearedToast(false)} style={{ backgroundColor: '#218838' }} autohide delay={7000} animation>
+          <Toast.Header closeButton>
+            <strong className="me-auto">Hints successfully cleared</strong>
+          </Toast.Header>
+          <Toast.Body className="text-white">
+            Fresh hint template in place.
+          </Toast.Body>
+        </Toast>
+        <Toast show={showSavedToast} onClose={() => setShowSavedToast(false)} style={{ backgroundColor: '#218838' }} autohide delay={7000} animation>
+          <Toast.Header closeButton>
+            <strong className="me-auto">Hints successfully saved</strong>
+          </Toast.Header>
+          <Toast.Body className="text-white">
+            Your new hints have been updated.
+          </Toast.Body>
+        </Toast>
+      </ToastContainer>
+
       {initialLoading ? (
         <div className="d-flex justify-content-center py-5">
           <div className="spinner-border text-warning" role="status">
@@ -156,27 +195,23 @@ function Create({ channelId }: CreateProps) {
         </div>
       ) : slides.length > 0 && (
         <div className="card">
-          <div className="d-flex justify-content-between p-2 align-items-center gap-2">
-            <div>
-              <button
-                className="btn btn-danger btn-sm"
-                onClick={() => setShowClearModal(true)}
-                disabled={isEditing}
-                style={{ minWidth: 60 }}
-              >
-                Clear
-              </button>
-            </div>
-            <div>
-              <button
-                className="btn btn-success btn-sm"
-                onClick={handleEditToggle}
-                aria-pressed={isEditing}
-                style={{ minWidth: 60 }}
-              >
-                {isEditing ? 'Done' : 'Edit'}
-              </button>
-            </div>
+          <div className="d-flex justify-content-end align-items-center gap-2 p-2">
+            <button
+              className="btn btn-danger btn-sm d-flex align-items-center gap-1"
+              onClick={() => setShowClearModal(true)}
+              disabled={isEditing}
+              style={{ minWidth: 60 }}
+            >
+              <FaTrash /> Clear
+            </button>
+            <button
+              className="btn btn-success btn-sm d-flex align-items-center gap-1"
+              onClick={handleEditToggle}
+              aria-pressed={isEditing}
+              style={{ minWidth: 60 }}
+            >
+              {isEditing ? <FaSave /> : <FaEdit />} {isEditing ? 'Done' : 'Edit'}
+            </button>
           </div>
           <div className="hints-preview">
             <HintCarousel
@@ -191,6 +226,7 @@ function Create({ channelId }: CreateProps) {
               onSelect={setActiveIndex}
               editable={isEditing}
               onEditHint={handleEditHint}
+              showRevealButtons={false}
             />
           </div>
         </div>
