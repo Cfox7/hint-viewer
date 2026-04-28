@@ -1,5 +1,8 @@
 import { ReactNode, useState, useEffect } from 'react';
 import { Button } from 'react-bootstrap';
+import Select from 'react-select';
+import type { SingleValue } from 'react-select';
+import { FaEdit } from 'react-icons/fa';
 import { colorizeHints } from '@hint-viewer/shared/colorizeHints';
 
 interface HintItemProps {
@@ -13,6 +16,8 @@ interface HintItemProps {
   onRevealWithLinks: (location: string) => void;
   editable?: boolean;
   onEditHint?: (location: string, value: string) => void;
+  hintedItemOptions?: string[];
+  onHintedItemChange?: (location: string, item: string) => void;
 }
 
 export default function HintItem({
@@ -26,11 +31,13 @@ export default function HintItem({
   onRevealWithLinks,
   editable = false,
   onEditHint,
+  hintedItemOptions = [] as string[],
+  onHintedItemChange,
 }: HintItemProps) {
   const [editValue, setEditValue] = useState(cleanedHint);
+  const [hintedItem, setHintedItem] = useState('');
+  const [isSelectingItem, setIsSelectingItem] = useState(false);
 
-  // Keep local input in sync if cleanedHint changes externally
-  // (e.g., after save or undo)
   useEffect(() => {
     setEditValue(cleanedHint);
   }, [cleanedHint]);
@@ -38,6 +45,15 @@ export default function HintItem({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEditValue(e.target.value);
     if (onEditHint) onEditHint(location, e.target.value);
+  };
+
+  const selectOptions = hintedItemOptions.map((item) => ({ value: item, label: item }));
+
+  const handleItemSelect = (option: SingleValue<{ value: string; label: string }>) => {
+    const value = option?.value ?? '';
+    setHintedItem(value);
+    setIsSelectingItem(false);
+    if (onHintedItemChange) onHintedItemChange(location, value);
   };
 
   return (
@@ -69,6 +85,46 @@ export default function HintItem({
         <p className={`hint-text${isRevealed && isCompleted ? ' completed' : ''}`}>
           {isRevealed ? colorizeHints(cleanedHint) : "???"}
         </p>
+      )}
+      {isCompleted && (
+        <div className="hint-item-found-row">
+          {isSelectingItem ? (
+            <div style={{ width: 200 }}>
+              <Select
+                autoFocus
+                classNamePrefix="hint-select"
+                options={selectOptions}
+                onChange={handleItemSelect}
+                placeholder={hintedItem || "Select item..."}
+                menuPortalTarget={document.body}
+                menuPlacement="auto"
+                styles={{
+                  menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                  control: (base) => ({ ...base, background: '#181c18', borderColor: '#ffe066', '&:hover': { borderColor: '#ffd700' } }),
+                  valueContainer: (base) => ({ ...base, padding: '0 4px' }),
+                  input: (base) => ({ ...base, margin: 0, padding: 0, paddingTop: 0, paddingBottom: 0, color: '#dee2e6' }),
+                  menu: (base) => ({ ...base, background: '#181c18', border: '1px solid #ffe066' }),
+                  option: (base, state) => ({ ...base, background: state.isFocused ? '#222a22' : '#181c18', color: '#dee2e6' }),
+                  singleValue: (base) => ({ ...base, color: '#dee2e6' }),
+                  placeholder: (base) => ({ ...base, color: '#525252' }),
+                }}
+              />
+            </div>
+          ) : (
+            <span className="hint-location">
+              Hinted Item: {hintedItem && <strong>{hintedItem}</strong>}
+            </span>
+          )}
+          <Button
+            size="sm"
+            variant="outline-secondary"
+            className="hint-toggle-btn"
+            aria-label="Set hinted item"
+            onClick={() => setIsSelectingItem((prev) => !prev)}
+          >
+            <FaEdit />
+          </Button>
+        </div>
       )}
     </div>
   );

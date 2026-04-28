@@ -163,6 +163,7 @@ export function HintCarousel({
                             onRevealWithLinks={revealLinkedHints}
                             editable={isFoolishOrWoth ? false : editable}
                             onEditHint={onEditHint}
+                            hintedItemOptions={game.hintedItemOptions}
                           />
                         );
                       })}

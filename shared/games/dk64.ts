@@ -55,6 +55,13 @@ const shopOrder: string[] = [
   "Snide"
 ];
 
+const hintedItemOptions: string[] = [
+  "Grape",
+  "Coconut",
+  "Feather",
+  "Hunky Chunky"
+];
+
 interface DKSpoilerLog {
   "Wrinkly Hints": Record<string, string>;
   "Direct Item Hints"?: Record<string, string>;
@@ -234,6 +241,7 @@ export const dk64Config: GameConfig = {
   backgroundImage,
   sectionLabels,
   hintOrder,
+  hintedItemOptions,
   getLevelCategory,
   normalize,
   sortHints,

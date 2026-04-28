@@ -351,6 +351,17 @@ input[type="file"]:disabled {
   border-radius: 6px;
   padding: 4px 6px;
   transition: background 0.15s;
+  position: relative;
+}
+
+.hint-item-found-row {
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .carousel-container .hint-item:hover {
@@ -629,4 +640,14 @@ html { font-size: 18px; } /* bump base; use rem units below */
 
 .hint-edit-input::placeholder {
   color: #525252 !important;
+}
+
+.hint-item input.hint-select__input {
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  font-size: inherit !important;
+  border-radius: 0 !important;
+  width: 100% !important;
 }

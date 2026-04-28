@@ -17,6 +17,7 @@ export interface GameConfig {
   backgroundImage: string;
   sectionLabels: Record<LevelCategory, string>;
   hintOrder: string[];
+  hintedItemOptions: string[];
   getLevelCategory: (level: string) => LevelCategory;
   normalize: (raw: unknown) => SpoilerLog;
   sortHints: (groupedHints: Record<string, string[]>) => Record<string, string[]>;

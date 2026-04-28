@@ -116,31 +116,11 @@ export function useUpload(channelId: string | undefined): UseUploadReturn {
       const normalized = game.normalize(parsed);
       const result = await uploadSpoiler(channelId, game.id, game.toServerPayload(normalized.hints));
 
-      // authoritative read-back
-      try {
-        const server = await getState(channelId);
-        if (server && server.spoilerData) {
-          const raw = server.spoilerData as Record<string, unknown>;
-          const serverNormalized = game.fromServerPayload(raw);
-          setSpoilerData(serverNormalized);
-          setUploadedAt(server.uploadedAt ?? result.uploadedAt ?? new Date().toISOString());
-          setSuccess(true);
-          setRevealedHints(new Set(server.revealed ?? []));
-          setCompletedHints(new Set(server.completed ?? []));
-        } else {
-          setSpoilerData(normalized);
-          setUploadedAt(result.uploadedAt ?? new Date().toISOString());
-          setSuccess(true);
-          setRevealedHints(new Set());
-          setCompletedHints(new Set());
-        }
-      } catch {
-        setSpoilerData(normalized);
-        setUploadedAt(result.uploadedAt ?? new Date().toISOString());
-        setSuccess(true);
-        setRevealedHints(new Set());
-        setCompletedHints(new Set());
-      }
+      setSpoilerData(normalized);
+      setUploadedAt(result.uploadedAt ?? new Date().toISOString());
+      setSuccess(true);
+      setRevealedHints(new Set());
+      setCompletedHints(new Set());
 
       if (syncTimerRef.current) { window.clearTimeout(syncTimerRef.current); syncTimerRef.current = null; }
       void postState(channelId, [], []);
