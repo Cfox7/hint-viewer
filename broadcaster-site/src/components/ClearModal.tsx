@@ -23,13 +23,13 @@ export function ClearModal({
           </>
         ) : (
           <>
-            <div className="mb-3">Are you sure you want make a new template and delete all of your hints?</div>
+            <div className="mb-3">Are you sure you want make a new template and delete any existing hints?</div>
             <div className="d-flex justify-content-center gap-3">
               <Button variant="secondary" onClick={onCancel} disabled={loading}>
                 Cancel
               </Button>
               <Button variant="danger" onClick={onConfirm} disabled={loading}>
-                Delete
+                New Template
               </Button>
             </div>
           </>

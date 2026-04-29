@@ -1,5 +1,6 @@
-import { Carousel } from 'react-bootstrap';
+import { Carousel, OverlayTrigger, Popover } from 'react-bootstrap';
 import { useState } from 'react';
+import { MdNotificationImportant } from 'react-icons/md';
 import { colorizeHints } from '@hint-viewer/shared/colorizeHints';
 import { LevelNav } from './LevelNav';
 import { buildSlides } from '@hint-viewer/shared/buildSlides';
@@ -10,16 +11,24 @@ export interface HintCarouselProps {
   className?: string;
   revealedHints: Set<string>;
   completedHints: Set<string>;
+  hintedItems: Record<string, string>;
 }
 
 const DIRECT_PER_PAGE = 5;
 const FOOLISH_PER_PAGE = 5;
 const WOTH_PER_PAGE = 5;
 
-export function HintCarousel({ hints, className = '', revealedHints, completedHints }: HintCarouselProps) {
+export function HintCarousel({ hints, className = '', revealedHints, completedHints, hintedItems }: HintCarouselProps) {
   const { game } = useGame();
-  // Group hints by level (extract level name from location)
   const { slides, levels } = buildSlides(hints, game.levelOrder, game.sortHints, DIRECT_PER_PAGE, FOOLISH_PER_PAGE, WOTH_PER_PAGE);
+
+  const cleanedMap = new Map<string, string[]>();
+  Object.keys(hints).forEach((loc) => {
+    const cleaned = (hints[loc] || '').split('|')[0].trim();
+    const arr = cleanedMap.get(cleaned) || [];
+    arr.push(loc);
+    cleanedMap.set(cleaned, arr);
+  });
   
 
   const [activeIndex, setActiveIndex] = useState(0);
@@ -63,6 +72,32 @@ export function HintCarousel({ hints, className = '', revealedHints, completedHi
                   const cleanedHint = (hints[location] || '').split('|')[0].trim();
                   const isRevealed = revealedHints.has(location);
                   const isCompleted = completedHints.has(location);
+                  const primaryLocation = (cleanedMap.get(cleanedHint) || [location])[0];
+                  const hintedItem = hintedItems[primaryLocation];
+
+                  if (isCompleted && hintedItem) {
+                    return (
+                      <OverlayTrigger
+                        key={location}
+                        trigger="click"
+                        placement="top"
+                        rootClose
+                        overlay={
+                          <Popover className="hint-popover">
+                            <Popover.Header as="h3">Hinted Item</Popover.Header>
+                            <Popover.Body><strong>{hintedItem}</strong></Popover.Body>
+                          </Popover>
+                        }
+                      >
+                        <div className="hint-item hint-item-hinted">
+                          <MdNotificationImportant className="hint-notification-icon" />
+                          <p className="hint-text completed">
+                            {isRevealed ? colorizeHints(cleanedHint) : "???"}
+                          </p>
+                        </div>
+                      </OverlayTrigger>
+                    );
+                  }
 
                   return (
                     <div key={location} className="hint-item">

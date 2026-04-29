@@ -21,7 +21,7 @@ const Header: React.FC<HeaderProps> = ({ user, logout, loginButton }) => {
       <div className="header-content">
         <Link to="/" className="nav-link" style={{ marginRight: '0.5rem' }}>
           <div className="header-title">
-            <img src="/hintViewer.png" alt="Hint Viewer Icon" style={{ height: 48, width: 48 }} />
+            <img src="/hintViewer.png" alt="Hint Viewer Icon" className="header-icon" />
             <div>
               <h1>{game.displayName}</h1>
               <h2>Hint Viewer</h2>

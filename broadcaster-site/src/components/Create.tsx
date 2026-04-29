@@ -1,7 +1,8 @@
 import Toast from 'react-bootstrap/Toast';
 import ToastContainer from 'react-bootstrap/ToastContainer';
 import { useEffect, useState } from 'react';
-import { FaTrash, FaEdit, FaSave, FaTasks } from 'react-icons/fa';
+import { FaEdit, FaSave, FaTasks } from 'react-icons/fa';
+import { MdNoteAdd } from 'react-icons/md';
 import { HintCarousel } from './HintCarousel';
 import { buildSlides } from '@hint-viewer/shared/buildSlides';
 import { useNav } from '../contexts/NavContext';
@@ -23,9 +24,11 @@ function Create({ channelId }: CreateProps) {
     hints,
     revealedHints,
     completedHints,
+    hintedItems,
     setHints,
     handleToggleReveal,
     handleToggleComplete,
+    handleHintedItemChange,
     clearAll,
     saveSpoiler,
   } = useManual(channelId);
@@ -193,43 +196,50 @@ function Create({ channelId }: CreateProps) {
             <span className="visually-hidden">Loading...</span>
           </div>
         </div>
-      ) : slides.length > 0 && (
-        <div className="card">
-          <div className="d-flex justify-content-end align-items-center gap-2 p-2">
+      ) : (
+        <>
+          <div className="d-flex justify-content-between align-items-center mb-3">
             <button
-              className="btn btn-danger btn-sm d-flex align-items-center gap-1"
+              className="btn btn-primary d-flex align-items-center gap-2"
               onClick={() => setShowClearModal(true)}
               disabled={isEditing}
-              style={{ minWidth: 60 }}
             >
-              <FaTrash /> Clear
+              <MdNoteAdd size={20} /> Create New Hint Template
             </button>
-            <button
-              className="btn btn-success btn-sm d-flex align-items-center gap-1"
-              onClick={handleEditToggle}
-              aria-pressed={isEditing}
-              style={{ minWidth: 60 }}
-            >
-              {isEditing ? <FaSave /> : <FaEdit />} {isEditing ? 'Done' : 'Edit'}
-            </button>
+            {slides.length > 0 && (
+              <button
+                className="btn btn-success btn-sm d-flex align-items-center gap-1"
+                onClick={handleEditToggle}
+                aria-pressed={isEditing}
+                style={{ minWidth: 60 }}
+              >
+                {isEditing ? <FaSave /> : <FaEdit />} {isEditing ? 'Done' : 'Edit'}
+              </button>
+            )}
           </div>
-          <div className="hints-preview">
-            <HintCarousel
-              hints={isEditing && editHints ? editHints : hints}
-              className="carousel-container"
-              channelId={channelId}
-              revealedHints={revealedHints}
-              completedHints={completedHints}
-              onToggleReveal={handleToggleReveal}
-              onToggleComplete={handleToggleComplete}
-              activeIndex={activeIndex}
-              onSelect={setActiveIndex}
-              editable={isEditing}
-              onEditHint={handleEditHint}
-              showRevealButtons={false}
-            />
-          </div>
-        </div>
+          {slides.length > 0 && (
+            <div className="card">
+              <div className="hints-preview">
+                <HintCarousel
+                  hints={isEditing && editHints ? editHints : hints}
+                  className="carousel-container"
+                  channelId={channelId}
+                  revealedHints={revealedHints}
+                  completedHints={completedHints}
+                  onToggleReveal={handleToggleReveal}
+                  onToggleComplete={handleToggleComplete}
+                  activeIndex={activeIndex}
+                  onSelect={setActiveIndex}
+                  editable={isEditing}
+                  onEditHint={handleEditHint}
+                  showRevealButtons={false}
+                  hintedItems={hintedItems}
+                  onHintedItemChange={handleHintedItemChange}
+                />
+              </div>
+            </div>
+          )}
+        </>
       )}
     </>
   );

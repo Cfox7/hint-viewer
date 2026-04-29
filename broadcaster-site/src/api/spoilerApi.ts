@@ -33,12 +33,12 @@ export const getState = async (channelId: string) => {
     headers: { 'Content-Type': 'application/json' },
   });
   if (!res.ok) return null;
-  return res.json() as Promise<{ spoilerData: unknown; uploadedAt: string | null; revealed: string[]; completed: string[] }>;
+  return res.json() as Promise<{ spoilerData: unknown; uploadedAt: string | null; revealed: string[]; completed: string[]; hinted: Record<string, string> }>;
 };
 
-export const postState = (channelId: string, revealedHints: string[], completedHints: string[]) =>
+export const postState = (channelId: string, revealedHints: string[], completedHints: string[], hintedItems: Record<string, string>) =>
   fetch(`${API_URL}/api/state/${channelId}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...authHeaders() },
-    body: JSON.stringify({ channelId, revealedHints, completedHints }),
+    body: JSON.stringify({ channelId, revealedHints, completedHints, hintedItems }),
   });

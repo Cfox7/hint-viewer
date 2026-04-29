@@ -7,9 +7,11 @@ interface UseManualReturn {
   hints: Record<string, string>;
   revealedHints: Set<string>;
   completedHints: Set<string>;
+  hintedItems: Record<string, string>;
   setHints: (hints: Record<string, string>) => void;
   handleToggleReveal: (key: string) => void;
   handleToggleComplete: (key: string) => void;
+  handleHintedItemChange: (location: string, item: string) => void;
   clearAll: () => void;
   error: string | null;
   saveState: () => Promise<void>;
@@ -21,6 +23,7 @@ export function useManual(channelId: string | undefined): UseManualReturn {
   const [hints, setHints] = useState<Record<string, string>>({});
   const [revealedHints, setRevealedHints] = useState<Set<string>>(new Set());
   const [completedHints, setCompletedHints] = useState<Set<string>>(new Set());
+  const [hintedItems, setHintedItems] = useState<Record<string, string>>({});
   const [initialLoading, setInitialLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -28,9 +31,11 @@ export function useManual(channelId: string | undefined): UseManualReturn {
   const hintsRef = useRef(hints);
   const revealedRef = useRef(revealedHints);
   const completedRef = useRef(completedHints);
+  const hintedRef = useRef(hintedItems);
   useEffect(() => { hintsRef.current = hints; }, [hints]);
   useEffect(() => { revealedRef.current = revealedHints; }, [revealedHints]);
   useEffect(() => { completedRef.current = completedHints; }, [completedHints]);
+  useEffect(() => { hintedRef.current = hintedItems; }, [hintedItems]);
 
   // Debounced sync to server (like useUpload)
   const syncTimerRef = useRef<number | null>(null);
@@ -43,6 +48,7 @@ export function useManual(channelId: string | undefined): UseManualReturn {
         channelId,
         Array.from(revealedRef.current),
         Array.from(completedRef.current),
+        hintedRef.current,
       ).catch(() => setError('Failed to sync hints'));
       syncTimerRef.current = null;
     }, delayMs);
@@ -64,10 +70,12 @@ export function useManual(channelId: string | undefined): UseManualReturn {
           setHints(normalized.hints || {});
           setRevealedHints(new Set(data.revealed ?? []));
           setCompletedHints(new Set(data.completed ?? []));
+          setHintedItems(data.hinted ?? {});
         } else {
           setHints({});
           setRevealedHints(new Set());
           setCompletedHints(new Set());
+          setHintedItems({});
         }
       } catch (err) {
         setError('Failed to load hints');
@@ -124,9 +132,10 @@ export function useManual(channelId: string | undefined): UseManualReturn {
       setHints(emptyTemplate);
       setRevealedHints(new Set());
       setCompletedHints(new Set());
+      setHintedItems({});
       // Upload the empty template and reset state in backend
       await uploadSpoiler(channelId, game.id, game.toServerPayload(emptyTemplate));
-      await postState(channelId, [], []);
+      await postState(channelId, [], [], {});
     } catch (err) {
       setError('Failed to clear hints');
     }
@@ -142,6 +151,7 @@ export function useManual(channelId: string | undefined): UseManualReturn {
         channelId,
         Array.from(revealedRef.current),
         Array.from(completedRef.current),
+        hintedRef.current,
       );
     } catch (err) {
       setError('Failed to save state');
@@ -157,7 +167,8 @@ export function useManual(channelId: string | undefined): UseManualReturn {
       await postState(
         channelId,
         Array.from(revealedRef.current),
-        Array.from(completedRef.current)
+        Array.from(completedRef.current),
+        hintedRef.current,
       );
     } catch (err) {
       setError('Failed to save spoiler');
@@ -169,13 +180,20 @@ export function useManual(channelId: string | undefined): UseManualReturn {
     hintsRef.current = newHints;
   };
 
+  const handleHintedItemChange = (location: string, item: string) => {
+    setHintedItems(prev => ({ ...prev, [location]: item }));
+    scheduleSync();
+  };
+
   return {
     hints,
     revealedHints,
     completedHints,
+    hintedItems,
     setHints: setHintsLocal,
     handleToggleReveal,
     handleToggleComplete,
+    handleHintedItemChange,
     clearAll,
     initialLoading,
     error,

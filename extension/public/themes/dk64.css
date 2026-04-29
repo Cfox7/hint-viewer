@@ -285,3 +285,45 @@ a:hover {
   line-height: 1.45;
   color: #fffde4;
 }
+
+/* Hinted item notification */
+.hint-item.hint-item-hinted {
+  position: relative;
+  cursor: pointer;
+}
+
+.hint-notification-icon {
+  position: absolute;
+  top: 0;
+  right: -20px;
+  color: #ffe066;
+  font-size: 20px;
+}
+
+/* Hinted item popover dark theme */
+.hint-popover {
+  background-color: #181c18;
+  border: 1px solid #ffe066;
+  font-family: 'Tekton Bold', Arial, sans-serif;
+}
+
+.hint-popover .popover-arrow::before {
+  border-top-color: #ffe066;
+}
+
+.hint-popover .popover-arrow::after {
+  border-top-color: #181c18;
+}
+
+.hint-popover .popover-header {
+  background-color: #3f423f;
+  color: #ffe066;
+  border-bottom: 1px solid #ffe066;
+  font-family: 'Tekton Bold', Arial, sans-serif;
+  font-weight: bold;
+}
+
+.hint-popover .popover-body {
+  color: #fffde4;
+  font-family: 'Tekton Bold', Arial, sans-serif;
+}

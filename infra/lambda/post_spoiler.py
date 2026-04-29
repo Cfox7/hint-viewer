@@ -57,6 +57,7 @@ def handler(event, context):
         "uploadedAt": uploaded_at,
         "revealedHints": [],
         "completedHints": [],
+        "hintedItems": {},
     })
 
     return {

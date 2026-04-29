@@ -17,6 +17,8 @@ interface HintItemProps {
   editable?: boolean;
   onEditHint?: (location: string, value: string) => void;
   hintedItemOptions?: string[];
+  hintedItem?: string;
+  hintedItemEditable?: boolean;
   onHintedItemChange?: (location: string, item: string) => void;
 }
 
@@ -32,10 +34,11 @@ export default function HintItem({
   editable = false,
   onEditHint,
   hintedItemOptions = [] as string[],
+  hintedItem = '',
+  hintedItemEditable = true,
   onHintedItemChange,
 }: HintItemProps) {
   const [editValue, setEditValue] = useState(cleanedHint);
-  const [hintedItem, setHintedItem] = useState('');
   const [isSelectingItem, setIsSelectingItem] = useState(false);
 
   useEffect(() => {
@@ -51,7 +54,6 @@ export default function HintItem({
 
   const handleItemSelect = (option: SingleValue<{ value: string; label: string }>) => {
     const value = option?.value ?? '';
-    setHintedItem(value);
     setIsSelectingItem(false);
     if (onHintedItemChange) onHintedItemChange(location, value);
   };
@@ -88,7 +90,7 @@ export default function HintItem({
       )}
       {isCompleted && (
         <div className="hint-item-found-row">
-          {isSelectingItem ? (
+          {hintedItemEditable && isSelectingItem ? (
             <div style={{ width: 200 }}>
               <Select
                 autoFocus
@@ -115,15 +117,17 @@ export default function HintItem({
               Hinted Item: {hintedItem && <strong>{hintedItem}</strong>}
             </span>
           )}
-          <Button
-            size="sm"
-            variant="outline-secondary"
-            className="hint-toggle-btn"
-            aria-label="Set hinted item"
-            onClick={() => setIsSelectingItem((prev) => !prev)}
-          >
-            <FaEdit />
-          </Button>
+          {hintedItemEditable && (
+            <Button
+              size="sm"
+              variant="outline-secondary"
+              className="hint-toggle-btn"
+              aria-label="Set hinted item"
+              onClick={() => setIsSelectingItem((prev) => !prev)}
+            >
+              <FaEdit />
+            </Button>
+          )}
         </div>
       )}
     </div>

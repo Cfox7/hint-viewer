@@ -18,6 +18,8 @@ export interface HintCarouselProps {
   editable?: boolean;
   onEditHint?: (location: string, value: string) => void;
   showRevealButtons?: boolean;
+  hintedItems?: Record<string, string>;
+  onHintedItemChange?: (location: string, item: string) => void;
 }
 
 const DIRECT_PER_PAGE = 5;
@@ -36,6 +38,8 @@ export function HintCarousel({
   editable = false,
   onEditHint,
   showRevealButtons = true,
+  hintedItems = {},
+  onHintedItemChange,
 }: HintCarouselProps) {
   const { game } = useGame();
 
@@ -145,17 +149,21 @@ export function HintCarousel({
                         if (isProgressive) {
                           locationLabel = `Hint ${location.slice(slide.level.length).trim()}`;
                         } else {
-                          // Always grab the last word after the space
                           const parts = location.split(' ');
                           locationLabel = parts.length > 1 ? parts[parts.length - 1] : location;
                         }
+
+                        const cleanedHint = (hints[location] || '').split('|')[0].trim();
+                        const linkedGroup = cleanedMap.get(cleanedHint) || [location];
+                        const primaryLocation = linkedGroup[0];
+                        const isLinked = primaryLocation !== location;
 
                         return (
                           <HintItem
                             key={location}
                             location={location}
                             locationLabel={colorizeHints(locationLabel)}
-                            cleanedHint={(hints[location] || '').split('|')[0].trim()}
+                            cleanedHint={cleanedHint}
                             isRevealed={revealedHints.has(location)}
                             isCompleted={completedHints.has(location)}
                             hideReveal={['foolish', 'woth'].includes(slide.level.toLowerCase())}
@@ -164,6 +172,9 @@ export function HintCarousel({
                             editable={isFoolishOrWoth ? false : editable}
                             onEditHint={onEditHint}
                             hintedItemOptions={game.hintedItemOptions}
+                            hintedItem={hintedItems[primaryLocation] ?? ''}
+                            hintedItemEditable={!isLinked}
+                            onHintedItemChange={onHintedItemChange}
                           />
                         );
                       })}

@@ -56,10 +56,87 @@ const shopOrder: string[] = [
 ];
 
 const hintedItemOptions: string[] = [
-  "Grape",
-  "Coconut",
-  "Feather",
-  "Hunky Chunky"
+  // Kongs
+  'Donkey Kong',
+  'Diddy Kong',
+  'Lanky Kong',
+  'Tiny Kong',
+  'Chunky Kong',
+  // Shared moves
+  'Vines',
+  'Swim',
+  'Oranges',
+  'Barrels',
+  'Climbing',
+  'Progressive Slam',
+  'Progressive Slam 2',
+  // DK moves
+  'Baboon Blast',
+  'Strong Kong',
+  'Gorilla Grab',
+  // Diddy moves
+  'Chimpy Charge',
+  'Rocketbarrel Boost',
+  'Simian Spring',
+  // Lanky moves
+  'Orangstand',
+  'Baboon Balloon',
+  'Orangstand Sprint',
+  // Tiny moves
+  'Mini Monkey',
+  'Ponytail Twirl',
+  'Monkeyport',
+  // Chunky moves
+  'Hunky Chunky',
+  'Primate Punch',
+  'Gorilla Gone',
+  // Guns
+  'Coconut',
+  'Peanut',
+  'Grape',
+  'Feather',
+  'Pineapple',
+  'Homing Ammo',
+  'Sniper Sight',
+  'Progressive Ammo Belt',
+  'Progressive Ammo Belt 2',
+  // Instruments
+  'Bongos',
+  'Guitar',
+  'Trombone',
+  'Saxophone',
+  'Triangle',
+  'Progressive Instrument Upgrade',
+  'Progressive Instrument Upgrade 2',
+  'Progressive Instrument Upgrade 3',
+  // Special items
+  'Camera',
+  'Shockwave',
+  'Camera & Shockwave',
+  'Nintendo Coin',
+  'Rareware Coin',
+  // Keys
+  'Key 1',
+  'Key 2',
+  'Key 3',
+  'Key 4',
+  'Key 5',
+  'Key 6',
+  'Key 7',
+  'Key 8',
+  // Collectibles
+  'Golden Banana',
+  'Banana Fairy',
+  'Banana Medal',
+  'Battle Crown',
+  'Bean',
+  'Pearl',
+  'Rainbow Coin',
+  // Shop NPCs
+  'Cranky',
+  'Funky',
+  'Candy',
+  'Snide',
 ];
 
 interface DKSpoilerLog {

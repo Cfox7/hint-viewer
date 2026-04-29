@@ -23,9 +23,11 @@ function Upload({ channelId }: UploadProps) {
     spoilerData,
     revealedHints,
     completedHints,
+    hintedItems,
     handleUpload,
     handleToggleReveal,
     handleToggleComplete,
+    handleHintedItemChange,
   } = useUpload(channelId);
 
   const { slides, activeIndex, setActiveIndex, setSlides } = useNav();
@@ -135,6 +137,8 @@ function Upload({ channelId }: UploadProps) {
               onToggleComplete={handleToggleComplete}
               activeIndex={activeIndex}
               onSelect={setActiveIndex}
+              hintedItems={hintedItems}
+              onHintedItemChange={handleHintedItemChange}
             />
           </div>
         </div>

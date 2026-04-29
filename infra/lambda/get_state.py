@@ -25,5 +25,6 @@ def handler(event, context):
             "uploadedAt": item.get("uploadedAt") if item else None,
             "revealed": item.get("revealedHints", []) if item else [],
             "completed": item.get("completedHints", []) if item else [],
+            "hinted": item.get("hintedItems", {}) if item else {},
         }),
     }
