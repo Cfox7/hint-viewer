@@ -23,7 +23,7 @@ const batchNames = Array.from({ length: BATCH_COUNT }, (_, i) => `Batch${i + 1}`
 const baseOrder = Object.keys(levelDisplayNames);
 baseOrder.splice(8, 0, ...batchNames);
 const levelOrder = baseOrder;
-const backgroundImage = '/assets/bgfinal.webp';
+const backgroundImage = './assets/bgfinal.webp';
 
 const sectionLabels: Record<LevelCategory, string> = {
   regions: 'Levels',

@@ -30,19 +30,14 @@ if [ ! -d "$DIST_DIR" ]; then
   exit 1
 fi
 
-# Copy build output
+# Copy build output (Vite already copies public/ into dist/ during build)
 cp -a "$DIST_DIR/." "$TMP_DIR/"
-
-# Include public assets (if you keep fonts/images in public)
-if [ -d "$EXT_DIR/public" ]; then
-  cp -a "$EXT_DIR/public/." "$TMP_DIR/" || true
-fi
 
 # Safety: ensure assets are under assets/ path in the staging dir
 echo "Contents to be zipped:"
 ( cd "$TMP_DIR" && find . -maxdepth 4 -print )
 
-# Create the bundle zip with files at the root of the archive
+rm -f "$OUT_ZIP"
 ( cd "$TMP_DIR" && zip -r "$OUT_ZIP" . >/dev/null )
 
 echo "Bundle created: $OUT_ZIP"

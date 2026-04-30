@@ -1,71 +1,50 @@
 # DK64 Randomizer Hint Viewer
 
-Twitch extension + broadcaster site for DK64 Randomizer hint viewing. Hosted on AWS (S3 + CloudFront + API Gateway + Lambda + DynamoDB).
+A Twitch extension and broadcaster dashboard for managing and revealing hints during [DK64 Randomizer](https://dk64randomizer.com) runs. Viewers see hints update live in the extension panel; broadcasters control what's revealed from the DKHome dashboard.
 
-## Structure
+## Installing the Extension
 
-- **extension/** — Twitch extension panel and config page (viewers)
-- **broadcaster-site/** — Web app for uploading spoiler logs (broadcasters)
-- **infra/** — AWS CDK infrastructure (Python)
-- **shared/** — Shared TypeScript types
+1. Go to `dashboard.twitch.tv/<your-username>` and open the **Extensions** tab
+2. Search for **HintViewer** and click **Install**
+3. Activate it as a panel on your channel page
 
-## Local Development
+## Getting Started
 
-### Broadcaster site
+Go to [hintviewer.com](https://hintviewer.com) and log in with your Twitch account. There are two ways to load your hints:
 
-```bash
-cd broadcaster-site
-npm install
-npm run dev
-```
+- **Upload:** Upload the spoiler log JSON generated with "Generate Spoiler Log" enabled. Hints are populated automatically, including Progressive hint batches and Foolish / WOTH grouping.
+- **Create:** Manually enter hints for your seed with no file needed. Use the **Edit** button to update hints at any time and **Create New Hint Template** to start fresh.
 
-Runs on `http://localhost:5173` against `http://localhost:3000` by default.
+## Revealing Hints
 
-### Extension
+Each hint row has action buttons:
 
-```bash
-cd extension
-npm install
-npm run build:serve   # builds then serves dist/ on port 8081
-```
+- **Eye:** Reveals the hint text to viewers. Click again to hide.
+- **Check** (appears after revealing): Marks the hint as completed. Completed hints appear struck through for viewers.
+- **Edit** (appears after completing): Select the item found at that location. It shows with an alert indicator in the extension.
 
-Point ngrok at port 8081 and set that URL as the Asset Hosting URL in the Twitch developer console.
+Hints with identical text are linked. Revealing or completing one will automatically reveal or complete all others with the same hint text.
 
-## AWS Deployment
+Use the **Reveal Area** button to bulk-reveal all hints on the current level page, or **Reveal All** to reveal everything at once.
 
-Requires AWS CLI configured and CDK bootstrapped (`cd infra && cdk bootstrap`).
+## Hint Types
 
-### Infrastructure (first time or after stack changes)
+**Non-Progressive hints** are color-coded by Kong based on the Wrinkly Kong door frame color in that level:
 
-```bash
-make infra-dev    # deploy HintViewerDev + HintViewerApiDev stacks
-make infra-prod   # deploy HintViewerProd + HintViewerApiProd stacks
-make infra-all    # deploy all four stacks
-```
+| Color | Kong |
+|-------|------|
+| Yellow | Donkey Kong |
+| Red | Diddy Kong |
+| Blue | Lanky Kong |
+| Purple | Tiny Kong |
+| Green | Chunky Kong |
 
-### Broadcaster site
+For example, a red door frame in Jungle Japes means the hint is listed under **Jungle Japes, Diddy**.
 
-```bash
-make deploy-dev   # build with dev-aws env + sync to S3 + invalidate CloudFront
-make deploy-prod  # build with prod-aws env + sync to S3 + invalidate CloudFront
-```
+**Progressive hints** are grouped into Batches automatically. Check the in-game hint tracker in the pause menu to see which batch you've unlocked, then use **Reveal Area (Batch #)** to unlock the full batch at once.
 
-### Extension
+**Foolish** and **WOTH** hints are grouped automatically when those keywords appear in a hint.
 
-```bash
-cd extension
-./zip_assets.sh   # builds and produces hint-viewer-bundle.zip
-```
+## Changelog
 
-Upload `hint-viewer-bundle.zip` to the Twitch developer console.
-
-## Architecture
-
-```
-Broadcaster Site  ──POST/DELETE──►  API Gateway  ──►  Lambda  ──►  DynamoDB
-(S3 + CloudFront)                                                      ▲
-                                                                       │
-Extension Panel   ──GET (poll 10s)──►  API Gateway  ──►  Lambda  ──────┘
-(Twitch hosted)
-```
-
+See [CHANGELOG.md](CHANGELOG.md).

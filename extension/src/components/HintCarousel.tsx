@@ -1,6 +1,8 @@
 import { Carousel, OverlayTrigger, Popover } from 'react-bootstrap';
 import { useState } from 'react';
 import { MdNotificationImportant } from 'react-icons/md';
+import CRightSvg from '../assets/C_Right.svg';
+import CLeftSvg from '../assets/C_Left.svg';
 import { colorizeHints } from '@hint-viewer/shared/colorizeHints';
 import { LevelNav } from './LevelNav';
 import { buildSlides } from '@hint-viewer/shared/buildSlides';
@@ -56,8 +58,8 @@ export function HintCarousel({ hints, className = '', revealedHints, completedHi
         onSelect={(idx) => setActiveIndex(idx ?? 0)}
         slide={false}
         indicators={false}
-        nextIcon={<img src="assets/C_Right.svg" alt="Next" style={{ width: 64, height: 64 }} />}
-        prevIcon={<img src="assets/C_Left.svg" alt="Prev" style={{ width: 64, height: 64 }} />}
+        nextIcon={<img src={CRightSvg} alt="Next" style={{ width: 64, height: 64 }} />}
+        prevIcon={<img src={CLeftSvg} alt="Prev" style={{ width: 64, height: 64 }} />}
       >
         {slides.map((slide, sIdx) => (
           <Carousel.Item key={`${slide.level}-p${slide.pageIndex}-${sIdx}`}>

@@ -123,7 +123,7 @@ function ProcessHints({ channelId }: ProcessHintsProps) {
       )}
       {lastPolled && (
         <div className="refresh-bar">
-          {lastFetch && <span>Uploaded: {new Date(lastFetch).toLocaleTimeString()}</span>}
+          {lastFetch && <span className="refresh-uploaded">Uploaded: {new Date(lastFetch).toLocaleTimeString()}</span>}
           <span>
             Last Updated: {lastPolled.toLocaleTimeString()}{' '}
             <button

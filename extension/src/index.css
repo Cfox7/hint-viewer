@@ -1,12 +1,12 @@
 @font-face {
   font-family: 'Tekton Bold';
-  src: url('../assets/Fonts/tektonbold.ttf') format('truetype');
+  src: url('./assets/Fonts/tektonbold.ttf') format('truetype');
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Jumpman';
-  src: url('../assets/Fonts/Jumpman.ttf') format('truetype');
+  src: url('./assets/Fonts/Jumpman.ttf') format('truetype');
   font-style: normal;
 }
 
@@ -39,7 +39,7 @@ a {
   color: #ffd700;
 }
 a:hover {
-  color: #fffde4;
+  color: #222a22;
 }
 
 /* Carousel styles */
@@ -119,7 +119,7 @@ a:hover {
 }
 
 .carousel-bg-container {
-  background-image: url('../assets/bgfinal.webp');
+  background-image: url('./assets/bgfinal.webp');
   background-size: cover;
   background-position: center;
   padding: 32px 0px 0px;
@@ -242,6 +242,8 @@ a:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  color: #ffe066;
+  font-family: Jumpman, 'Tekton Bold', Arial, sans-serif;
 }
 
 .refresh-btn {
@@ -283,5 +285,5 @@ a:hover {
   margin: 0 0 16px 1.25rem;
   padding-left: 0;
   line-height: 1.45;
-  color: #fffde4;
+  color: #222a22;
 }
