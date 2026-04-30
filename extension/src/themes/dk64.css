@@ -337,3 +337,90 @@ a:hover {
   font-size: 18px;
   text-align: center;
 }
+
+/* Config page */
+.config-page {
+  padding: 20px 16px;
+  font-family: 'Tekton Bold', Arial, sans-serif;
+}
+
+.config-title {
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 2px;
+}
+
+.config-subtitle {
+  text-align: center;
+  color: #ffe066;
+  opacity: 0.6;
+  font-size: 0.85rem;
+  margin-bottom: 20px;
+  font-family: 'Tekton Bold', Arial, sans-serif;
+}
+
+.config-section {
+  background-color: #222a22;
+  border: 1px solid #3f423f;
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+
+.config-section-title {
+  color: #ffd700;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 10px;
+  opacity: 0.8;
+}
+
+.config-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: #ffe066;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  margin-bottom: 10px;
+}
+
+.config-step:last-child {
+  margin-bottom: 0;
+}
+
+.config-step-number {
+  background-color: #ffd700;
+  color: #181c18;
+  font-weight: bold;
+  font-size: 0.75rem;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.config-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.config-legend-item {
+  color: #ffe066;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.config-inline-icon {
+  color: #ffd700;
+  vertical-align: middle;
+  flex-shrink: 0;
+}

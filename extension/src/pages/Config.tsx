@@ -1,31 +1,41 @@
+import { FaUpload, FaTasks, FaEye, FaCheck, FaEdit } from 'react-icons/fa';
+
+function Step({ number, children }: { number: number; children: React.ReactNode }) {
+  return (
+    <div className="config-step">
+      <span className="config-step-number">{number}</span>
+      <span>{children}</span>
+    </div>
+  );
+}
+
 function Config() {
   return (
-    <div className="carousel-container no-spoiler-container">
-      <div className="hint-text">
-        <h1 className="gradient-jumpman level-title">Hint Viewer — Usage</h1>
+    <div className="config-page">
+      <h1 className="gradient-jumpman config-title">HintViewer</h1>
+      <p className="config-subtitle">DK64 Randomizer</p>
 
-        <div className="no-spoiler-message">
-          <p>
-            This extension displays hints from your spoiler log to your viewers. To set it up:
-          </p>
+      <section className="config-section">
+        <h2 className="config-section-title">Setup</h2>
+        <Step number={1}>
+          Go to <a href="https://hintviewer.com" target="_blank" rel="noopener noreferrer">hintviewer.com</a> and sign in with your Twitch account.
+        </Step>
+        <Step number={2}>
+          Load your hints using <FaUpload className="config-inline-icon" /> <strong>Upload</strong> (spoiler log JSON) or <FaTasks className="config-inline-icon" /> <strong>Create</strong> (manual entry).
+        </Step>
+        <Step number={3}>
+          Activate the extension as a panel on your channel. Viewers will see hints update live.
+        </Step>
+      </section>
 
-          <ol className="no-spoiler-list">
-            <li>
-              Visit <a href="https://hintviewer.com" target="_blank" rel="noopener noreferrer">the broadcaster site</a> and sign in with your Twitch account.
-            </li>
-            <li>
-              Upload a spoiler log on the broadcaster site. Everything you see in your Hint Viewer will be mirrored to your viewers.
-            </li>
-            <li>
-              Return to your channel and ensure the extension is active. Refresh if needed.
-            </li>
-          </ol>
-
-          <p>
-            Notes: This extension currently supports Donkey Kong 64 Randomizer only.
-          </p>
+      <section className="config-section">
+        <h2 className="config-section-title">During a Run</h2>
+        <div className="config-legend">
+          <div className="config-legend-item"><FaEye className="config-inline-icon" /> Reveal a hint to viewers</div>
+          <div className="config-legend-item"><FaCheck className="config-inline-icon" /> Mark a hint as completed</div>
+          <div className="config-legend-item"><FaEdit className="config-inline-icon" /> Set the item found at that location</div>
         </div>
-      </div>
+      </section>
     </div>
   );
 }

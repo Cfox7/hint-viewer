@@ -21,7 +21,7 @@ npm run dev
 
 Runs on `http://localhost:3000` by default.
 
-### Extension https://dulrvobi1xht4.cloudfront.net
+### Extension
 
 ```bash
 cd extension
@@ -81,6 +81,9 @@ make bundle-prod  # produces extension/hint-viewer-bundle-prod.zip
 ```
 
 Upload the zip to the Twitch developer console.
+
+dev api url: https://d38u8hqe9n28qc.cloudfront.net
+prod api url: https://dulrvobi1xht4.cloudfront.net
 
 ## Helpers
 
