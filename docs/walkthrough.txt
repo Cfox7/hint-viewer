@@ -1,16 +1,5 @@
 https://www.twitch.tv/cfox_codes
 
-Changelog v
-
-New
--
-
-Changed
--
-
-Fixed
--
-
 ---
 
 DK64 Randomizer Hint Viewer: Broadcaster Guide

@@ -23,7 +23,7 @@ const batchNames = Array.from({ length: BATCH_COUNT }, (_, i) => `Batch${i + 1}`
 const baseOrder = Object.keys(levelDisplayNames);
 baseOrder.splice(8, 0, ...batchNames);
 const levelOrder = baseOrder;
-const backgroundImage = '/assets/bgfinal.webp';
+const backgroundImage = './assets/bgfinal.webp';
 
 const sectionLabels: Record<LevelCategory, string> = {
   regions: 'Levels',
@@ -38,6 +38,105 @@ const hintOrder: string[] = [
   "Lanky",
   "Tiny",
   "Chunky"
+];
+
+const instrumentOrder: string[] = [
+  "Bongos",
+  "Guitar",
+  "Trombone",
+  "Saxophone",
+  "Triangle"
+];
+
+const shopOrder: string[] = [
+  "Cranky",
+  "Candy",
+  "Funky",
+  "Snide"
+];
+
+const hintedItemOptions: string[] = [
+  // Kongs
+  'Donkey Kong',
+  'Diddy Kong',
+  'Lanky Kong',
+  'Tiny Kong',
+  'Chunky Kong',
+  // Shared moves
+  'Vines',
+  'Swim',
+  'Oranges',
+  'Barrels',
+  'Climbing',
+  'Progressive Slam',
+  'Progressive Slam 2',
+  // DK moves
+  'Baboon Blast',
+  'Strong Kong',
+  'Gorilla Grab',
+  // Diddy moves
+  'Chimpy Charge',
+  'Rocketbarrel Boost',
+  'Simian Spring',
+  // Lanky moves
+  'Orangstand',
+  'Baboon Balloon',
+  'Orangstand Sprint',
+  // Tiny moves
+  'Mini Monkey',
+  'Ponytail Twirl',
+  'Monkeyport',
+  // Chunky moves
+  'Hunky Chunky',
+  'Primate Punch',
+  'Gorilla Gone',
+  // Guns
+  'Coconut',
+  'Peanut',
+  'Grape',
+  'Feather',
+  'Pineapple',
+  'Homing Ammo',
+  'Sniper Sight',
+  'Progressive Ammo Belt',
+  'Progressive Ammo Belt 2',
+  // Instruments
+  'Bongos',
+  'Guitar',
+  'Trombone',
+  'Saxophone',
+  'Triangle',
+  'Progressive Instrument Upgrade',
+  'Progressive Instrument Upgrade 2',
+  'Progressive Instrument Upgrade 3',
+  // Special items
+  'Camera',
+  'Shockwave',
+  'Camera & Shockwave',
+  'Nintendo Coin',
+  'Rareware Coin',
+  // Keys
+  'Key 1',
+  'Key 2',
+  'Key 3',
+  'Key 4',
+  'Key 5',
+  'Key 6',
+  'Key 7',
+  'Key 8',
+  // Collectibles
+  'Golden Banana',
+  'Banana Fairy',
+  'Banana Medal',
+  'Battle Crown',
+  'Bean',
+  'Pearl',
+  'Rainbow Coin',
+  // Shop NPCs
+  'Cranky',
+  'Funky',
+  'Candy',
+  'Snide',
 ];
 
 interface DKSpoilerLog {
@@ -177,6 +276,40 @@ function getLevelTitle(
   return displayName;
 }
 
+function getEmptyHintTemplate(isProgressive = false): Record<string, string> {
+  const template: Record<string, string> = {};
+  const filteredLevels = Object.keys(levelDisplayNames).filter(
+    key => key !== 'Isles' &&
+      !key.startsWith('Direct') &&
+      key !== 'Helm' &&
+      key !== 'Foolish' &&
+      key !== 'WOTH'
+  );
+  hintOrder.forEach(kong => {
+    filteredLevels.forEach(level => {
+      template[`${level} ${kong}`] = '';
+    });
+  });
+
+  // Add Direct_Instrument keys in instrumentOrder
+  instrumentOrder.forEach(instr => {
+    template[`Direct_Instrument ${instr}`] = '';
+  });
+
+  // Add Direct_Shop keys in shopOrder
+  shopOrder.forEach(shop => {
+    template[`Direct_Shop ${shop}`] = '';
+  });
+
+  if (isProgressive) {
+    const batchNamesLocal = Array.from({ length: BATCH_COUNT }, (_, i) => `Batch${i + 1}`);
+    batchNamesLocal.forEach(batch => {
+      template[batch] = '';
+    });
+  }
+  return template;
+}
+
 export const dk64Config: GameConfig = {
   id: 'dk64',
   displayName: 'Donkey Kong 64 Randomizer',
@@ -185,10 +318,12 @@ export const dk64Config: GameConfig = {
   backgroundImage,
   sectionLabels,
   hintOrder,
+  hintedItemOptions,
   getLevelCategory,
   normalize,
   sortHints,
   getLevelTitle,
+  getEmptyHintTemplate,
   homeComponent: DkHome,
   toServerPayload: (hints): Record<string, unknown> => ({ "Wrinkly Hints": hints }),
   fromServerPayload: (raw) => {

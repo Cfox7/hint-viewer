@@ -17,11 +17,13 @@ export interface GameConfig {
   backgroundImage: string;
   sectionLabels: Record<LevelCategory, string>;
   hintOrder: string[];
+  hintedItemOptions: string[];
   getLevelCategory: (level: string) => LevelCategory;
   normalize: (raw: unknown) => SpoilerLog;
   sortHints: (groupedHints: Record<string, string[]>) => Record<string, string[]>;
   getLevelTitle: (slide: { level: string; pageIndex: number } | undefined, slideCountByLevel: Record<string, number>, levelDisplayNames: Record<string, string>) => string;
   homeComponent: React.FC;
+  getEmptyHintTemplate: () => Record<string, string>;
   toServerPayload: (hints: Record<string, string>) => Record<string, unknown>;
   fromServerPayload: (raw: unknown) => SpoilerLog;
 }

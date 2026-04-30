@@ -22,12 +22,14 @@ interface UseUploadReturn {
   spoilerData: SpoilerLog | null;
   revealedHints: Set<string>;
   completedHints: Set<string>;
+  hintedItems: Record<string, string>;
   showClearModal: boolean;
   setShowClearModal: (v: boolean) => void;
   handleUpload: (e: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
   handleClear: () => Promise<void>;
   handleToggleReveal: (location: string) => void;
   handleToggleComplete: (location: string) => void;
+  handleHintedItemChange: (location: string, item: string) => void;
 }
 
 export function useUpload(channelId: string | undefined): UseUploadReturn {
@@ -44,22 +46,22 @@ export function useUpload(channelId: string | undefined): UseUploadReturn {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [revealedHints, setRevealedHints] = useState<Set<string>>(new Set());
   const [completedHints, setCompletedHints] = useState<Set<string>>(new Set());
+  const [hintedItems, setHintedItems] = useState<Record<string, string>>({});
 
   const revealedRef = useRef(revealedHints);
-  useEffect(() => {
-    revealedRef.current = revealedHints;
-  }, [revealedHints]);
+  useEffect(() => { revealedRef.current = revealedHints; }, [revealedHints]);
 
   const completedRef = useRef(completedHints);
-  useEffect(() => {
-    completedRef.current = completedHints;
-  }, [completedHints]);
+  useEffect(() => { completedRef.current = completedHints; }, [completedHints]);
+
+  const hintedRef = useRef(hintedItems);
+  useEffect(() => { hintedRef.current = hintedItems; }, [hintedItems]);
 
   const syncTimerRef = useRef<number | null>(null);
   const scheduleSync = (delayMs = 250) => {
     if (syncTimerRef.current) window.clearTimeout(syncTimerRef.current);
     syncTimerRef.current = window.setTimeout(() => {
-      postState(channelId!, Array.from(revealedRef.current), Array.from(completedRef.current)).catch((err) =>
+      postState(channelId!, Array.from(revealedRef.current), Array.from(completedRef.current), hintedRef.current).catch((err) =>
         console.error('Sync state error:', err),
       );
       syncTimerRef.current = null;
@@ -83,6 +85,7 @@ export function useUpload(channelId: string | undefined): UseUploadReturn {
           setSuccess(true);
           setRevealedHints(new Set(data.revealed ?? []));
           setCompletedHints(new Set(data.completed ?? []));
+          setHintedItems(data.hinted ?? {});
         }
       } catch (err) {
         console.warn('Failed to fetch persisted spoiler from server', err);
@@ -116,34 +119,15 @@ export function useUpload(channelId: string | undefined): UseUploadReturn {
       const normalized = game.normalize(parsed);
       const result = await uploadSpoiler(channelId, game.id, game.toServerPayload(normalized.hints));
 
-      // authoritative read-back
-      try {
-        const server = await getState(channelId);
-        if (server && server.spoilerData) {
-          const raw = server.spoilerData as Record<string, unknown>;
-          const serverNormalized = game.fromServerPayload(raw);
-          setSpoilerData(serverNormalized);
-          setUploadedAt(server.uploadedAt ?? result.uploadedAt ?? new Date().toISOString());
-          setSuccess(true);
-          setRevealedHints(new Set(server.revealed ?? []));
-          setCompletedHints(new Set(server.completed ?? []));
-        } else {
-          setSpoilerData(normalized);
-          setUploadedAt(result.uploadedAt ?? new Date().toISOString());
-          setSuccess(true);
-          setRevealedHints(new Set());
-          setCompletedHints(new Set());
-        }
-      } catch {
-        setSpoilerData(normalized);
-        setUploadedAt(result.uploadedAt ?? new Date().toISOString());
-        setSuccess(true);
-        setRevealedHints(new Set());
-        setCompletedHints(new Set());
-      }
+      setSpoilerData(normalized);
+      setUploadedAt(result.uploadedAt ?? new Date().toISOString());
+      setSuccess(true);
+      setRevealedHints(new Set());
+      setCompletedHints(new Set());
+      setHintedItems({});
 
       if (syncTimerRef.current) { window.clearTimeout(syncTimerRef.current); syncTimerRef.current = null; }
-      void postState(channelId, [], []);
+      void postState(channelId, [], [], {});
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to upload spoiler log');
       console.error('Upload error:', err);
@@ -168,9 +152,10 @@ export function useUpload(channelId: string | undefined): UseUploadReturn {
       setSpoilerData(null);
       setRevealedHints(new Set());
       setCompletedHints(new Set());
+      setHintedItems({});
       if (fileInputRef.current) fileInputRef.current.value = '';
       if (syncTimerRef.current) { window.clearTimeout(syncTimerRef.current); syncTimerRef.current = null; }
-      void postState(channelId!, [], []);
+      void postState(channelId!, [], [], {});
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to clear spoiler log');
       console.error('Clear error:', err);
@@ -204,6 +189,11 @@ export function useUpload(channelId: string | undefined): UseUploadReturn {
     scheduleSync();
   };
 
+  const handleHintedItemChange = (location: string, item: string) => {
+    setHintedItems(prev => ({ ...prev, [location]: item }));
+    scheduleSync();
+  };
+
   return {
     fileInputRef,
     file,
@@ -216,11 +206,13 @@ export function useUpload(channelId: string | undefined): UseUploadReturn {
     spoilerData,
     revealedHints,
     completedHints,
+    hintedItems,
     showClearModal,
     setShowClearModal,
     handleUpload,
     handleClear,
     handleToggleReveal,
     handleToggleComplete,
+    handleHintedItemChange,
   };
 }

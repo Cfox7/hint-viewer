@@ -1,5 +1,5 @@
 import React from "react";
-import colorMap from "./colorRules";
+import colorMap from "@hint-viewer/shared/colorRules";
 
 const keywords = Object.keys(colorMap).sort((a, b) => b.length - a.length);
 

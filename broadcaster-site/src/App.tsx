@@ -2,18 +2,21 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import { useState, useEffect } from 'react';
 import TwitchLogin from './components/TwitchLogin';
 import Upload from './components/Upload';
+import Create from './components/Create';
 import Header from './components/Header';
 import { LevelNav } from './components/LevelNav';
 import { NavProvider, useNav } from './contexts/NavContext';
 import { GameProvider, useGame } from './contexts/GameContext';
-import './App.css';
+import '../public/themes/dk64.css';
 
 function AppBody() {
   const { slides, activeIndex, setActiveIndex } = useNav();
   const { game } = useGame();
   const HomeComponent = game.homeComponent;
   const location = useLocation();
-  const showSidebar = location.pathname === '/upload' && slides.length > 0;
+  const showSidebar =
+    (location.pathname === '/upload' || location.pathname === '/create') &&
+    slides.length > 0;
 
   const [mode, setMode] = useState<'sidebar' | 'offcanvas'>(
     window.innerWidth >= 1400 ? 'sidebar' : 'offcanvas'
@@ -50,6 +53,10 @@ function AppBody() {
                     <Route
                       path="/upload"
                       element={user ? <Upload channelId={user.id} /> : <Navigate to="/" replace />}
+                    />
+                    <Route
+                      path="/create"
+                      element={user ? <Create channelId={user.id} /> : <Navigate to="/" replace />}
                     />
                   </Routes>
                 </div>

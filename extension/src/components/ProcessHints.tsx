@@ -14,6 +14,7 @@ function ProcessHints({ channelId }: ProcessHintsProps) {
   const { game, setGame, games }= useGame();
   const [revealedHints, setRevealedHints] = useState<Set<string>>(new Set());
   const [completedHints, setCompletedHints] = useState<Set<string>>(new Set());
+  const [hintedItems, setHintedItems] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastFetch, setLastFetch] = useState<string | null>(null);
@@ -45,11 +46,13 @@ function ProcessHints({ channelId }: ProcessHintsProps) {
       const uploadedAt = (obj['uploadedAt'] ?? null) as string | null;
       const revealed = Array.isArray(obj['revealed']) ? (obj['revealed'] as string[]) : [];
       const completed = Array.isArray(obj['completed']) ? (obj['completed'] as string[]) : [];
+      const hinted = typeof obj['hinted'] === 'object' && obj['hinted'] !== null ? (obj['hinted'] as Record<string, string>) : {};
 
       setSpoilerData(spoiler);
       setLastFetch(uploadedAt);
       setRevealedHints(new Set(revealed));
       setCompletedHints(new Set(completed));
+      setHintedItems(hinted);
       setLoading(false);
       setError(null);
     } catch (err) {
@@ -115,11 +118,12 @@ function ProcessHints({ channelId }: ProcessHintsProps) {
           className="carousel-container"
           revealedHints={revealedHints}
           completedHints={completedHints}
+          hintedItems={hintedItems}
         />
       )}
       {lastPolled && (
         <div className="refresh-bar">
-          {lastFetch && <span>Uploaded: {new Date(lastFetch).toLocaleTimeString()}</span>}
+          {lastFetch && <span className="refresh-uploaded">Uploaded: {new Date(lastFetch).toLocaleTimeString()}</span>}
           <span>
             Last Updated: {lastPolled.toLocaleTimeString()}{' '}
             <button

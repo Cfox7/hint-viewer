@@ -15,7 +15,7 @@
 }
 
 body {
-  background-color: #181c18;
+  background-color: #181c18 !important;
   color: #ffe066;
   font-family: 'Jumpman';
 }
@@ -39,7 +39,7 @@ a {
   color: #ffd700;
 }
 a:hover {
-  color: #fffde4;
+  color: #222a22;
 }
 
 /* Carousel styles */
@@ -85,7 +85,6 @@ a:hover {
 }
 
 .carousel-container .hint-text.completed {
-  text-decoration: line-through;
   opacity: 0.5;
 }
 
@@ -243,13 +242,15 @@ a:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  color: #ffe066;
+  font-family: Jumpman, 'Tekton Bold', Arial, sans-serif;
 }
 
 .refresh-btn {
   background: none;
   border: none;
   cursor: pointer;
-  padding: 0 0 0 4px;
+  padding: 0 10px 0 4px;
   font-size: 30px;
   color: #ffe066;
   line-height: 1;
@@ -260,11 +261,15 @@ a:hover {
   opacity: 0.3;
 }
 
+.refresh-uploaded {
+  padding-left: 10px;
+}
+
 .no-spoiler-container {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 320px; /* adjust as needed */
+  height: 320px;
   padding: 24px;
   box-sizing: border-box;
 }
@@ -284,5 +289,51 @@ a:hover {
   margin: 0 0 16px 1.25rem;
   padding-left: 0;
   line-height: 1.45;
-  color: #fffde4;
+  color: #222a22;
+}
+
+/* Hinted item notification */
+.hint-item.hint-item-hinted {
+  position: relative;
+  cursor: pointer;
+}
+
+.hint-notification-icon {
+  position: absolute;
+  top: 0;
+  right: -20px;
+  color: #ffe066;
+  font-size: 20px;
+}
+
+/* Hinted item popover dark theme */
+.hint-popover {
+  background-color: #222a22;
+  border: 1px solid #ffe066 !important;
+  font-family: 'Tekton Bold', Arial, sans-serif;
+  min-width: 150px;
+}
+
+.hint-popover .popover-arrow::before {
+  border-top-color: #ffe066;
+}
+
+.hint-popover .popover-arrow::after {
+  border-top-color: #111;
+}
+
+.hint-popover .popover-header {
+  background-color: #181c18;
+  color: #ffe066;
+  border-bottom: 1px solid #ffe066 !important;
+  font-family: 'Tekton Bold', Arial, sans-serif;
+  font-weight: bold;
+}
+
+.hint-popover .popover-body {
+  background-color: #3f423f !important;
+  color: #ffe066;
+  font-family: 'Tekton Bold', Arial, sans-serif;
+  font-size: 18px;
+  text-align: center;
 }

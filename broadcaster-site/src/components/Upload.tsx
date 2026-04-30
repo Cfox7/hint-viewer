@@ -1,4 +1,7 @@
-import { useEffect } from 'react';
+import Toast from 'react-bootstrap/Toast';
+import ToastContainer from 'react-bootstrap/ToastContainer';
+import { useEffect, useState } from 'react';
+import { FaUpload } from 'react-icons/fa';
 import { HintCarousel } from './HintCarousel';
 import { useUpload } from '../hooks/useUpload';
 import { UploadModals } from './UploadModals';
@@ -20,13 +23,16 @@ function Upload({ channelId }: UploadProps) {
     spoilerData,
     revealedHints,
     completedHints,
+    hintedItems,
     handleUpload,
     handleToggleReveal,
     handleToggleComplete,
+    handleHintedItemChange,
   } = useUpload(channelId);
 
   const { slides, activeIndex, setActiveIndex, setSlides } = useNav();
   const { game } = useGame();
+  const [showSuccess, setShowSuccess] = useState(false);
 
   // Sync slides into nav context whenever spoilerData changes
   useEffect(() => {
@@ -35,9 +41,82 @@ function Upload({ channelId }: UploadProps) {
     setActiveIndex(0);
   }, [spoilerData]);
 
+  useEffect(() => {
+    if (success && file) setShowSuccess(true);
+    else setShowSuccess(false);
+  }, [success, file]);
+
   return (
     <>
       <UploadModals uploading={uploading} />
+
+      {/* Header */}
+      <div className="upload-header d-flex align-items-center gap-3 mb-3 p-3" style={{ background: '#cce4fa', borderRadius: 8 }}>
+        <FaUpload size={36} style={{ color: '#007bff' }} />
+        <div>
+          <h2 className="mb-1" style={{ color: '#007bff', fontWeight: 700 }}>Upload Spoiler Log</h2>
+          <div style={{ fontSize: '1rem', color: '#222' }}>
+            Upload your DK64 spoiler log to instantly populate all hints. You can then reveal/complete them as you go for you viewers. No manual entry required!
+          </div>
+        </div>
+      </div>
+
+      {/* Upload */}
+      <div className="form-group mb-4">
+        <div className="file-input-row">
+          <div className="file-input-inner">
+            <input
+              id="fileUpload"
+              ref={fileInputRef}
+              type="file"
+              accept=".json"
+              onChange={handleUpload}
+              disabled={uploading}
+              style={{ display: 'none' }}
+            />
+
+            <button
+              type="button"
+              className="twitch-btn btn btn-primary d-flex align-items-center gap-2"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploading}
+              style={{ fontWeight: 600 }}
+            >
+              <FaUpload /> Choose file
+            </button>
+
+            <span className="file-chosen" style={{ color: '#007bff', fontWeight: 500 }}>
+              {file ? file.name : success ? 'Spoiler loaded' : 'No file chosen'}
+            </span>
+          </div>
+        </div>
+
+        <ToastContainer position="bottom-end" className="p-3" style={{ zIndex: 9999, position: 'fixed', bottom: 0, right: 0 }}>
+          <Toast
+            show={success && showSuccess}
+            onClose={() => setShowSuccess(false)}
+            style={{ backgroundColor: '#1b6b2d' }}
+            autohide
+            delay={7000}
+            animation
+          >
+            <Toast.Header closeButton>
+              <strong className="me-auto">Successfully uploaded!</strong>
+            </Toast.Header>
+            <Toast.Body className="text-white">
+              Viewers can now see hints.
+            </Toast.Body>
+          </Toast>
+        </ToastContainer>
+
+        {error && <div className="message error">{error}</div>}
+
+        {success && uploadedAt && (
+          <div className="timestamp mt-2" style={{ color: '#007bff', fontWeight: 500 }}>
+            Uploaded at: {new Date(uploadedAt).toLocaleString()}
+          </div>
+        )}
+      </div>
 
       {initialLoading ? (
         <div className="d-flex justify-content-center py-5">
@@ -58,50 +137,12 @@ function Upload({ channelId }: UploadProps) {
               onToggleComplete={handleToggleComplete}
               activeIndex={activeIndex}
               onSelect={setActiveIndex}
+              hintedItems={hintedItems}
+              onHintedItemChange={handleHintedItemChange}
             />
           </div>
         </div>
       )}
-
-      <div className="form-group">
-        <label htmlFor="fileUpload">Spoiler Log:</label>
-        <div className="file-input-row">
-          <div className="file-input-inner">
-            <input
-              id="fileUpload"
-              ref={fileInputRef}
-              type="file"
-              accept=".json"
-              onChange={handleUpload}
-              disabled={uploading}
-              style={{ display: 'none' }}
-            />
-
-            <button
-              type="button"
-              className="twitch-btn"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={uploading}
-            >
-              Choose file
-            </button>
-
-            <span className="file-chosen">
-              {file ? file.name : 'No file chosen'}
-            </span>
-          </div>
-
-        </div>
-      </div>
-
-      {success && (
-        <div className="message success">
-          Successfully uploaded! Viewers can now see hints.
-          {uploadedAt && <div className="timestamp">Uploaded at: {new Date(uploadedAt).toLocaleString()}</div>}
-        </div>
-      )}
-
-      {error && <div className="message error">{error}</div>}
     </>
   );
 }

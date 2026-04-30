@@ -1,45 +1,9 @@
-import { ReactNode } from 'react';
-import { Carousel, Button } from 'react-bootstrap';
-import { colorizeHints } from '../utils/colorizeHints';
+import { Carousel } from 'react-bootstrap';
+import { colorizeHints } from '@hint-viewer/shared/colorizeHints';
 import RevealButtons from './RevealButtons';
 import { buildSlides } from '@hint-viewer/shared/buildSlides';
 import { useGame } from '../contexts/GameContext';
-
-interface HintItemProps {
-  location: string;
-  locationLabel: ReactNode;
-  cleanedHint: string;
-  isRevealed: boolean;
-  isCompleted: boolean;
-  hideReveal: boolean;
-  onCompleteWithLinks: (location: string) => void;
-  onRevealWithLinks: (location: string) => void;
-}
-
-function HintItem({ location, locationLabel, cleanedHint, isRevealed, isCompleted, hideReveal, onCompleteWithLinks, onRevealWithLinks }: HintItemProps) {
-  return (
-    <div className="hint-item">
-      <div className="d-flex justify-content-between align-items-center mb-1">
-        <span className="hint-location">{locationLabel}:</span>
-        <div className="d-flex gap-1">
-          {isRevealed && !hideReveal && (
-            <Button size="sm" variant={isCompleted ? "success" : "outline-success"} className="hint-toggle-btn" aria-label={isCompleted ? "Mark uncompleted" : "Mark completed"} onClick={() => onCompleteWithLinks(location)}>
-              <i className={`bi ${isCompleted ? "bi-check-circle-fill" : "bi-check-circle"}`}></i>
-            </Button>
-          )}
-          {!hideReveal && (
-            <Button size="sm" variant={isRevealed ? "outline-secondary" : "outline-primary"} className="hint-toggle-btn" aria-label={isRevealed ? "Hide hint" : "Reveal hint"} onClick={() => onRevealWithLinks(location)}>
-              <i className={`bi ${isRevealed ? "bi-eye-slash" : "bi-eye"}`}></i>
-            </Button>
-          )}
-        </div>
-      </div>
-      <p className={`hint-text${isRevealed && isCompleted ? ' completed' : ''}`}>
-        {isRevealed ? colorizeHints(cleanedHint) : "???"}
-      </p>
-    </div>
-  );
-}
+import HintItem from './HintItem';
 
 export interface HintCarouselProps {
   hints: Record<string, string>;
@@ -51,6 +15,11 @@ export interface HintCarouselProps {
   onToggleComplete: (location: string) => void;
   activeIndex: number;
   onSelect: (idx: number) => void;
+  editable?: boolean;
+  onEditHint?: (location: string, value: string) => void;
+  showRevealButtons?: boolean;
+  hintedItems?: Record<string, string>;
+  onHintedItemChange?: (location: string, item: string) => void;
 }
 
 const DIRECT_PER_PAGE = 5;
@@ -66,6 +35,11 @@ export function HintCarousel({
   onToggleComplete,
   activeIndex,
   onSelect,
+  editable = false,
+  onEditHint,
+  showRevealButtons = true,
+  hintedItems = {},
+  onHintedItemChange,
 }: HintCarouselProps) {
   const { game } = useGame();
 
@@ -82,39 +56,37 @@ export function HintCarousel({
   const revealLinkedHints = (location: string) => {
     const isCurrentlyRevealed = revealedHints.has(location);
     const cleaned = (hints[location] || '').split('|')[0].trim();
-    const linked = cleanedMap.get(cleaned) || [];
+    const linked = cleaned && cleaned !== '' ? cleanedMap.get(cleaned) || [] : [];
 
     // toggle the clicked location
     onToggleReveal(location);
 
-    // for each linked location (excluding the clicked one) toggle if it needs the same action
-    linked.forEach((loc) => {
-      if (loc === location) return;
-      const locRevealed = revealedHints.has(loc);
-      // if we're revealing (was not revealed) reveal any linked unrevealed ones
-      if (!isCurrentlyRevealed && !locRevealed) onToggleReveal(loc);
-      // if we're hiding (was revealed) hide any linked revealed ones
-      if (isCurrentlyRevealed && locRevealed) onToggleReveal(loc);
-    });
+    // Only toggle linked if cleaned is non-empty
+    if (cleaned && cleaned !== '') {
+      linked.forEach((loc) => {
+        if (loc === location) return;
+        const locRevealed = revealedHints.has(loc);
+        if (!isCurrentlyRevealed && !locRevealed) onToggleReveal(loc);
+        if (isCurrentlyRevealed && locRevealed) onToggleReveal(loc);
+      });
+    }
   };
 
   const completeLinkedHints = (location: string) => {
     const isCurrentlyCompleted = completedHints.has(location);
     const cleaned = (hints[location] || '').split('|')[0].trim();
-    const linked = cleanedMap.get(cleaned) || [];
+    const linked = cleaned && cleaned !== '' ? cleanedMap.get(cleaned) || [] : [];
 
-    // toggle the clicked location
     onToggleComplete(location);
 
-    // for each linked location (excluding the clicked one) toggle if it needs the same action
-    linked.forEach((loc) => {
-      if (loc === location) return;
-      const locCompleted = completedHints.has(loc);
-      // if we're marking complete, mark any linked uncompleted ones
-      if (!isCurrentlyCompleted && !locCompleted) onToggleComplete(loc);
-      // if we're marking uncomplete, uncomplete any linked completed ones
-      if (isCurrentlyCompleted && locCompleted) onToggleComplete(loc);
-    });
+    if (cleaned && cleaned !== '') {
+      linked.forEach((loc) => {
+        if (loc === location) return;
+        const locCompleted = completedHints.has(loc);
+        if (!isCurrentlyCompleted && !locCompleted) onToggleComplete(loc);
+        if (isCurrentlyCompleted && locCompleted) onToggleComplete(loc);
+      });
+    }
   };
 
   // Bulk toggle that expands linked hints based on current revealedHints, then calls onToggleReveal
@@ -164,55 +136,69 @@ export function HintCarousel({
             nextIcon={<img src="/assets/C_Right.svg" alt="Next" style={{ width: 64, height: 64 }} />}
             prevIcon={<img src="/assets/C_Left.svg" alt="Prev" style={{ width: 64, height: 64 }} />}
           >
-            {slides.map((slide, sIdx) => (
-              <Carousel.Item key={`${slide.level}-p${slide.pageIndex}-${sIdx}`}>
-                <img src={game.backgroundImage} alt={`${slide.level} background`} style={{ opacity: 0 }} />
-                <Carousel.Caption>
-                  <div className="hints-list">
-                    {slide.locations.map((location) => {
-                      const isProgressive = slide.level.startsWith('Batch');
-                      let locationLabel = location;
-                      if (isProgressive) {
-                        locationLabel = `Hint ${location.slice(slide.level.length).trim()}`;
-                      } else {
-                        // Always grab the last word after the space
-                        const parts = location.split(' ');
-                        locationLabel = parts.length > 1 ? parts[parts.length - 1] : location;
-                      }
+            {slides.map((slide, sIdx) => {
+              const isFoolishOrWoth = ['foolish', 'woth'].includes(slide.level.toLowerCase());
+              return (
+                <Carousel.Item key={`${slide.level}-p${slide.pageIndex}-${sIdx}`}>
+                  <img src={game.backgroundImage} alt={`${slide.level} background`} style={{ opacity: 0 }} />
+                  <Carousel.Caption>
+                    <div className="hints-list">
+                      {slide.locations.map((location) => {
+                        const isProgressive = slide.level.startsWith('Batch');
+                        let locationLabel = location;
+                        if (isProgressive) {
+                          locationLabel = `Hint ${location.slice(slide.level.length).trim()}`;
+                        } else {
+                          const parts = location.split(' ');
+                          locationLabel = parts.length > 1 ? parts[parts.length - 1] : location;
+                        }
 
-                      return (
-                        <HintItem
-                          key={location}
-                          location={location}
-                          locationLabel={colorizeHints(locationLabel)}
-                          cleanedHint={(hints[location] || '').split('|')[0].trim()}
-                          isRevealed={revealedHints.has(location)}
-                          isCompleted={completedHints.has(location)}
-                          hideReveal={['foolish', 'woth'].includes(slide.level.toLowerCase())}
-                          onCompleteWithLinks={completeLinkedHints}
-                          onRevealWithLinks={revealLinkedHints}
-                        />
-                      );
-                    })}
-                  </div>
-                </Carousel.Caption>
-              </Carousel.Item>
-            ))}
+                        const cleanedHint = (hints[location] || '').split('|')[0].trim();
+                        const linkedGroup = cleanedMap.get(cleanedHint) || [location];
+                        const primaryLocation = linkedGroup[0];
+                        const isLinked = primaryLocation !== location;
+
+                        return (
+                          <HintItem
+                            key={location}
+                            location={location}
+                            locationLabel={colorizeHints(locationLabel)}
+                            cleanedHint={cleanedHint}
+                            isRevealed={revealedHints.has(location)}
+                            isCompleted={completedHints.has(location)}
+                            hideReveal={['foolish', 'woth'].includes(slide.level.toLowerCase())}
+                            onCompleteWithLinks={completeLinkedHints}
+                            onRevealWithLinks={revealLinkedHints}
+                            editable={isFoolishOrWoth ? false : editable}
+                            onEditHint={onEditHint}
+                            hintedItemOptions={game.hintedItemOptions}
+                            hintedItem={hintedItems[primaryLocation] ?? ''}
+                            hintedItemEditable={!isLinked}
+                            onHintedItemChange={onHintedItemChange}
+                          />
+                        );
+                      })}
+                    </div>
+                  </Carousel.Caption>
+                </Carousel.Item>
+              );
+            })}
           </Carousel>
         ) : (
           <div className="no-hints">No hints available</div>
         )}
       </div>
-
-      <RevealButtons
-        levels={levels}
-        levelDisplayNames={game.levelDisplayNames}
-        groupedHints={groupedHints}
-        revealedHints={revealedHints}
-        onToggleReveal={revealLinkedHints}
-        onBulkToggle={handleBulkToggle}
-        selectedLevelIndex={currentLevelSelectedIndex}
-      />
+      {showRevealButtons !== false && (
+        <RevealButtons
+          levels={levels}
+          levelDisplayNames={game.levelDisplayNames}
+          groupedHints={groupedHints}
+          revealedHints={revealedHints}
+          onToggleReveal={revealLinkedHints}
+          onBulkToggle={handleBulkToggle}
+          selectedLevelIndex={currentLevelSelectedIndex}
+        />
+      )}
     </>
   );
 }

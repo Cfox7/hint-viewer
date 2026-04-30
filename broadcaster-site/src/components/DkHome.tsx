@@ -1,42 +1,85 @@
 import { Link } from 'react-router-dom';
+import { FaEye, FaCheck, FaUpload, FaTasks, FaEdit } from 'react-icons/fa';
+import { MdNotificationImportant } from 'react-icons/md';
+
+const KONG_COLORS: { name: string; color: string }[] = [
+  { name: 'Donkey Kong', color: '#f5c518' },
+  { name: 'Diddy Kong',  color: '#e63946' },
+  { name: 'Lanky Kong',  color: '#4488cc' },
+  { name: 'Tiny Kong',   color: '#9b59b6' },
+  { name: 'Chunky Kong', color: '#2ecc71' },
+];
+
+function IconPill({ children }: { children: React.ReactNode }) {
+  return <span className="icon-pill">{children}</span>;
+}
+
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <section className="home-section">
+      <h3 className="home-section-title">{title}</h3>
+      {children}
+    </section>
+  );
+}
 
 function DkHome() {
   return (
     <>
-      <h2 className="gradient-jumpman">Welcome to the DK64 Randomizer Hint Viewer!</h2>
-      <p>
-        This site allows <a href="https://dk64randomizer.com" target="_blank" rel="noreferrer">DK64 Randomizer</a> broadcasters to securely upload and share spoiler logs for their seeds.
-        Before generating your seed, make sure to select "Generate Spoiler Log" as you'll need it to use this site.
-      </p>
-      <p>
-        Log in with your Twitch account to access the hint viewer and upload your spoiler log. After logging in, you can view and manage your hints on the <Link to="/upload">Upload page</Link>.
-      </p>
-      <p>We currently support:</p>
-      <ul>
-        <li>Standard Non-Progressive hints, which includes rando Wrinkly Kong locations.</li>
-        <li>Progressive hints</li>
-      </ul>
-      <h2 className="gradient-jumpman">Using the Hint Viewer</h2>
-      <p>
-        You reveal individual hints by clicking on the eye icon <i className="bi-eye"></i> to the right of the hint title.
-      </p>
-      <p>
-        For Non-Progressive hints: When selecting which hints to reveal, you'll look at what level you are currently in and the color of the door frame. Which will match
-        the color of the Kong in the base game:</p>
-      <ul>
-        <li>Donkey Kong: Yellow</li>
-        <li>Diddy Kong: Red</li>
-        <li>Lanky Kong: Blue</li>
-        <li>Tiny Kong: Purple</li>
-        <li>Chunky Kong: Green</li>
-      </ul>
-      <p>So for example: A Red Door framed Wrinkly Kong in Jungle Japes will be under Jungle Japes, Japes Diddy.</p>
-      <p>For Progressive hints: The hints will automatically be separated into Batches. To see what batch you have unlocked, refer to the in-game hint tracker in the pause menu.
-        To unlock a full batch at a time you can select the "Reveal Level(Batch #)" below the hint viewer.
-      </p>
-      <p>
-        This is still in early development, so expect some bugs and missing features. Feedback is welcome!
-      </p>
+      <h2 className="gradient-jumpman" style={{ marginBottom: '1.5rem' }}>Welcome to the DK64 Randomizer Hint Viewer!</h2>
+
+      <Section title="Getting Started">
+        <p>
+          This site lets <a href="https://dk64randomizer.com" target="_blank" rel="noreferrer">DK64 Randomizer</a> broadcasters securely share hints with their viewers. There are two ways to get started:
+        </p>
+        <ul>
+          <li><strong><FaUpload style={{ verticalAlign: 'middle' }} /> <Link to="/upload">Upload</Link></strong> — Upload a spoiler log generated with "Generate Spoiler Log" enabled. Hints are populated automatically.</li>
+          <li><strong><FaTasks style={{ verticalAlign: 'middle' }} /> <Link to="/create">Create</Link></strong> — Manually enter and edit hints without a spoiler log.</li>
+        </ul>
+        <p>We currently support:</p>
+        <ul>
+          <li>Standard Non-Progressive hints (Wrinkly Kong locations)</li>
+          <li>Direct Instrument and Direct Shop hints</li>
+          <li>Progressive hints when spoiler log is uploaded (grouped into Batches automatically)</li>
+          <li>Foolish / WOTH automatic grouping when those keywords appear in a hint</li>
+        </ul>
+      </Section>
+
+      <Section title="Revealing and Completing Hints">
+        <ol>
+          <li>Click <IconPill><FaEye /></IconPill> next to a hint to reveal it to your viewers.</li>
+          <li>Once revealed, click <IconPill><FaCheck /></IconPill> to mark it as completed.</li>
+          <li>After completing, click <IconPill><FaEdit /></IconPill> to select the item found at that location, it will appear with a <IconPill><MdNotificationImportant /></IconPill> indicator in the extension.</li>
+        </ol>
+      </Section>
+
+      <Section title="Reading Non-Progressive Hints">
+        <p>
+          Each hint belongs to a Kong based on the color of the Wrinkly Kong door frame in that level. The colors match the Kong's theme color in the base game:
+        </p>
+        <ul>
+          {KONG_COLORS.map(({ name, color }) => (
+            <li key={name} className="kong-list-item">
+              <span className="kong-color-dot" style={{ background: color }} />
+              {name}
+            </li>
+          ))}
+        </ul>
+        <p>
+          For example: a red door frame in Jungle Japes means the hint is listed under <strong>Japes Japes, Diddy</strong>.
+        </p>
+      </Section>
+
+      <Section title="Progressive Hints">
+        <p>
+          Hints are grouped into Batches automatically. Check the in-game hint tracker in the pause menu to see which batch you've unlocked.
+          Use the <strong>Reveal Level (Batch #)</strong> button below the hint viewer to unlock a full batch at once.
+        </p>
+      </Section>
+
+      <div className="dev-note">
+        This project is still in active development — expect occasional bugs and new features. Feedback is welcome!
+      </div>
     </>
   );
 }
