@@ -71,6 +71,23 @@ function DkHome() {
         </p>
       </Section>
 
+      <Section title="Creating Hints">
+        <p>
+          When manually creating hints on the <strong><FaTasks style={{ verticalAlign: 'middle' }} /> <Link to="/create">Create</Link></strong> page, certain keywords will automatically group hints into their own sections:
+        </p>
+        <ul>
+          <li>
+            Hints containing <strong style={{ color: '#FF0000' }}>foolish</strong> will be grouped into a <strong>Foolish Hints</strong> section.
+          </li>
+          <li>
+            Hints containing <strong style={{ color: '#FFA010' }}>Way of the Hoard</strong> or <strong style={{ color: '#FFA010' }}>woth</strong> will be grouped into a <strong>Way Of The Hoard</strong> section.
+          </li>
+        </ul>
+        <p>
+          This grouping happens automatically whenever hints are saved. The keywords are case-insensitive and will also be color-coded when displayed to viewers.
+        </p>
+      </Section>
+
       <Section title="Progressive Hints">
         <p>
           Hints are grouped into Batches automatically. Check the in-game hint tracker in the pause menu to see which batch you've unlocked.

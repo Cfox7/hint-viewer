@@ -45,6 +45,23 @@ function OotHome() {
         </ol>
       </Section>
 
+      <Section title="Creating Hints">
+        <p>
+          When manually creating hints on the <strong><FaTasks style={{ verticalAlign: 'middle' }} /> <Link to="/create">Create</Link></strong> page, certain keywords will automatically group hints into their own sections:
+        </p>
+        <ul>
+          <li>
+            Hints containing <strong style={{ color: '#FF0000' }}>foolish</strong> or <strong><span style={{ color: '#FF0000' }}>0</span> major</strong> will be grouped into a <strong>Foolish Hints</strong> section.
+          </li>
+          <li>
+            Hints containing <strong style={{ color: '#FFA010' }}>path to</strong> or a <strong>greater than 0 major</strong> count (i.e. <strong><span style={{ color: '#FFA010' }}>1</span> major</strong>) will be grouped into a <strong>Path/Major Hints</strong> section.
+          </li>
+        </ul>
+        <p>
+          This grouping happens automatically whenever hints are saved. The keywords are case-insensitive and will also be color-coded when displayed to viewers.
+        </p>
+      </Section>
+
       <Section title="Reading Hints">
         <p>
           Hints come from Gossip Stones scattered throughout Hyrule. Each region in the carousel contains a list of gossip stone locations for that area. When you reach a stone in-game, find the matching entry and reveal it to show the hint text to your viewers.
