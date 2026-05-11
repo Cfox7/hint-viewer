@@ -4,7 +4,6 @@ import type { SpoilerLog } from '../types';
 import {
   uploadSpoiler,
   deleteSpoiler,
-  deleteHints,
   getState,
   postState,
 } from '../api/spoilerApi';
@@ -96,7 +95,7 @@ export function useUpload(channelId: string | undefined): UseUploadReturn {
     return () => { mounted = false; };
   }, [channelId]);
 
-  const deleteResources = (channel: string) => Promise.all([deleteSpoiler(channel), deleteHints(channel)]);
+  const deleteResources = (channel: string) => deleteSpoiler(channel, game.id);
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -142,7 +141,7 @@ export function useUpload(channelId: string | undefined): UseUploadReturn {
     setError(null);
 
     try {
-      const [spoilerResp] = await deleteResources(channelId!);
+      const spoilerResp = await deleteResources(channelId!);
       if (!spoilerResp.ok) throw new Error('Failed to clear spoiler log');
 
       setSuccess(false);

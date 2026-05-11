@@ -127,6 +127,43 @@ body, .app-layout {
   line-height: 1.05;
 }
 
+/* Game Switcher */
+.game-switcher {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.game-switcher-label {
+  color: #888;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.game-switcher-select {
+  background: #1a1a1a;
+  color: #ffe066;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-family: 'Tekton Bold', Arial, sans-serif;
+  font-size: clamp(0.85rem, 1.2vw, 1rem);
+  cursor: pointer;
+}
+
+.game-switcher-select:hover {
+  border-color: #ffe066;
+}
+
+.game-switcher-select:focus {
+  outline: none;
+  border-color: #ffd700;
+}
+
 .user-info-header {
   display: flex;
   align-items: center;

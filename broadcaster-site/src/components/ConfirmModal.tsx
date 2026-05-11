@@ -1,13 +1,19 @@
 import { Modal, Spinner, Button } from 'react-bootstrap';
 
-export function ClearModal({
+export function ConfirmModal({
   show,
   loading,
+  message,
+  confirmLabel = 'Confirm',
+  loadingText = 'Processing...',
   onCancel,
   onConfirm,
 }: {
   show: boolean;
   loading: boolean;
+  message: string;
+  confirmLabel?: string;
+  loadingText?: string;
   onCancel: () => void;
   onConfirm: () => void;
 }) {
@@ -17,19 +23,19 @@ export function ClearModal({
         {loading ? (
           <>
             <Spinner animation="border" role="status" className="mb-3 upload-modal-spinner">
-              <span className="visually-hidden">Clearing...</span>
+              <span className="visually-hidden">{loadingText}</span>
             </Spinner>
-            <div>Clearing…</div>
+            <div>{loadingText}</div>
           </>
         ) : (
           <>
-            <div className="mb-3">Are you sure you want make a new template and delete any existing hints?</div>
+            <div className="mb-3">{message}</div>
             <div className="d-flex justify-content-center gap-3">
               <Button variant="secondary" onClick={onCancel} disabled={loading}>
                 Cancel
               </Button>
               <Button variant="danger" onClick={onConfirm} disabled={loading}>
-                New Template
+                {confirmLabel}
               </Button>
             </div>
           </>

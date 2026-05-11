@@ -8,7 +8,7 @@ import { buildSlides } from '@hint-viewer/shared/buildSlides';
 import { useNav } from '../contexts/NavContext';
 import { useGame } from '../contexts/GameContext';
 import { useManual } from '../hooks/useManual';
-import { ClearModal } from './ClearModal';
+import { ConfirmModal } from './ConfirmModal';
 
 interface CreateProps { channelId: string; }
 
@@ -164,9 +164,12 @@ function Create({ channelId }: CreateProps) {
         </div>
       </div>
 
-      <ClearModal
+      <ConfirmModal
         show={showClearModal}
         loading={clearing}
+        message="Are you sure you want make a new template and delete any existing hints?"
+        confirmLabel="New Template"
+        loadingText="Clearing..."
         onCancel={() => setShowClearModal(false)}
         onConfirm={handleClear}
       />

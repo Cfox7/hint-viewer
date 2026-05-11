@@ -2,6 +2,7 @@ import React from 'react';
 import { FaUpload, FaTasks, FaSignOutAlt } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import { useGame } from '../contexts/GameContext';
+import GameSwitcher from './GameSwitcher';
 
 interface HeaderProps {
   user?: {
@@ -28,6 +29,7 @@ const Header: React.FC<HeaderProps> = ({ user, logout, loginButton }) => {
             </div>
           </div>
         </Link>
+        <GameSwitcher channelId={user?.id} />
 
         {user && (
           <div className="user-info-header">

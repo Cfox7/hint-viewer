@@ -15,16 +15,11 @@ export const uploadSpoiler = async (channelId: string, game: string, json: Recor
   return res.json();
 };
 
-export const deleteSpoiler = (channelId: string) =>
+export const deleteSpoiler = (channelId: string, game: string) =>
   fetch(`${API_URL}/api/spoiler/${channelId}`, {
     method: 'DELETE',
-    headers: authHeaders(),
-  });
-
-export const deleteHints = (channelId: string) =>
-  fetch(`${API_URL}/api/hints/${channelId}`, {
-    method: 'DELETE',
-    headers: authHeaders(),
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
+    body: JSON.stringify({ game }),
   });
 
 export const getState = async (channelId: string) => {
@@ -33,7 +28,7 @@ export const getState = async (channelId: string) => {
     headers: { 'Content-Type': 'application/json' },
   });
   if (!res.ok) return null;
-  return res.json() as Promise<{ spoilerData: unknown; uploadedAt: string | null; revealed: string[]; completed: string[]; hinted: Record<string, string> }>;
+  return res.json() as Promise<{ game: string | null; spoilerData: unknown; uploadedAt: string | null; revealed: string[]; completed: string[]; hinted: Record<string, string> }>;
 };
 
 export const postState = (channelId: string, revealedHints: string[], completedHints: string[], hintedItems: Record<string, string>) =>

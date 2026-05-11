@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { postState, getState, uploadSpoiler, deleteSpoiler, deleteHints } from '../api/spoilerApi';
+import { postState, getState, uploadSpoiler, deleteSpoiler } from '../api/spoilerApi';
 import { useGame } from '../contexts/GameContext';
 
 interface UseManualReturn {
@@ -127,8 +127,7 @@ export function useManual(channelId: string | undefined): UseManualReturn {
       return;
     }
     try {
-      await deleteSpoiler(channelId);
-      await deleteHints(channelId);
+      await deleteSpoiler(channelId, game.id);
       setHints(emptyTemplate);
       setRevealedHints(new Set());
       setCompletedHints(new Set());
