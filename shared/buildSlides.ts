@@ -8,6 +8,7 @@ export function buildSlides(
   hints: Record<string, string>,
   levelOrder: string[],
   sortHints: (grouped: Record<string, string[]>) => Record<string, string[]>,
+  getLevelCategory: (level: string) => string,
   DIRECT_HINTS_PER_PAGE: number,
   FOOLISH_HINTS_PER_PAGE: number,
   WOTH_HINTS_PER_PAGE: number
@@ -33,10 +34,11 @@ export function buildSlides(
   const slides: Slide[] = [];
   levels.forEach((level) => {
     const locs = (sortedHints[level] || []);
+    const category = getLevelCategory(level);
     let perPage = locs.length || 1;
-    if (level.startsWith('Direct')) perPage = DIRECT_HINTS_PER_PAGE;
-    else if (level === 'Foolish') perPage = FOOLISH_HINTS_PER_PAGE;
-    else if (level.toLowerCase() === 'woth' || level === 'WOTH') perPage = WOTH_HINTS_PER_PAGE;
+    if (category === 'direct') perPage = DIRECT_HINTS_PER_PAGE;
+    else if (category === 'foolish') perPage = FOOLISH_HINTS_PER_PAGE;
+    else if (category === 'woth') perPage = WOTH_HINTS_PER_PAGE;
     for (let i = 0; i < locs.length; i += perPage) {
       slides.push({
         level,

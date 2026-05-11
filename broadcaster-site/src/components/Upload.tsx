@@ -36,7 +36,7 @@ function Upload({ channelId }: UploadProps) {
 
   // Sync slides into nav context whenever spoilerData changes
   useEffect(() => {
-    const { slides: newSlides } = spoilerData ? buildSlides(spoilerData.hints, game.levelOrder, game.sortHints, 5, 5, 5) : { slides: [] };
+    const { slides: newSlides } = spoilerData ? buildSlides(spoilerData.hints, game.levelOrder, game.sortHints, game.getLevelCategory, 5, 5, 5) : { slides: [] };
     setSlides(newSlides);
     setActiveIndex(0);
   }, [spoilerData]);

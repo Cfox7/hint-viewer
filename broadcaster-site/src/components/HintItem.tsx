@@ -2,13 +2,13 @@ import { ReactNode, useState, useEffect } from 'react';
 import { Button } from 'react-bootstrap';
 import Select from 'react-select';
 import type { SingleValue } from 'react-select';
-import { colorizeHints } from '@hint-viewer/shared/colorizeHints';
 import { useSelectTheme } from '../hooks/useSelectTheme';
 
 interface HintItemProps {
   location: string;
   locationLabel: ReactNode;
   cleanedHint: string;
+  colorizedHint: ReactNode;
   isRevealed: boolean;
   isCompleted: boolean;
   hideReveal: boolean;
@@ -26,6 +26,7 @@ export default function HintItem({
   location,
   locationLabel,
   cleanedHint,
+  colorizedHint,
   isRevealed,
   isCompleted,
   hideReveal,
@@ -90,7 +91,7 @@ export default function HintItem({
         />
       ) : (
         <p className={`hint-text${isRevealed && isCompleted ? ' completed' : ''}`}>
-          {isRevealed ? colorizeHints(cleanedHint) : "???"}
+          {isRevealed ? colorizedHint : "???"}
         </p>
       )}
       {isCompleted && !hintedItemEditable && hintedItem && (

@@ -22,7 +22,7 @@ export function LevelNav({ slides, activeIndex, onSelect, levelDisplayNames, mod
   const [show, setShow] = useState(false);
   const { game } = useGame();
   const isProgressive = slides.some((s) => s.level.startsWith('Batch'));
-  const sectionLabels = { ...game.sectionLabels, regions: isProgressive ? 'Batches' : 'Levels' };
+  const sectionLabels = { ...game.sectionLabels, regions: isProgressive ? 'Batches' : game.sectionLabels.regions };
   const slideCountByLevel: Record<string, number> = {};
   
   slides.forEach((s) => {
