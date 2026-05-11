@@ -19,6 +19,7 @@ function Upload({ channelId }: UploadProps) {
     initialLoading,
     success,
     error,
+    clearError,
     uploadedAt,
     spoilerData,
     revealedHints,
@@ -107,9 +108,22 @@ function Upload({ channelId }: UploadProps) {
               Viewers can now see hints.
             </Toast.Body>
           </Toast>
+          <Toast
+            show={!!error}
+            onClose={clearError}
+            style={{ backgroundColor: '#8b1a1a' }}
+            autohide
+            delay={7000}
+            animation
+          >
+            <Toast.Header closeButton>
+              <strong className="me-auto">Upload Error</strong>
+            </Toast.Header>
+            <Toast.Body className="text-white">
+              {error}
+            </Toast.Body>
+          </Toast>
         </ToastContainer>
-
-        {error && <div className="message error">{error}</div>}
 
         {success && uploadedAt && (
           <div className="timestamp mt-2" style={{ color: '#007bff', fontWeight: 500 }}>

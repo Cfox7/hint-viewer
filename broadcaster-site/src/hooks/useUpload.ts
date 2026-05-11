@@ -16,6 +16,7 @@ interface UseUploadReturn {
   initialLoading: boolean;
   success: boolean;
   error: string | null;
+  clearError: () => void;
   uploadedAt: string | null;
   clearing: boolean;
   spoilerData: SpoilerLog | null;
@@ -111,10 +112,17 @@ export function useUpload(channelId: string | undefined): UseUploadReturn {
     setUploading(true);
 
     try {
-      await deleteResources(channelId);
-
       const text = await selectedFile.text();
       const parsed = JSON.parse(text) as Record<string, unknown>;
+
+      if (!game.validateSpoilerLog(parsed)) {
+        setError(`This spoiler log doesn't match ${game.displayName}. Please check that you have the correct game selected and that this is a valid spoiler log.`);
+        setUploading(false);
+        return;
+      }
+
+      await deleteResources(channelId);
+
       const normalized = game.normalize(parsed);
       const result = await uploadSpoiler(channelId, game.id, game.toServerPayload(normalized.hints));
 
@@ -200,6 +208,7 @@ export function useUpload(channelId: string | undefined): UseUploadReturn {
     initialLoading,
     success,
     error,
+    clearError: () => setError(null),
     uploadedAt,
     clearing,
     spoilerData,

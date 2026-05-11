@@ -414,4 +414,8 @@ export const dk64Config: GameConfig = {
     if ('hints' in obj) return obj as unknown as SpoilerLog;
     return { hints: (obj['Wrinkly Hints'] ?? {}) as Record<string, string> };
   },
+  validateSpoilerLog: (raw) => {
+    const obj = raw as Record<string, unknown>;
+    return 'Wrinkly Hints' in obj;
+  },
 };

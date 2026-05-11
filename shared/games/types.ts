@@ -29,4 +29,5 @@ export interface GameConfig {
   getEmptyHintTemplate: () => Record<string, string>;
   toServerPayload: (hints: Record<string, string>) => Record<string, unknown>;
   fromServerPayload: (raw: unknown) => SpoilerLog;
+  validateSpoilerLog: (raw: unknown) => boolean;
 }

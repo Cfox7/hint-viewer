@@ -32,7 +32,7 @@ const levelDisplayNames: Record<string, string> = {
   ZF: "Zora's Fountain",
   ZR: "Zora's River",
   Foolish: "Foolish Hints",
-  Path: "Path Hints",
+  Path: "Path/Major Hints",
 };
 
 const levelOrder = Object.keys(levelDisplayNames);
@@ -42,7 +42,7 @@ const sectionLabels: Record<LevelCategory, string> = {
   regions: 'Regions',
   direct: 'Direct',
   foolish: 'Foolish',
-  woth: 'Path Hints',
+  woth: 'Path/Major Hints',
 };
 
 const gossipStoneNames: string[] = [
@@ -272,10 +272,11 @@ function categorizeHints(hints: Record<string, string>): Record<string, string> 
 
   for (const val of nonCategoryValues) {
     const stripped = val.replace(/#/g, '').toLowerCase();
-    if (stripped.includes('foolish') || stripped.includes('0 major')) {
+    const majorMatch = stripped.match(/(\d+)\s*major/);
+    if (stripped.includes('foolish') || (majorMatch && majorMatch[1] === '0')) {
       result[`Foolish ${foolishCount++}`] = val;
     }
-    if (stripped.includes('path to')) {
+    if (stripped.includes('path to') || (majorMatch && majorMatch[1] !== '0')) {
       result[`Path ${pathCount++}`] = val;
     }
   }
@@ -402,5 +403,9 @@ export const ootConfig: GameConfig = {
     const obj = raw as Record<string, unknown>;
     if ('hints' in obj) return obj as unknown as SpoilerLog;
     return { hints: (obj['gossip_stones'] ?? {}) as Record<string, string> };
+  },
+  validateSpoilerLog: (raw) => {
+    const obj = raw as Record<string, unknown>;
+    return 'gossip_stones' in obj;
   },
 };
