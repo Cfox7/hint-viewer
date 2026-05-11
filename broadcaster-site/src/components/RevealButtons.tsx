@@ -64,29 +64,25 @@ export default function RevealButtons({
     : 'Reveal Area';
 
   return (
-    <div style={{ marginTop: 16 }}>
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <Button
-          onClick={handleRevealLevel}
-          disabled={disableLevelButton}
-          aria-label={isLevelRevealed ? 'Hide current area' : 'Reveal current area'}
-          className="reveal-btn"
-          style={{ minWidth: 250 }}
-        >
-          {isLevelRevealed ? <FaEyeSlash style={{ marginRight: 6, verticalAlign: 'middle' }} /> : <FaEye style={{ marginRight: 6, verticalAlign: 'middle' }} />}
-          {levelButtonLabel}
-        </Button>
+    <div className="reveal-buttons">
+      <Button
+        onClick={handleRevealLevel}
+        disabled={disableLevelButton}
+        aria-label={isLevelRevealed ? 'Hide current area' : 'Reveal current area'}
+        className="reveal-btn reveal-btn-area"
+      >
+        {isLevelRevealed ? <FaEyeSlash className="reveal-btn-icon" /> : <FaEye className="reveal-btn-icon" />}
+        {levelButtonLabel}
+      </Button>
 
-        <Button
-          onClick={handleRevealAll}
-          aria-label={isAllRevealed ? 'Hide all areas' : 'Reveal all areas'}
-          className="reveal-btn"
-          style={{ minWidth: 100 }}
-        >
-          {isAllRevealed ? <FaEyeSlash style={{ marginRight: 6, verticalAlign: 'middle' }} /> : <FaEye style={{ marginRight: 6, verticalAlign: 'middle' }} />}
-          {isAllRevealed ? 'Hide All' : 'Reveal All'}
-        </Button>
-      </div>
+      <Button
+        onClick={handleRevealAll}
+        aria-label={isAllRevealed ? 'Hide all areas' : 'Reveal all areas'}
+        className="reveal-btn reveal-btn-all"
+      >
+        {isAllRevealed ? <FaEyeSlash className="reveal-btn-icon" /> : <FaEye className="reveal-btn-icon" />}
+        {isAllRevealed ? 'Hide All' : 'Reveal All'}
+      </Button>
     </div>
   );
 }

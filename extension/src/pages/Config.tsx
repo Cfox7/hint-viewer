@@ -12,7 +12,7 @@ function Step({ number, children }: { number: number; children: React.ReactNode 
 function Config() {
   return (
     <div className="config-page">
-      <h1 className="gradient-jumpman config-title">HintViewer</h1>
+      <h1 className="theme-gradient-text config-title">HintViewer</h1>
       <p className="config-subtitle">DK64 Randomizer</p>
 
       <section className="config-section">

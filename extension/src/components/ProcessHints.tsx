@@ -62,7 +62,7 @@ function ProcessHints({ channelId }: ProcessHintsProps) {
     }
 
     setLastPolled(new Date());
-  }, [channelId]);
+  }, [channelId, game.id, games, setGame]);
 
   const restartInterval = useCallback(() => {
     if (intervalRef.current) clearInterval(intervalRef.current);
@@ -93,12 +93,24 @@ function ProcessHints({ channelId }: ProcessHintsProps) {
     return (
       <div className="no-spoiler-container">
         <div>
-          <h2 className="gradient-jumpman" style={{ fontSize: '2rem', marginBottom: '8px' }}>
+          <h2 className="theme-gradient-text" style={{ fontSize: '2rem', marginBottom: '8px' }}>
             No spoiler log uploaded
           </h2>
           <p className="no-spoiler-message">
             Broadcaster should upload the spoiler log via the broadcaster site to populate hints here.
           </p>
+          <button
+            className="no-spoiler-refresh-btn"
+            disabled={!canRefresh}
+            onClick={() => {
+              setCanRefresh(false);
+              void fetchAll();
+              restartInterval();
+              setTimeout(() => setCanRefresh(true), 10000);
+            }}
+          >
+            ↻ Refresh
+          </button>
         </div>
       </div>
     );

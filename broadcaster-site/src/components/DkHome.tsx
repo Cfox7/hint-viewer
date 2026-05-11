@@ -26,7 +26,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 function DkHome() {
   return (
     <>
-      <h2 className="gradient-jumpman" style={{ marginBottom: '1.5rem' }}>Welcome to the DK64 Randomizer Hint Viewer!</h2>
+      <h2 className="theme-gradient-text" style={{ marginBottom: '1.5rem' }}>Welcome to the DK64 Randomizer Hint Viewer!</h2>
 
       <Section title="Getting Started">
         <p>

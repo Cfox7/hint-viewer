@@ -1,7 +1,9 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './themes/base.css'
 import './themes/dk64.css'
+import './themes/oot.css'
 import Panel from './pages/Panel'
 import { GameProvider } from './contexts/GameContext';
 

@@ -125,7 +125,7 @@ export function HintCarousel({
   return (
     <>
       <div className={`carousel-bg-container ${className}`}>
-        <h3 className="level-title gradient-jumpman">{levelTitle}</h3>
+        <h3 className="level-title theme-gradient-text">{levelTitle}</h3>
 
         {slides.length > 0 ? (
           <Carousel

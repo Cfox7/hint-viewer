@@ -1,5 +1,5 @@
 import type { GameConfig, LevelCategory, SpoilerLog } from './types';
-import DkHome from '../../broadcaster-site/src/components/DkHome';
+import OotHome from '../../broadcaster-site/src/components/OotHome';
 
 const levelDisplayNames: Record<string, string> = {
   Isles: "DK Isles",
@@ -319,7 +319,7 @@ export const ootConfig: GameConfig = {
   sortHints,
   getLevelTitle,
   getEmptyHintTemplate,
-  homeComponent: DkHome,
+  homeComponent: OotHome,
   toServerPayload: (hints): Record<string, unknown> => ({ "Wrinkly Hints": hints }),
   fromServerPayload: (raw) => {
     const obj = raw as Record<string, unknown>;

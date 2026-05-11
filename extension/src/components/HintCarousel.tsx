@@ -44,7 +44,7 @@ export function HintCarousel({ hints, className = '', revealedHints, completedHi
 
   return (
     <div className={`carousel-bg-container ${className}`}>
-      <h3 className="level-title gradient-jumpman">{levelTitle}</h3>
+      <h3 className="level-title theme-gradient-text">{levelTitle}</h3>
       <LevelNav
         slides={slides}
         activeIndex={activeIndex}

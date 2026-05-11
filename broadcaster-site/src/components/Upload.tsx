@@ -56,7 +56,7 @@ function Upload({ channelId }: UploadProps) {
         <div>
           <h2 className="mb-1" style={{ color: '#007bff', fontWeight: 700 }}>Upload Spoiler Log</h2>
           <div style={{ fontSize: '1rem', color: '#222' }}>
-            Upload your DK64 spoiler log to instantly populate all hints. You can then reveal/complete them as you go for you viewers. No manual entry required!
+            Upload your spoiler log to instantly populate all hints. You can then reveal/complete them as you go for you viewers. No manual entry required!
           </div>
         </div>
       </div>
