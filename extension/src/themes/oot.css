@@ -72,6 +72,17 @@
   pointer-events: none;
 }
 
+[data-theme="oot"] .carousel-bg-container .level-title {
+  position: relative;
+  z-index: 2;
+}
+
+[data-theme="oot"] .carousel-bg-container .carousel-control-prev,
+[data-theme="oot"] .carousel-bg-container .carousel-control-next,
+[data-theme="oot"] .carousel-bg-container .carousel-caption {
+  z-index: 2;
+}
+
 [data-theme="oot"] .carousel-container .hint-text {
   font-size: 14px;
 }
