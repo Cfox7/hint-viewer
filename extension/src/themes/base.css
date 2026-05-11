@@ -135,7 +135,7 @@ a:hover {
 .level-nav-offcanvas {
   background-color: var(--bg-offcanvas) !important;
   color: #fff !important;
-  width: 260px !important;
+  width: 320px !important;
   font-family: var(--font-primary);
 }
 
@@ -205,6 +205,48 @@ a:hover {
 
 .level-nav-offcanvas .accordion-body {
   background-color: var(--bg-offcanvas);
+}
+
+/* Chip grid for regions */
+.level-nav-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px;
+}
+
+.level-nav-chip {
+  background: var(--chip-bg);
+  border: 1px solid var(--chip-border);
+  color: var(--chip-color);
+  font-family: var(--font-primary);
+  font-size: 0.85rem;
+  padding: 3px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: var(--chip-shadow);
+  transition: all 0.15s ease;
+}
+
+.level-nav-chip:hover {
+  background: var(--chip-hover-bg);
+  border-color: var(--chip-hover-border);
+  box-shadow: var(--chip-hover-shadow);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.level-nav-chip:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.4);
+}
+
+.level-nav-chip.active {
+  background: var(--chip-active-bg);
+  border-color: var(--chip-active-border);
+  color: var(--chip-active-color);
+  box-shadow: var(--chip-active-shadow);
 }
 
 .refresh-bar {
@@ -331,7 +373,7 @@ a:hover {
   background-color: var(--bg-popover-body) !important;
   color: var(--text-accent);
   font-family: var(--font-primary);
-  font-size: 18px;
+  font-size: 14px;
   text-align: center;
   border-radius: 0 0 var(--bs-popover-border-radius) var(--bs-popover-border-radius);
 }

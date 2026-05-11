@@ -30,6 +30,18 @@
   --border-accent: #58a6ff;
 
   --carousel-bg-image: url('../assets/oot-bg.png');
+
+  --chip-bg: linear-gradient(180deg, #1a2744 0%, #0e1726 100%);
+  --chip-border: #2d5a8a;
+  --chip-color: #79c0ff;
+  --chip-shadow: 0 2px 4px rgba(0,0,0,0.5), inset 0 1px 0 rgba(88,166,255,0.12);
+  --chip-hover-bg: linear-gradient(180deg, #223660 0%, #152238 100%);
+  --chip-hover-border: #3d7abf;
+  --chip-hover-shadow: 0 3px 6px rgba(0,0,0,0.6), inset 0 1px 0 rgba(88,166,255,0.2);
+  --chip-active-bg: linear-gradient(180deg, #1f4e8a 0%, #163260 100%);
+  --chip-active-border: #58a6ff;
+  --chip-active-color: #fff;
+  --chip-active-shadow: 0 1px 3px rgba(0,0,0,0.4), inset 0 1px 0 rgba(88,166,255,0.25), 0 0 8px rgba(88,166,255,0.3);
 }
 
 [data-theme="oot"] .carousel-bg-container {
@@ -66,6 +78,11 @@
 
 [data-theme="oot"] .refresh-bar {
   font-size: 16px;
+}
+
+[data-theme="oot"] .hint-notification-icon {
+  color: #ffcc00;
+  filter: drop-shadow(0 0 3px rgba(255, 204, 0, 0.6));
 }
 
 [data-theme="oot"] .theme-gradient-text {

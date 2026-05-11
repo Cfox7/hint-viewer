@@ -26,7 +26,7 @@ export function useSelectTheme(): StylesConfig<SelectOption> {
     const selectClearHover = v('--select-clear-hover');
 
     return {
-      container: (base) => ({ ...base, width: 220 }),
+      container: (base) => ({ ...base, minWidth: 220, width: 'auto', maxWidth: 420 }),
       menuPortal: (base) => ({ ...base, zIndex: 9999 }),
       control: (base) => ({ ...base, background: selectBg, borderColor: selectBorder, minHeight: 26, boxShadow: 'none', '&:hover': { borderColor: selectBorderHover } }),
       valueContainer: (base) => ({ ...base, padding: '0 4px' }),

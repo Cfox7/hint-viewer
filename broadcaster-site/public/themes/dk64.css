@@ -50,6 +50,18 @@
   --select-border-hover: #7aaa7a;
   --select-clear: #cc4444;
   --select-clear-hover: #ff6b6b;
+
+  --chip-bg: linear-gradient(180deg, #3a2e10 0%, #1e1808 100%);
+  --chip-border: #7a6520;
+  --chip-color: #ffe066;
+  --chip-shadow: 0 2px 4px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,224,102,0.15);
+  --chip-hover-bg: linear-gradient(180deg, #4d3d18 0%, #2a2010 100%);
+  --chip-hover-border: #a8892a;
+  --chip-hover-shadow: 0 3px 6px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,224,102,0.25);
+  --chip-active-bg: linear-gradient(180deg, #5a4a20 0%, #382c14 100%);
+  --chip-active-border: #ffd700;
+  --chip-active-color: #fff;
+  --chip-active-shadow: 0 1px 3px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,224,102,0.3), 0 0 8px rgba(255,215,0,0.3);
 }
 
 /* DK64-specific styles */

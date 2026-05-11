@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Offcanvas, Accordion, Nav } from 'react-bootstrap';
+import { Offcanvas, Accordion } from 'react-bootstrap';
 import { useGame } from '../contexts/GameContext';
 import type { LevelCategory } from '@hint-viewer/shared/games/types';
 
@@ -52,17 +52,17 @@ export function LevelNav({ slides, activeIndex, onSelect, levelDisplayNames, mod
         <Accordion.Item key={cat} eventKey={cat}>
           <Accordion.Header>{sectionLabels[cat]}</Accordion.Header>
           <Accordion.Body className="p-1">
-            <Nav className="flex-column">
+            <div className="level-nav-chips">
               {sections[cat].map(({ label, idx }) => (
-                <Nav.Link
+                <button
                   key={idx}
-                  active={idx === activeIndex}
+                  className={`level-nav-chip${idx === activeIndex ? ' active' : ''}`}
                   onClick={() => { onSelect(idx); setShow(false); }}
                 >
                   {label}
-                </Nav.Link>
+                </button>
               ))}
-            </Nav>
+            </div>
           </Accordion.Body>
         </Accordion.Item>
       ))}

@@ -50,7 +50,7 @@ function OotHome() {
           Hints come from Gossip Stones scattered throughout Hyrule. Each region in the carousel contains a list of gossip stone locations for that area. When you reach a stone in-game, find the matching entry and reveal it to show the hint text to your viewers.
         </p>
         <p>
-          For example, the <strong>Colossus</strong> region might list <strong>Colossus (Spirit Temple)</strong>. After reading the stone in-game, reveal that entry to display its hint.
+          For example, the <strong>Colossus</strong> region might list <strong>Spirit Temple</strong>. After reading the stone in-game, reveal that entry to display its hint.
         </p>
       </Section>
 
