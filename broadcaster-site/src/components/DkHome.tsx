@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { FaEye, FaCheck, FaUpload, FaTasks, FaEdit } from 'react-icons/fa';
+import { FaEye, FaCheck, FaUpload, FaTasks } from 'react-icons/fa';
 import { MdNotificationImportant } from 'react-icons/md';
 
 const KONG_COLORS: { name: string; color: string }[] = [
@@ -30,7 +30,8 @@ function DkHome() {
 
       <Section title="Getting Started">
         <p>
-          This site lets <a href="https://dk64randomizer.com" target="_blank" rel="noreferrer">DK64 Randomizer</a> broadcasters securely share hints with their viewers. There are two ways to get started:
+          This site lets <a href="https://dk64randomizer.com" target="_blank" rel="noreferrer">DK64 Randomizer</a> broadcasters securely share hints with their viewers. 
+          Once you log in there are two ways to get started:
         </p>
         <ul>
           <li><strong><FaUpload style={{ verticalAlign: 'middle' }} /> <Link to="/upload">Upload</Link></strong> — Upload a spoiler log generated with "Generate Spoiler Log" enabled. Hints are populated automatically.</li>
@@ -49,7 +50,7 @@ function DkHome() {
         <ol>
           <li>Click <IconPill><FaEye /></IconPill> next to a hint to reveal it to your viewers.</li>
           <li>Once revealed, click <IconPill><FaCheck /></IconPill> to mark it as completed.</li>
-          <li>After completing, click <IconPill><FaEdit /></IconPill> to select the item found at that location, it will appear with a <IconPill><MdNotificationImportant /></IconPill> indicator in the extension.</li>
+          <li>After completing, use the dropdown to select the item found at that location. It will appear with a <IconPill><MdNotificationImportant /></IconPill> indicator in the extension.</li>
         </ol>
       </Section>
 

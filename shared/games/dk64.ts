@@ -64,7 +64,7 @@ const hintedItemOptions: string[] = [
   'Chunky Kong',
   // Shared moves
   'Vines',
-  'Swim',
+  'Diving',
   'Oranges',
   'Barrels',
   'Climbing',
@@ -98,17 +98,12 @@ const hintedItemOptions: string[] = [
   'Pineapple',
   'Homing Ammo',
   'Sniper Sight',
-  'Progressive Ammo Belt',
-  'Progressive Ammo Belt 2',
   // Instruments
   'Bongos',
   'Guitar',
   'Trombone',
   'Saxophone',
   'Triangle',
-  'Progressive Instrument Upgrade',
-  'Progressive Instrument Upgrade 2',
-  'Progressive Instrument Upgrade 3',
   // Special items
   'Camera',
   'Shockwave',

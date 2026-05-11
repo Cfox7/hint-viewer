@@ -2,7 +2,6 @@ import { ReactNode, useState, useEffect } from 'react';
 import { Button } from 'react-bootstrap';
 import Select from 'react-select';
 import type { SingleValue } from 'react-select';
-import { FaEdit } from 'react-icons/fa';
 import { colorizeHints } from '@hint-viewer/shared/colorizeHints';
 
 interface HintItemProps {
@@ -39,7 +38,6 @@ export default function HintItem({
   onHintedItemChange,
 }: HintItemProps) {
   const [editValue, setEditValue] = useState(cleanedHint);
-  const [isSelectingItem, setIsSelectingItem] = useState(false);
 
   useEffect(() => {
     setEditValue(cleanedHint);
@@ -50,11 +48,15 @@ export default function HintItem({
     if (onEditHint) onEditHint(location, e.target.value);
   };
 
-  const selectOptions = hintedItemOptions.map((item) => ({ value: item, label: item }));
+  const allOptions = hintedItemOptions.map((item) => ({ value: item, label: item }));
+  const selectedOption = hintedItem ? { value: hintedItem, label: hintedItem } : null;
+
+  const groupedOptions = hintedItem
+    ? [{ label: `Current: ${hintedItem}`, options: allOptions.filter((o) => o.value !== hintedItem) }]
+    : allOptions;
 
   const handleItemSelect = (option: SingleValue<{ value: string; label: string }>) => {
     const value = option?.value ?? '';
-    setIsSelectingItem(false);
     if (onHintedItemChange) onHintedItemChange(location, value);
   };
 
@@ -88,46 +90,40 @@ export default function HintItem({
           {isRevealed ? colorizeHints(cleanedHint) : "???"}
         </p>
       )}
-      {isCompleted && (
+      {isCompleted && !hintedItemEditable && hintedItem && (
         <div className="hint-item-found-row">
-          {hintedItemEditable && isSelectingItem ? (
-            <div style={{ width: 200 }}>
-              <Select
-                autoFocus
-                classNamePrefix="hint-select"
-                options={selectOptions}
-                onChange={handleItemSelect}
-                placeholder={hintedItem || "Select item..."}
-                menuPortalTarget={document.body}
-                menuPlacement="auto"
-                styles={{
-                  menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-                  control: (base) => ({ ...base, background: '#181c18', borderColor: '#ffe066', '&:hover': { borderColor: '#ffd700' } }),
-                  valueContainer: (base) => ({ ...base, padding: '0 4px' }),
-                  input: (base) => ({ ...base, margin: 0, padding: 0, paddingTop: 0, paddingBottom: 0, color: '#dee2e6' }),
-                  menu: (base) => ({ ...base, background: '#181c18', border: '1px solid #ffe066' }),
-                  option: (base, state) => ({ ...base, background: state.isFocused ? '#222a22' : '#181c18', color: '#dee2e6' }),
-                  singleValue: (base) => ({ ...base, color: '#dee2e6' }),
-                  placeholder: (base) => ({ ...base, color: '#525252' }),
-                }}
-              />
-            </div>
-          ) : (
-            <span className="hint-location">
-              Hinted Item: {hintedItem && <strong>{hintedItem}</strong>}
-            </span>
-          )}
-          {hintedItemEditable && (
-            <Button
-              size="sm"
-              variant="outline-secondary"
-              className="hint-toggle-btn"
-              aria-label="Set hinted item"
-              onClick={() => setIsSelectingItem((prev) => !prev)}
-            >
-              <FaEdit />
-            </Button>
-          )}
+          <span className="hint-location" style={{ color: '#ccc' }}>
+            Hinted Item: <strong style={{ color: '#dee2e6' }}>{hintedItem}</strong>
+          </span>
+        </div>
+      )}
+      {isCompleted && hintedItemEditable && (
+        <div className="hint-item-found-row">
+          <Select
+            classNamePrefix="hint-select"
+            options={groupedOptions}
+            value={selectedOption}
+            onChange={handleItemSelect}
+            isClearable
+            placeholder="Hinted Item..."
+            menuPortalTarget={document.body}
+            menuPlacement="auto"
+            styles={{
+              container: (base) => ({ ...base, width: 220 }),
+              menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+              control: (base) => ({ ...base, background: '#1e241e', borderColor: '#5a7a5a', minHeight: 26, boxShadow: 'none', '&:hover': { borderColor: '#7aaa7a' } }),
+              valueContainer: (base) => ({ ...base, padding: '0 4px' }),
+              input: (base) => ({ ...base, margin: 0, padding: 0, color: '#ccc' }),
+              menu: (base) => ({ ...base, background: '#181c18', border: '1px solid #5a7a5a' }),
+              option: (base, state) => ({ ...base, background: state.isFocused ? '#222a22' : '#181c18', color: '#dee2e6' }),
+              singleValue: (base, state) => ({ ...base, color: '#ccc', opacity: state.selectProps.menuIsOpen ? 0.3 : 1 }),
+              placeholder: (base) => ({ ...base, color: '#666' }),
+              clearIndicator: (base) => ({ ...base, padding: '0 4px', color: '#cc4444', '&:hover': { color: '#ff6b6b' } }),
+              dropdownIndicator: (base) => ({ ...base, padding: '0 4px', color: '#5a7a5a', '&:hover': { color: '#7aaa7a' } }),
+              groupHeading: (base) => ({ ...base, color: '#999', fontSize: '0.7rem', textTransform: 'uppercase', marginBottom: 2, paddingBottom: 2 }),
+              group: (base) => ({ ...base, paddingTop: 2, paddingBottom: 2, borderBottom: '1px solid #444' }),
+            }}
+          />
         </div>
       )}
     </div>

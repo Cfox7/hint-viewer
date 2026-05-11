@@ -31,7 +31,7 @@ export function HintCarousel({ hints, className = '', revealedHints, completedHi
     arr.push(loc);
     cleanedMap.set(cleaned, arr);
   });
-  
+  cleanedMap.forEach((arr) => arr.sort());
 
   const [activeIndex, setActiveIndex] = useState(0);
   const currentSlide = slides[activeIndex];
@@ -74,8 +74,9 @@ export function HintCarousel({ hints, className = '', revealedHints, completedHi
                   const cleanedHint = (hints[location] || '').split('|')[0].trim();
                   const isRevealed = revealedHints.has(location);
                   const isCompleted = completedHints.has(location);
-                  const primaryLocation = (cleanedMap.get(cleanedHint) || [location])[0];
-                  const hintedItem = hintedItems[primaryLocation];
+                  const linkedGroup = cleanedMap.get(cleanedHint) || [location];
+                  const hintedLoc = linkedGroup.find(loc => hintedItems[loc]);
+                  const hintedItem = hintedLoc ? hintedItems[hintedLoc] : undefined;
 
                   if (isCompleted && hintedItem) {
                     return (

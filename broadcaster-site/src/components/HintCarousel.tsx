@@ -51,6 +51,7 @@ export function HintCarousel({
     arr.push(loc);
     cleanedMap.set(cleaned, arr);
   });
+  cleanedMap.forEach((arr) => arr.sort());
 
   // When toggling a location, also toggle any linked locations that have the exact same cleaned hint
   const revealLinkedHints = (location: string) => {
