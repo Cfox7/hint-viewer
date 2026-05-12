@@ -128,7 +128,7 @@ export function HintCarousel({
             prevIcon={<img src="/assets/C_Left.svg" alt="Prev" style={{ width: 64, height: 64 }} />}
           >
             {slides.map((slide, sIdx) => {
-              const isFoolishOrWoth = ['foolish', 'woth'].includes(slide.level.toLowerCase());
+              const isFoolishOrWoth = ['foolish', 'woth'].includes(game.getLevelCategory(slide.level));
               return (
                 <Carousel.Item key={`${slide.level}-p${slide.pageIndex}-${sIdx}`}>
                   <img src={game.backgroundImage} alt={`${slide.level} background`} style={{ opacity: 0 }} />
@@ -150,7 +150,7 @@ export function HintCarousel({
                             colorizedHint={game.colorizeHints(hints[location] || '')}
                             isRevealed={revealedHints.has(location)}
                             isCompleted={completedHints.has(location)}
-                            hideReveal={['foolish', 'woth'].includes(slide.level.toLowerCase())}
+                            hideReveal={isFoolishOrWoth}
                             onCompleteWithLinks={completeLinkedHints}
                             onRevealWithLinks={revealLinkedHints}
                             editable={isFoolishOrWoth ? false : editable}

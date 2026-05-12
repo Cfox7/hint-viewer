@@ -42,6 +42,7 @@ a:hover {
   flex-direction: column;
   height: 100%;
   justify-content: space-evenly;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.75) 0%, transparent 75%);
 }
 
 .carousel-container .hint-item {
@@ -120,7 +121,7 @@ a:hover {
   background: rgba(255, 215, 0, 0.1);
   border: 1px solid var(--text-accent-alt);
   color: var(--text-accent-alt);
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   font-weight: 600;
   padding: 3px 14px;
   border-radius: 4px;
@@ -146,6 +147,7 @@ a:hover {
 
 .level-nav-offcanvas .offcanvas-header {
   border-bottom: 1px solid var(--border-color);
+  padding: 5px;
 }
 
 .level-nav-offcanvas .offcanvas-title {

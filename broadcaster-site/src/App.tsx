@@ -7,9 +7,9 @@ import Header from './components/Header';
 import { LevelNav } from './components/LevelNav';
 import { NavProvider, useNav } from './contexts/NavContext';
 import { GameProvider, useGame } from './contexts/GameContext';
-import '../public/themes/base.css';
-import '../public/themes/dk64.css';
-import '../public/themes/oot.css';
+import './themes/base.css';
+import './themes/dk64.css';
+import './themes/oot.css';
 
 function AppBody() {
   const { slides, activeIndex, setActiveIndex } = useNav();

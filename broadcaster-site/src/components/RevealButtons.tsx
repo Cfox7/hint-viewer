@@ -1,5 +1,6 @@
 import { Button } from 'react-bootstrap';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { useGame } from '../contexts/GameContext';
 
 interface Props {
   levels: string[];
@@ -19,13 +20,13 @@ export default function RevealButtons({
   onBulkToggle,
   selectedLevelIndex
 }: Props) {
+  const { game } = useGame();
   const selectedLevel = selectedLevelIndex != null ? levels[selectedLevelIndex] : undefined;
   const selectedLevelLocations = selectedLevel ? groupedHints[selectedLevel] || [] : [];
 
-  // disable Reveal Level for Foolish and WOTH pages
   const disableLevelButton =
     selectedLevelIndex == null ||
-    ['foolish', 'woth'].includes((selectedLevel || '').toLowerCase());
+    ['foolish', 'woth'].includes(game.getLevelCategory(selectedLevel || ''));
 
   const isLevelRevealed =
     selectedLevelLocations.length > 0 && selectedLevelLocations.every((loc) => revealedHints.has(loc));

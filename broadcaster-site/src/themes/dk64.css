@@ -1,12 +1,12 @@
 @font-face {
   font-family: 'Tekton Bold';
-  src: url('../assets/Fonts/tektonbold.ttf') format('truetype');
+  src: url('/assets/Fonts/tektonbold.ttf') format('truetype');
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Jumpman';
-  src: url('../assets/Fonts/Jumpman.ttf') format('truetype');
+  src: url('/assets/Fonts/Jumpman.ttf') format('truetype');
   font-style: normal;
 }
 
@@ -16,10 +16,13 @@
 
   --bg-primary: #181c18;
   --bg-secondary: #222a22;
+  --bg-header: #101510;
+  --bg-input: #181c18;
+  --bg-input-focus: #222a22;
   --bg-offcanvas: #111;
   --bg-nav-button: #1a1a1a;
   --bg-nav-button-active: #222;
-  --bg-popover-body: #3f423f;
+  --bg-modal: #222a22;
 
   --text-primary: #dee2e6;
   --text-accent: #ffe066;
@@ -29,7 +32,24 @@
   --border-color: #333;
   --border-accent: #ffe066;
 
-  --carousel-bg-image: url('../assets/bgfinal.webp');
+  --btn-primary-bg: #5010d8;
+  --btn-primary-hover: #8956FB;
+  --btn-primary-color: #ffe066;
+  --btn-primary-hover-color: #ffd700;
+  --btn-reveal-bg: #3f49a8;
+  --btn-reveal-hover: #5969e0;
+
+  --hint-location-color: #ffd700;
+  --twitch-accent: #9146FF;
+  --spinner-color: #ffe066;
+
+  --carousel-bg-image: url('/assets/bgfinal.webp');
+
+  --select-bg: #1e241e;
+  --select-border: #5a7a5a;
+  --select-border-hover: #7aaa7a;
+  --select-clear: #cc4444;
+  --select-clear-hover: #ff6b6b;
 
   --chip-bg: linear-gradient(180deg, #3a2e10 0%, #1e1808 100%);
   --chip-border: #7a6520;
@@ -44,15 +64,7 @@
   --chip-active-shadow: 0 1px 3px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,224,102,0.3), 0 0 8px rgba(255,215,0,0.3);
 }
 
-[data-theme="dk64"] .carousel-container .hint-text {
-  font-size: 16px;
-}
-
-[data-theme="dk64"] .hint-notification-icon {
-  color: #ffcc00;
-  filter: drop-shadow(0 0 3px rgba(255, 204, 0, 0.6));
-}
-
+/* DK64-specific styles */
 [data-theme="dk64"] .theme-gradient-text {
   font-family: 'Jumpman', Arial, sans-serif;
   background: linear-gradient(
@@ -66,4 +78,29 @@
   -webkit-text-stroke: 0.5px #000;
   background-clip: text;
   color: transparent;
+}
+
+[data-theme="dk64"] .icon-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 224, 102, 0.15);
+  border: 1px solid #ffe066;
+  border-radius: 4px;
+  padding: 1px 6px;
+  vertical-align: middle;
+}
+
+[data-theme="dk64"] .kong-list-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+[data-theme="dk64"] .kong-color-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
 }
