@@ -8,7 +8,7 @@ Randomizer Hint Viewer: Broadcaster Guide
 First-time setup
 
 1. Go to hintviewer.com and log in with your Twitch account
-2. Upload your spoiler log JSON file using the upload button
+2. Upload your spoiler log JSON file using the upload button or use the create button to enter your own hints
 3. The spoiler log is saved to the server; viewers can now see the ??? placeholders in the extension
 
 
@@ -21,6 +21,10 @@ Use the eye button next to any hint location to reveal it to viewers. Hints with
 Marking a hint as completed
 
 Once a hint is revealed, a checkmark button appears next to it. Click it to mark the hint completed and it will appear struck through for both you and viewers. Un-revealing a hint automatically clears its completed state.
+
+Setting the hinted item
+
+Once a hint is completed you can hit the edit button and select the item the hint was hinting to.
 
 Navigating levels
 

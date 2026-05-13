@@ -13,7 +13,7 @@ function Config() {
   return (
     <div className="config-page">
       <h1 className="theme-gradient-text config-title">HintViewer</h1>
-      <p className="config-subtitle">DK64 Randomizer</p>
+      <p className="config-subtitle">Currently supports Donkey Kong 64 and Ocarina of Time Randomizer</p>
 
       <section className="config-section">
         <h2 className="config-section-title">Setup</h2>
@@ -21,9 +21,12 @@ function Config() {
           Go to <a href="https://hintviewer.com" target="_blank" rel="noopener noreferrer">hintviewer.com</a> and sign in with your Twitch account.
         </Step>
         <Step number={2}>
-          Load your hints using <FaUpload className="config-inline-icon" /> <strong>Upload</strong> (spoiler log JSON) or <FaTasks className="config-inline-icon" /> <strong>Create</strong> (manual entry).
+          Select which game you are playing at the top middle of the header. This will determine the layout of the hints.
         </Step>
         <Step number={3}>
+          Load your hints using <FaUpload className="config-inline-icon" /> <strong>Upload</strong> (spoiler log JSON) or <FaTasks className="config-inline-icon" /> <strong>Create</strong> (manual entry).
+        </Step>
+        <Step number={4}>
           Activate the extension as a panel on your channel. Viewers will see hints update live.
         </Step>
       </section>

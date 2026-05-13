@@ -101,6 +101,21 @@ make lambda-off-prod   # set reserved concurrency to 0
 make lambda-on-prod    # restore concurrency
 ```
 
+## Tagging a Release
+
+After merging to `main`, create an annotated tag and push it:
+
+```bash
+git tag -a v1.2.0 -m "v1.2.0"
+git push origin v1.2.0
+```
+
+To list existing tags:
+
+```bash
+git tag -l
+```
+
 ## Architecture
 
 ```

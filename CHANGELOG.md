@@ -1,5 +1,24 @@
 # Changelog
 
+## v1.2.0
+
+### New
+- Ocarina of Time support. Full hint tracking with major item hints, item options, and spoiler log validation.
+- GameSwitcher component for selecting between supported games.
+- CSS theme system with per-game themes (DK64, OoT).
+- Manual hint creation section added to home pages.
+- Game caching to prevent flickering on reload.
+- Refresh button on the No Spoiler Log screen.
+
+### Changed
+- Lambdas updated for game selection.
+- LevelNav layout updated.
+- All components converted to CSS modules.
+
+### Fixed
+- Path reveal and complete icons not displaying correctly.
+- CSS cleanup across themes and components.
+
 ## v1.1.0
 
 ### New
