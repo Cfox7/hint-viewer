@@ -19,6 +19,7 @@ function Upload({ channelId }: UploadProps) {
     initialLoading,
     success,
     error,
+    clearError,
     uploadedAt,
     spoilerData,
     revealedHints,
@@ -36,7 +37,7 @@ function Upload({ channelId }: UploadProps) {
 
   // Sync slides into nav context whenever spoilerData changes
   useEffect(() => {
-    const { slides: newSlides } = spoilerData ? buildSlides(spoilerData.hints, game.levelOrder, game.sortHints, 5, 5, 5) : { slides: [] };
+    const { slides: newSlides } = spoilerData ? buildSlides(spoilerData.hints, game.levelOrder, game.sortHints, game.getLevelCategory, 5, 5, 5) : { slides: [] };
     setSlides(newSlides);
     setActiveIndex(0);
   }, [spoilerData]);
@@ -56,7 +57,7 @@ function Upload({ channelId }: UploadProps) {
         <div>
           <h2 className="mb-1" style={{ color: '#007bff', fontWeight: 700 }}>Upload Spoiler Log</h2>
           <div style={{ fontSize: '1rem', color: '#222' }}>
-            Upload your DK64 spoiler log to instantly populate all hints. You can then reveal/complete them as you go for you viewers. No manual entry required!
+            Upload your spoiler log to instantly populate all hints. You can then reveal/complete them as you go for you viewers. No manual entry required!
           </div>
         </div>
       </div>
@@ -107,9 +108,22 @@ function Upload({ channelId }: UploadProps) {
               Viewers can now see hints.
             </Toast.Body>
           </Toast>
+          <Toast
+            show={!!error}
+            onClose={clearError}
+            style={{ backgroundColor: '#8b1a1a' }}
+            autohide
+            delay={7000}
+            animation
+          >
+            <Toast.Header closeButton>
+              <strong className="me-auto">Upload Error</strong>
+            </Toast.Header>
+            <Toast.Body className="text-white">
+              {error}
+            </Toast.Body>
+          </Toast>
         </ToastContainer>
-
-        {error && <div className="message error">{error}</div>}
 
         {success && uploadedAt && (
           <div className="timestamp mt-2" style={{ color: '#007bff', fontWeight: 500 }}>

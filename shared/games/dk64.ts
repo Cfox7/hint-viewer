@@ -1,5 +1,22 @@
+import React from 'react';
 import type { GameConfig, LevelCategory, SpoilerLog } from './types';
 import DkHome from '../../broadcaster-site/src/components/DkHome';
+
+const dk64ColorMap: Record<string, string> = {
+  "Way of the hoard": "#FFA010", woth: "#FFA010", keys: "#FFA010", key: "#FFA010",
+  donkey: "#FFA010", dk: "#FFA010", angry: "#FFA010", aztec: "#FFA010", dogadon1: "#FFA010",
+  foolish: "#FF0000", diddy: "#FF0000", helm: "#FF0000", hideout: "#FF0000",
+  lanky: "#0C7DED", galleon: "#0C7DED", gloomy: "#0C7DED", pufftoss: "#0C7DED",
+  tiny: "#BB1CFF", forest: "#BB1CFF", fungi: "#BB1CFF", dogadon2: "#BB1CFF",
+  chunky: "#59FF64", japes: "#59FF64", jungle: "#59FF64", dillo1: "#59FF64",
+  magenta: "#E84898", castle: "#E84898", creepy: "#E84898", kutout: "#E84898",
+  caves: "#3EE1E1", crystal: "#3EE1E1", fridge: "#3EE1E1", dillo2: "#3EE1E1", freekongs: "#3EE1E1",
+  isles: "#D25757", isle: "#D25757", "main isle": "#D25757", "outer isles": "#D25757", "krem isle": "#D25757", training: "#D25757",
+  allkongs: "#B5CDFF", factory: "#B5CDFF", frantic: "#B5CDFF", madjack: "#B5CDFF",
+  jetpac: "#00CE0E",
+};
+
+const dk64Keywords = Object.keys(dk64ColorMap).sort((a, b) => b.length - a.length);
 
 const levelDisplayNames: Record<string, string> = {
   Isles: "DK Isles",
@@ -162,9 +179,38 @@ function getProgressiveHintValues(raw: DKSpoilerLog) {
   return { progressiveHints: Boolean(item), item, cap };
 }
 
+function categorizeHints(hints: Record<string, string>): Record<string, string> {
+  const result = { ...hints };
+
+  Object.keys(result).filter(k => k.startsWith('Foolish') || k.startsWith('WOTH')).forEach(k => delete result[k]);
+
+  let foolishCount = 1;
+  let wothCount = 1;
+
+  const nonCategoryValues = Object.entries(result)
+    .filter(([k]) => !k.startsWith('Foolish') && !k.startsWith('WOTH'))
+    .map(([, v]) => v);
+
+  for (const val of nonCategoryValues) {
+    const lower = val.toLowerCase();
+    if (lower.includes('foolish')) {
+      result[`Foolish ${foolishCount++}`] = val;
+    }
+    if (lower.includes('way of the hoard')) {
+      result[`WOTH ${wothCount++}`] = val;
+    }
+  }
+
+  return result;
+}
+
 function normalize(raw: unknown): SpoilerLog {
   const input = raw as DKSpoilerLog;
-  const wrinkly: Record<string, string> = { ...(input['Wrinkly Hints'] ?? {}) };
+  const rawHints = input['Wrinkly Hints'] ?? {};
+  const wrinkly: Record<string, string> = {};
+  for (const [k, v] of Object.entries(rawHints)) {
+    wrinkly[k] = v.split('|')[0].trim();
+  }
 
   const progHints = getProgressiveHintValues(input);
   if (progHints.progressiveHints) {
@@ -193,24 +239,13 @@ function normalize(raw: unknown): SpoilerLog {
     Object.assign(wrinkly, newHints);
   }
 
-  let foolishCount = 1;
-  let wothCount = 1;
-
   for (const key of Object.keys(wrinkly)) {
-    const val = wrinkly[key];
     if (key.startsWith('First')) {
       delete wrinkly[key];
-      continue;
-    }
-    if (val.toLowerCase().includes('foolish')) {
-      const foolishKey = `Foolish ${foolishCount++}`;
-      if (!(foolishKey in wrinkly)) wrinkly[foolishKey] = val;
-    }
-    if (val.toLowerCase().includes('way of the hoard')) {
-      const wothKey = `WOTH ${wothCount++}`;
-      if (!(wothKey in wrinkly)) wrinkly[wothKey] = val;
     }
   }
+
+  Object.assign(wrinkly, categorizeHints(wrinkly));
 
   const direct = input['Direct Item Hints'];
   const shopKeys = ["Cranky", "Candy", "Funky", "Snide"];
@@ -255,6 +290,56 @@ function sortHints(groupedHints: Record<string, string[]>): Record<string, strin
     });
   });
   return sorted;
+}
+
+function colorizeHints(text: string): React.ReactNode {
+  if (!text) return null;
+  let parts: React.ReactNode[] = [text];
+  let key = 0;
+
+  dk64Keywords.forEach(keyword => {
+    let regex: RegExp;
+    if (keyword === "key" || keyword === "keys") {
+      regex = new RegExp(
+        `\\b(${keyword}(?:\\s*(?:\\d+|,|\\s|and(?=\\s*\\d+)))+)\\b`,
+        "gi"
+      );
+    } else {
+      regex = new RegExp(`\\b(${keyword})\\b`, "gi");
+    }
+    const nextParts: React.ReactNode[] = [];
+    parts.forEach(part => {
+      if (typeof part !== "string") {
+        nextParts.push(part);
+        return;
+      }
+      let lastIndex = 0;
+      let match: RegExpExecArray | null;
+      while ((match = regex.exec(part)) !== null) {
+        if (match.index > lastIndex) {
+          nextParts.push(part.slice(lastIndex, match.index));
+        }
+        nextParts.push(
+          React.createElement('span', { style: { color: dk64ColorMap[keyword] }, key: key++ }, match[0])
+        );
+        lastIndex = regex.lastIndex;
+      }
+      if (lastIndex < part.length) {
+        nextParts.push(part.slice(lastIndex));
+      }
+    });
+    parts = nextParts;
+  });
+
+  return React.createElement(React.Fragment, null, ...parts);
+}
+
+function getLocationLabel(location: string, level: string): string {
+  if (level.startsWith('Batch')) {
+    return `Hint ${location.slice(level.length).trim()}`;
+  }
+  const parts = location.split(' ');
+  return parts.length > 1 ? parts[parts.length - 1] : location;
 }
 
 function getLevelTitle(
@@ -314,10 +399,13 @@ export const dk64Config: GameConfig = {
   sectionLabels,
   hintOrder,
   hintedItemOptions,
+  colorizeHints,
+  getLocationLabel,
   getLevelCategory,
   normalize,
   sortHints,
   getLevelTitle,
+  categorizeHints,
   getEmptyHintTemplate,
   homeComponent: DkHome,
   toServerPayload: (hints): Record<string, unknown> => ({ "Wrinkly Hints": hints }),
@@ -325,5 +413,9 @@ export const dk64Config: GameConfig = {
     const obj = raw as Record<string, unknown>;
     if ('hints' in obj) return obj as unknown as SpoilerLog;
     return { hints: (obj['Wrinkly Hints'] ?? {}) as Record<string, string> };
+  },
+  validateSpoilerLog: (raw) => {
+    const obj = raw as Record<string, unknown>;
+    return 'Wrinkly Hints' in obj;
   },
 };

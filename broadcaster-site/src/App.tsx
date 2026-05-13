@@ -7,11 +7,16 @@ import Header from './components/Header';
 import { LevelNav } from './components/LevelNav';
 import { NavProvider, useNav } from './contexts/NavContext';
 import { GameProvider, useGame } from './contexts/GameContext';
-import '../public/themes/dk64.css';
+import './themes/base.css';
+import './themes/dk64.css';
+import './themes/oot.css';
 
 function AppBody() {
   const { slides, activeIndex, setActiveIndex } = useNav();
   const { game } = useGame();
+  useEffect(() => {
+    document.documentElement.dataset.theme = game.id;
+  }, [game.id]);
   const HomeComponent = game.homeComponent;
   const location = useLocation();
   const showSidebar =

@@ -8,7 +8,7 @@ import { buildSlides } from '@hint-viewer/shared/buildSlides';
 import { useNav } from '../contexts/NavContext';
 import { useGame } from '../contexts/GameContext';
 import { useManual } from '../hooks/useManual';
-import { ClearModal } from './ClearModal';
+import { ConfirmModal } from './ConfirmModal';
 
 interface CreateProps { channelId: string; }
 
@@ -40,7 +40,7 @@ function Create({ channelId }: CreateProps) {
   useEffect(() => {
     const sourceHints = isEditing && editHints ? editHints : hints;
     const { slides: newSlides } = sourceHints && Object.keys(sourceHints).length > 0
-      ? buildSlides(sourceHints, game.levelOrder, game.sortHints, 5, 5, 5)
+      ? buildSlides(sourceHints, game.levelOrder, game.sortHints, game.getLevelCategory, 5, 5, 5)
       : { slides: [] };
     setSlides(newSlides);
   }, [hints, editHints, isEditing]);
@@ -52,61 +52,8 @@ function Create({ channelId }: CreateProps) {
       setIsEditing(true);
     } else {
       if (editHints) {
-        const newHints = { ...editHints };
-        const existingFoolish = Object.keys(newHints).filter((k) => k.startsWith('Foolish'));
-        let foolishCount = existingFoolish.length + 1;
-        const existingWoth = Object.keys(newHints).filter((k) => k.startsWith('WOTH'));
-        let wothCount = existingWoth.length + 1;
+        const newHints = game.categorizeHints(editHints);
 
-        Object.entries(editHints).forEach(([, value]) => {
-          if (value) {
-            const hint = value.toLowerCase();
-            // Foolish
-            if (hint.includes('foolish')) {
-              const alreadyGrouped = Object.entries(newHints).some(
-                ([k, v]) => k.startsWith('Foolish') && v === value
-              );
-              if (!alreadyGrouped) {
-                let nextKey = `Foolish ${foolishCount}`;
-                while (nextKey in newHints) {
-                  foolishCount++;
-                  nextKey = `Foolish ${foolishCount}`;
-                }
-                newHints[nextKey] = value;
-                foolishCount++;
-              }
-            }
-            // WOTH
-            if (hint.includes('way of the hoard') || hint.includes('woth')) {
-              const alreadyGrouped = Object.entries(newHints).some(
-                ([k, v]) => k.startsWith('WOTH') && v === value
-              );
-              if (!alreadyGrouped) {
-                let nextKey = `WOTH ${wothCount}`;
-                while (nextKey in newHints) {
-                  wothCount++;
-                  nextKey = `WOTH ${wothCount}`;
-                }
-                newHints[nextKey] = value;
-                wothCount++;
-              }
-            }
-          }
-        });
-
-        // Remove grouped keys if their value is no longer present in any non-grouped hint
-        const nonGroupedValues = new Set(
-          Object.entries(newHints)
-            .filter(([k]) => !k.startsWith('Foolish') && !k.startsWith('WOTH'))
-            .map(([, v]) => v)
-        );
-        Object.keys(newHints).forEach((key) => {
-          if ((key.startsWith('Foolish') || key.startsWith('WOTH')) && !nonGroupedValues.has(newHints[key])) {
-            delete newHints[key];
-          }
-        });
-
-        // Unreveal any hints that are now empty but were previously revealed
         Object.keys(newHints).forEach((key) => {
           if (
             revealedHints.has(key) &&
@@ -164,9 +111,12 @@ function Create({ channelId }: CreateProps) {
         </div>
       </div>
 
-      <ClearModal
+      <ConfirmModal
         show={showClearModal}
         loading={clearing}
+        message="Are you sure you want make a new template and delete any existing hints?"
+        confirmLabel="New Template"
+        loadingText="Clearing..."
         onCancel={() => setShowClearModal(false)}
         onConfirm={handleClear}
       />

@@ -26,7 +26,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 function DkHome() {
   return (
     <>
-      <h2 className="gradient-jumpman" style={{ marginBottom: '1.5rem' }}>Welcome to the DK64 Randomizer Hint Viewer!</h2>
+      <h2 className="theme-gradient-text" style={{ marginBottom: '1.5rem' }}>Welcome to the DK64 Randomizer Hint Viewer!</h2>
 
       <Section title="Getting Started">
         <p>
@@ -68,6 +68,23 @@ function DkHome() {
         </ul>
         <p>
           For example: a red door frame in Jungle Japes means the hint is listed under <strong>Japes Japes, Diddy</strong>.
+        </p>
+      </Section>
+
+      <Section title="Creating Hints">
+        <p>
+          When manually creating hints on the <strong><FaTasks style={{ verticalAlign: 'middle' }} /> <Link to="/create">Create</Link></strong> page, certain keywords will automatically group hints into their own sections:
+        </p>
+        <ul>
+          <li>
+            Hints containing <strong style={{ color: '#FF0000' }}>foolish</strong> will be grouped into a <strong>Foolish Hints</strong> section.
+          </li>
+          <li>
+            Hints containing <strong style={{ color: '#FFA010' }}>Way of the Hoard</strong> or <strong style={{ color: '#FFA010' }}>woth</strong> will be grouped into a <strong>Way Of The Hoard</strong> section.
+          </li>
+        </ul>
+        <p>
+          This grouping happens automatically whenever hints are saved. The keywords are case-insensitive and will also be color-coded when displayed to viewers.
         </p>
       </Section>
 

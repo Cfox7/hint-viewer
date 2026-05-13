@@ -1,5 +1,4 @@
 import { Carousel } from 'react-bootstrap';
-import { colorizeHints } from '@hint-viewer/shared/colorizeHints';
 import RevealButtons from './RevealButtons';
 import { buildSlides } from '@hint-viewer/shared/buildSlides';
 import { useGame } from '../contexts/GameContext';
@@ -43,6 +42,8 @@ export function HintCarousel({
 }: HintCarouselProps) {
   const { game } = useGame();
 
+  const categoryOf = (loc: string) => game.getLevelCategory(loc.split(' ')[0]);
+
   // build a map from cleaned hint text -> locations that have that exact cleaned text
   const cleanedMap = new Map<string, string[]>();
   Object.keys(hints).forEach((loc) => {
@@ -53,50 +54,39 @@ export function HintCarousel({
   });
   cleanedMap.forEach((arr) => arr.sort());
 
-  // When toggling a location, also toggle any linked locations that have the exact same cleaned hint
+  const getCrossLinked = (location: string) => {
+    const cleaned = (hints[location] || '').split('|')[0].trim();
+    if (!cleaned) return [];
+    const myCategory = categoryOf(location);
+    return (cleanedMap.get(cleaned) || []).filter(loc => loc !== location && categoryOf(loc) !== myCategory);
+  };
+
   const revealLinkedHints = (location: string) => {
     const isCurrentlyRevealed = revealedHints.has(location);
-    const cleaned = (hints[location] || '').split('|')[0].trim();
-    const linked = cleaned && cleaned !== '' ? cleanedMap.get(cleaned) || [] : [];
-
-    // toggle the clicked location
     onToggleReveal(location);
 
-    // Only toggle linked if cleaned is non-empty
-    if (cleaned && cleaned !== '') {
-      linked.forEach((loc) => {
-        if (loc === location) return;
-        const locRevealed = revealedHints.has(loc);
-        if (!isCurrentlyRevealed && !locRevealed) onToggleReveal(loc);
-        if (isCurrentlyRevealed && locRevealed) onToggleReveal(loc);
-      });
-    }
+    getCrossLinked(location).forEach((loc) => {
+      const locRevealed = revealedHints.has(loc);
+      if (!isCurrentlyRevealed && !locRevealed) onToggleReveal(loc);
+      if (isCurrentlyRevealed && locRevealed) onToggleReveal(loc);
+    });
   };
 
   const completeLinkedHints = (location: string) => {
     const isCurrentlyCompleted = completedHints.has(location);
-    const cleaned = (hints[location] || '').split('|')[0].trim();
-    const linked = cleaned && cleaned !== '' ? cleanedMap.get(cleaned) || [] : [];
-
     onToggleComplete(location);
 
-    if (cleaned && cleaned !== '') {
-      linked.forEach((loc) => {
-        if (loc === location) return;
-        const locCompleted = completedHints.has(loc);
-        if (!isCurrentlyCompleted && !locCompleted) onToggleComplete(loc);
-        if (isCurrentlyCompleted && locCompleted) onToggleComplete(loc);
-      });
-    }
+    getCrossLinked(location).forEach((loc) => {
+      const locCompleted = completedHints.has(loc);
+      if (!isCurrentlyCompleted && !locCompleted) onToggleComplete(loc);
+      if (isCurrentlyCompleted && locCompleted) onToggleComplete(loc);
+    });
   };
 
-  // Bulk toggle that expands linked hints based on current revealedHints, then calls onToggleReveal
   const handleBulkToggle = (locations: string[], reveal: boolean) => {
     const toToggle = new Set<string>();
     locations.forEach((loc) => {
-      const cleaned = (hints[loc] || '').split('|')[0].trim();
-      const linked = cleanedMap.get(cleaned) || [];
-
+      const linked = getCrossLinked(loc);
       if (reveal) {
         if (!revealedHints.has(loc)) toToggle.add(loc);
         linked.forEach((l) => { if (!revealedHints.has(l)) toToggle.add(l); });
@@ -110,7 +100,7 @@ export function HintCarousel({
   };
 
   // Group hints by level (extract level name from location) using game-specific sorting
-  const { slides, levels, groupedHints } = buildSlides(hints, game.levelOrder, game.sortHints, DIRECT_PER_PAGE, FOOLISH_PER_PAGE, WOTH_PER_PAGE);
+  const { slides, levels, groupedHints } = buildSlides(hints, game.levelOrder, game.sortHints, game.getLevelCategory, DIRECT_PER_PAGE, FOOLISH_PER_PAGE, WOTH_PER_PAGE);
 
   const currentSlide = slides[activeIndex];
   const currentLevel = currentSlide ? currentSlide.level : undefined;
@@ -125,7 +115,7 @@ export function HintCarousel({
   return (
     <>
       <div className={`carousel-bg-container ${className}`}>
-        <h3 className="level-title gradient-jumpman">{levelTitle}</h3>
+        <h3 className="level-title theme-gradient-text">{levelTitle}</h3>
 
         {slides.length > 0 ? (
           <Carousel
@@ -138,36 +128,29 @@ export function HintCarousel({
             prevIcon={<img src="/assets/C_Left.svg" alt="Prev" style={{ width: 64, height: 64 }} />}
           >
             {slides.map((slide, sIdx) => {
-              const isFoolishOrWoth = ['foolish', 'woth'].includes(slide.level.toLowerCase());
+              const isFoolishOrWoth = ['foolish', 'woth'].includes(game.getLevelCategory(slide.level));
               return (
                 <Carousel.Item key={`${slide.level}-p${slide.pageIndex}-${sIdx}`}>
                   <img src={game.backgroundImage} alt={`${slide.level} background`} style={{ opacity: 0 }} />
                   <Carousel.Caption>
                     <div className="hints-list">
                       {slide.locations.map((location) => {
-                        const isProgressive = slide.level.startsWith('Batch');
-                        let locationLabel = location;
-                        if (isProgressive) {
-                          locationLabel = `Hint ${location.slice(slide.level.length).trim()}`;
-                        } else {
-                          const parts = location.split(' ');
-                          locationLabel = parts.length > 1 ? parts[parts.length - 1] : location;
-                        }
-
+                        const locationLabel = game.getLocationLabel(location, slide.level);
                         const cleanedHint = (hints[location] || '').split('|')[0].trim();
-                        const linkedGroup = cleanedMap.get(cleanedHint) || [location];
-                        const primaryLocation = linkedGroup[0];
+                        const crossLinked = getCrossLinked(location);
+                        const primaryLocation = crossLinked.length > 0 ? [location, ...crossLinked].sort()[0] : location;
                         const isLinked = primaryLocation !== location;
 
                         return (
                           <HintItem
                             key={location}
                             location={location}
-                            locationLabel={colorizeHints(locationLabel)}
+                            locationLabel={game.colorizeHints(locationLabel)}
                             cleanedHint={cleanedHint}
+                            colorizedHint={game.colorizeHints(hints[location] || '')}
                             isRevealed={revealedHints.has(location)}
                             isCompleted={completedHints.has(location)}
-                            hideReveal={['foolish', 'woth'].includes(slide.level.toLowerCase())}
+                            hideReveal={isFoolishOrWoth}
                             onCompleteWithLinks={completeLinkedHints}
                             onRevealWithLinks={revealLinkedHints}
                             editable={isFoolishOrWoth ? false : editable}

@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { MdNotificationImportant } from 'react-icons/md';
 import CRightSvg from '../assets/C_Right.svg';
 import CLeftSvg from '../assets/C_Left.svg';
-import { colorizeHints } from '@hint-viewer/shared/colorizeHints';
 import { LevelNav } from './LevelNav';
 import { buildSlides } from '@hint-viewer/shared/buildSlides';
 import { useGame } from '../contexts/GameContext';
@@ -22,7 +21,7 @@ const WOTH_PER_PAGE = 5;
 
 export function HintCarousel({ hints, className = '', revealedHints, completedHints, hintedItems }: HintCarouselProps) {
   const { game } = useGame();
-  const { slides, levels } = buildSlides(hints, game.levelOrder, game.sortHints, DIRECT_PER_PAGE, FOOLISH_PER_PAGE, WOTH_PER_PAGE);
+  const { slides, levels } = buildSlides(hints, game.levelOrder, game.sortHints, game.getLevelCategory, DIRECT_PER_PAGE, FOOLISH_PER_PAGE, WOTH_PER_PAGE);
 
   const cleanedMap = new Map<string, string[]>();
   Object.keys(hints).forEach((loc) => {
@@ -44,7 +43,7 @@ export function HintCarousel({ hints, className = '', revealedHints, completedHi
 
   return (
     <div className={`carousel-bg-container ${className}`}>
-      <h3 className="level-title gradient-jumpman">{levelTitle}</h3>
+      <h3 className="level-title theme-gradient-text">{levelTitle}</h3>
       <LevelNav
         slides={slides}
         activeIndex={activeIndex}
@@ -95,7 +94,7 @@ export function HintCarousel({ hints, className = '', revealedHints, completedHi
                         <div className="hint-item hint-item-hinted">
                           <MdNotificationImportant className="hint-notification-icon" />
                           <p className="hint-text completed">
-                            {isRevealed ? colorizeHints(cleanedHint) : "???"}
+                            {isRevealed ? game.colorizeHints(hints[location] || '') : "???"}
                           </p>
                         </div>
                       </OverlayTrigger>
@@ -105,7 +104,7 @@ export function HintCarousel({ hints, className = '', revealedHints, completedHi
                   return (
                     <div key={location} className="hint-item">
                       <p className={`hint-text${isCompleted ? ' completed' : ''}`}>
-                        {isRevealed ? colorizeHints(cleanedHint) : "???"}
+                        {isRevealed ? game.colorizeHints(hints[location] || '') : "???"}
                       </p>
                     </div>
                   );

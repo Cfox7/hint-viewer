@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Offcanvas, Accordion, Nav } from 'react-bootstrap';
+import { Offcanvas, Accordion } from 'react-bootstrap';
 import { useGame } from '../contexts/GameContext';
 import type { LevelCategory } from '@hint-viewer/shared/games/types';
 
@@ -21,7 +21,7 @@ export function LevelNav({ slides, activeIndex, onSelect, levelDisplayNames }: L
   const [show, setShow] = useState(false);
   const { game } = useGame();
   const isProgressive = slides.some((s) => s.level.startsWith('Batch'));
-  const sectionLabels = { ...game.sectionLabels, regions: isProgressive ? 'Batches' : 'Levels' };
+  const sectionLabels = { ...game.sectionLabels, regions: isProgressive ? 'Batches' : game.sectionLabels.regions };
   const slideCountByLevel: Record<string, number> = {};
   
   slides.forEach((s) => {
@@ -72,17 +72,17 @@ export function LevelNav({ slides, activeIndex, onSelect, levelDisplayNames }: L
               <Accordion.Item key={cat} eventKey={cat}>
                 <Accordion.Header>{sectionLabels[cat]}</Accordion.Header>
                 <Accordion.Body className="p-1">
-                  <Nav className="flex-column">
+                  <div className="level-nav-chips">
                     {sections[cat].map(({ label, idx }) => (
-                      <Nav.Link
+                      <button
                         key={idx}
-                        active={idx === activeIndex}
+                        className={`level-nav-chip${idx === activeIndex ? ' active' : ''}`}
                         onClick={() => handleSelect(idx)}
                       >
                         {label}
-                      </Nav.Link>
+                      </button>
                     ))}
-                  </Nav>
+                  </div>
                 </Accordion.Body>
               </Accordion.Item>
             ))}

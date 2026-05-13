@@ -21,9 +21,13 @@ export interface GameConfig {
   getLevelCategory: (level: string) => LevelCategory;
   normalize: (raw: unknown) => SpoilerLog;
   sortHints: (groupedHints: Record<string, string[]>) => Record<string, string[]>;
+  colorizeHints: (text: string) => React.ReactNode;
+  getLocationLabel: (location: string, level: string) => string;
   getLevelTitle: (slide: { level: string; pageIndex: number } | undefined, slideCountByLevel: Record<string, number>, levelDisplayNames: Record<string, string>) => string;
   homeComponent: React.FC;
+  categorizeHints: (hints: Record<string, string>) => Record<string, string>;
   getEmptyHintTemplate: () => Record<string, string>;
   toServerPayload: (hints: Record<string, string>) => Record<string, unknown>;
   fromServerPayload: (raw: unknown) => SpoilerLog;
+  validateSpoilerLog: (raw: unknown) => boolean;
 }

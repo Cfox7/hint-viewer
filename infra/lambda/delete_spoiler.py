@@ -20,7 +20,13 @@ def handler(event, context):
             "body": json.dumps({"error": "Unauthorized"}),
         }
 
+    body = json.loads(event.get("body") or "{}")
+
     table = dynamodb.Table(TABLE_NAME)
-    table.delete_item(Key={"channelId": channel_id})
+    table.update_item(
+        Key={"channelId": channel_id},
+        UpdateExpression="REMOVE spoilerData, uploadedAt, revealedHints, completedHints, hintedItems SET game = :g",
+        ExpressionAttributeValues={":g": body.get("game")},
+    )
 
     return {"statusCode": 204, "body": ""}

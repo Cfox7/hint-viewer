@@ -1,5 +1,6 @@
 import { Button } from 'react-bootstrap';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { useGame } from '../contexts/GameContext';
 
 interface Props {
   levels: string[];
@@ -19,13 +20,13 @@ export default function RevealButtons({
   onBulkToggle,
   selectedLevelIndex
 }: Props) {
+  const { game } = useGame();
   const selectedLevel = selectedLevelIndex != null ? levels[selectedLevelIndex] : undefined;
   const selectedLevelLocations = selectedLevel ? groupedHints[selectedLevel] || [] : [];
 
-  // disable Reveal Level for Foolish and WOTH pages
   const disableLevelButton =
     selectedLevelIndex == null ||
-    ['foolish', 'woth'].includes((selectedLevel || '').toLowerCase());
+    ['foolish', 'woth'].includes(game.getLevelCategory(selectedLevel || ''));
 
   const isLevelRevealed =
     selectedLevelLocations.length > 0 && selectedLevelLocations.every((loc) => revealedHints.has(loc));
@@ -64,29 +65,25 @@ export default function RevealButtons({
     : 'Reveal Area';
 
   return (
-    <div style={{ marginTop: 16 }}>
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <Button
-          onClick={handleRevealLevel}
-          disabled={disableLevelButton}
-          aria-label={isLevelRevealed ? 'Hide current area' : 'Reveal current area'}
-          className="reveal-btn"
-          style={{ minWidth: 250 }}
-        >
-          {isLevelRevealed ? <FaEyeSlash style={{ marginRight: 6, verticalAlign: 'middle' }} /> : <FaEye style={{ marginRight: 6, verticalAlign: 'middle' }} />}
-          {levelButtonLabel}
-        </Button>
+    <div className="reveal-buttons">
+      <Button
+        onClick={handleRevealLevel}
+        disabled={disableLevelButton}
+        aria-label={isLevelRevealed ? 'Hide current area' : 'Reveal current area'}
+        className="reveal-btn reveal-btn-area"
+      >
+        {isLevelRevealed ? <FaEyeSlash className="reveal-btn-icon" /> : <FaEye className="reveal-btn-icon" />}
+        {levelButtonLabel}
+      </Button>
 
-        <Button
-          onClick={handleRevealAll}
-          aria-label={isAllRevealed ? 'Hide all areas' : 'Reveal all areas'}
-          className="reveal-btn"
-          style={{ minWidth: 100 }}
-        >
-          {isAllRevealed ? <FaEyeSlash style={{ marginRight: 6, verticalAlign: 'middle' }} /> : <FaEye style={{ marginRight: 6, verticalAlign: 'middle' }} />}
-          {isAllRevealed ? 'Hide All' : 'Reveal All'}
-        </Button>
-      </div>
+      <Button
+        onClick={handleRevealAll}
+        aria-label={isAllRevealed ? 'Hide all areas' : 'Reveal all areas'}
+        className="reveal-btn reveal-btn-all"
+      >
+        {isAllRevealed ? <FaEyeSlash className="reveal-btn-icon" /> : <FaEye className="reveal-btn-icon" />}
+        {isAllRevealed ? 'Hide All' : 'Reveal All'}
+      </Button>
     </div>
   );
 }

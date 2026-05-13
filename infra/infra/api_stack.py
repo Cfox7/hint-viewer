@@ -47,8 +47,6 @@ class ApiStack(cdk.Stack):
         post_state_fn = make_fn("PostState", "post_state")
         post_spoiler_fn = make_fn("PostSpoiler", "post_spoiler")
         delete_spoiler_fn = make_fn("DeleteSpoiler", "delete_spoiler")
-        delete_revealed_hints_fn = make_fn("DeleteRevealedHints", "delete_revealed_hints")
-
         api = apigatewayv2.HttpApi(
             self, "HintViewerApi",
             api_name=f"hint-viewer-{environment}",
@@ -79,13 +77,6 @@ class ApiStack(cdk.Stack):
             methods=[apigatewayv2.HttpMethod.DELETE],
             integration=integrations.HttpLambdaIntegration("DeleteSpoilerInt", delete_spoiler_fn),
         )
-        api.add_routes(
-            path="/api/hints/{channelId}",
-            methods=[apigatewayv2.HttpMethod.DELETE],
-            integration=integrations.HttpLambdaIntegration("DeleteRevealedHintsInt", delete_revealed_hints_fn),
-        )
-
-
         # CloudFront in front of API Gateway — caches GET responses for 10s
         # Authorization must live in the CachePolicy (not OriginRequestPolicy) per CloudFront rules.
         cache_policy = cloudfront.CachePolicy(
