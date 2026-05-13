@@ -26,5 +26,6 @@ def handler(event, context):
             "revealed": item.get("revealedHints", []) if item else [],
             "completed": item.get("completedHints", []) if item else [],
             "hinted": item.get("hintedItems", {}) if item else {},
+            "shopTracker": decimals_to_floats(item.get("shopTracker", {})) if item else {},
         }),
     }

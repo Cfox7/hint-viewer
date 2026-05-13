@@ -31,16 +31,20 @@ function Upload({ channelId }: UploadProps) {
     handleHintedItemChange,
   } = useUpload(channelId);
 
-  const { slides, activeIndex, setActiveIndex, setSlides } = useNav();
+  const { slides, activeIndex, setActiveIndex, setSlides, setRevealedHints, setCompletedHints } = useNav();
   const { game } = useGame();
   const [showSuccess, setShowSuccess] = useState(false);
 
-  // Sync slides into nav context whenever spoilerData changes
   useEffect(() => {
     const { slides: newSlides } = spoilerData ? buildSlides(spoilerData.hints, game.levelOrder, game.sortHints, game.getLevelCategory, 5, 5, 5) : { slides: [] };
     setSlides(newSlides);
     setActiveIndex(0);
   }, [spoilerData]);
+
+  useEffect(() => {
+    setRevealedHints(revealedHints);
+    setCompletedHints(completedHints);
+  }, [revealedHints, completedHints]);
 
   useEffect(() => {
     if (success && file) setShowSuccess(true);

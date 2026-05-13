@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Offcanvas, Accordion } from 'react-bootstrap';
+import { FaCheck } from 'react-icons/fa';
 import { useGame } from '../contexts/GameContext';
+import { useNav } from '../contexts/NavContext';
 import type { LevelCategory } from '@hint-viewer/shared/games/types';
 
 export interface LevelSlide {
@@ -18,9 +20,21 @@ export interface LevelNavProps {
 
 const SECTION_ORDER: LevelCategory[] = ['regions', 'direct', 'foolish', 'woth'];
 
+type SlideStatus = 'empty' | 'revealed' | 'complete';
+
+function getSlideStatus(locations: string[], revealedHints: Set<string>, completedHints: Set<string>): SlideStatus {
+  if (locations.length === 0) return 'empty';
+  const allCompleted = locations.every((loc) => completedHints.has(loc));
+  if (allCompleted) return 'complete';
+  const anyRevealed = locations.some((loc) => revealedHints.has(loc));
+  if (anyRevealed) return 'revealed';
+  return 'empty';
+}
+
 export function LevelNav({ slides, activeIndex, onSelect, levelDisplayNames, mode = 'offcanvas' }: LevelNavProps) {
   const [show, setShow] = useState(false);
   const { game } = useGame();
+  const { revealedHints, completedHints, slides: navSlides } = useNav();
   const isProgressive = slides.some((s) => s.level.startsWith('Batch'));
   const sectionLabels = { ...game.sectionLabels, regions: isProgressive ? 'Batches' : game.sectionLabels.regions };
   const slideCountByLevel: Record<string, number> = {};
@@ -53,15 +67,22 @@ export function LevelNav({ slides, activeIndex, onSelect, levelDisplayNames, mod
           <Accordion.Header>{sectionLabels[cat]}</Accordion.Header>
           <Accordion.Body className="p-1">
             <div className="level-nav-chips">
-              {sections[cat].map(({ label, idx }) => (
-                <button
-                  key={idx}
-                  className={`level-nav-chip${idx === activeIndex ? ' active' : ''}`}
-                  onClick={() => { onSelect(idx); setShow(false); }}
-                >
-                  {label}
-                </button>
-              ))}
+              {sections[cat].map(({ label, idx }) => {
+                const status = cat !== 'foolish'
+                  ? getSlideStatus(navSlides[idx]?.locations ?? [], revealedHints, completedHints)
+                  : 'empty';
+                return (
+                  <button
+                    key={idx}
+                    className={`level-nav-chip${idx === activeIndex ? ' active' : ''}`}
+                    onClick={() => { onSelect(idx); setShow(false); }}
+                  >
+                    {label}
+                    {status === 'revealed' && <span className="level-nav-dot" />}
+                    {status === 'complete' && <FaCheck className="level-nav-check" />}
+                  </button>
+                );
+              })}
             </div>
           </Accordion.Body>
         </Accordion.Item>
