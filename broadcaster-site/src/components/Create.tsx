@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { FaEdit, FaSave, FaTasks } from 'react-icons/fa';
 import { MdNoteAdd } from 'react-icons/md';
 import { HintCarousel } from './HintCarousel';
-import { buildSlides } from '@hint-viewer/shared/buildSlides';
+import { buildSlides } from '@hint-viewer/shared/components/buildSlides';
 import { useNav } from '../contexts/NavContext';
 import { useGame } from '../contexts/GameContext';
 import { useManual } from '../hooks/useManual';

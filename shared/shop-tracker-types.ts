@@ -16,11 +16,10 @@ export const SHOP_TRACKER_ITEMS = [
   'Bean',
   'Pearl',
   'Blueprint',
-  'Nintendo Coin',
-  'Rareware Coin',
   'Shop',
   'Fairy',
   'Medal',
   'Crown',
-  'Rainbow Coin',
+  'Nintendo Coin',
+  'Rareware Coin',
 ] as const;

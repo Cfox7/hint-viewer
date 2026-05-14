@@ -1,6 +1,9 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { FaSearch, FaStore } from 'react-icons/fa';
 import { HintCarousel } from './HintCarousel';
 import type { SpoilerLog } from '@hint-viewer/shared';
+import type { ShopTrackerKongState, ShopTrackerItemState } from '@hint-viewer/shared/shop-tracker-types';
+import { ShopTrackerOffcanvas } from './ShopTrackerOffcanvas';
 import { useGame } from '../contexts/GameContext';
 
 interface ProcessHintsProps {
@@ -15,11 +18,15 @@ function ProcessHints({ channelId }: ProcessHintsProps) {
   const [revealedHints, setRevealedHints] = useState<Set<string>>(new Set());
   const [completedHints, setCompletedHints] = useState<Set<string>>(new Set());
   const [hintedItems, setHintedItems] = useState<Record<string, string>>({});
+  const [kongState, setKongState] = useState<ShopTrackerKongState>({});
+  const [itemState, setItemState] = useState<ShopTrackerItemState>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastFetch, setLastFetch] = useState<string | null>(null);
   const [lastPolled, setLastPolled] = useState<Date | null>(null);
   const [canRefresh, setCanRefresh] = useState(true);
+  const [showLevelNav, setShowLevelNav] = useState(false);
+  const [showShopTracker, setShowShopTracker] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const fetchAll = useCallback(async () => {
@@ -53,6 +60,13 @@ function ProcessHints({ channelId }: ProcessHintsProps) {
       setRevealedHints(new Set(revealed));
       setCompletedHints(new Set(completed));
       setHintedItems(hinted);
+
+      const tracker = obj['shopTracker'] as { kongs?: Record<string, number>; items?: Record<string, string> } | undefined;
+      if (tracker) {
+        setKongState((tracker.kongs ?? {}) as ShopTrackerKongState);
+        setItemState(tracker.items ?? {});
+      }
+
       setLoading(false);
       setError(null);
     } catch (err) {
@@ -131,11 +145,27 @@ function ProcessHints({ channelId }: ProcessHintsProps) {
           revealedHints={revealedHints}
           completedHints={completedHints}
           hintedItems={hintedItems}
+          showLevelNav={showLevelNav}
+          onHideLevelNav={() => setShowLevelNav(false)}
+        />
+      )}
+      {game.id === 'dk64' && Object.keys(kongState).length > 0 && (
+        <ShopTrackerOffcanvas
+          show={showShopTracker}
+          onHide={() => setShowShopTracker(false)}
+          kongState={kongState}
+          itemState={itemState}
         />
       )}
       {lastPolled && (
         <div className="refresh-bar">
           {lastFetch && <span className="refresh-uploaded">Uploaded: {new Date(lastFetch).toLocaleTimeString()}</span>}
+          <div className="refresh-bar-nav">
+            <button className="level-nav-toggle" onClick={() => setShowLevelNav(true)}><FaSearch /> Level Nav</button>
+            {game.id === 'dk64' && Object.keys(kongState).length > 0 && (
+              <button className="shop-tracker-toggle" onClick={() => setShowShopTracker(true)}><FaStore /> Shop Tracker</button>
+            )}
+          </div>
           <span>
             Last Updated: {lastPolled.toLocaleTimeString()}{' '}
             <button

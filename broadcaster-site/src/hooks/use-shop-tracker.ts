@@ -16,7 +16,7 @@ interface UseShopTrackerReturn {
   setShowResetModal: (v: boolean) => void;
 }
 
-export function useShopTracker(channelId: string | undefined, readOnly = false): UseShopTrackerReturn {
+export function useShopTracker(channelId: string | undefined): UseShopTrackerReturn {
   const [kongState, setKongState] = useState<ShopTrackerKongState>({});
   const [itemState, setItemState] = useState<ShopTrackerItemState>({});
   const [loading, setLoading] = useState(true);
@@ -64,7 +64,6 @@ export function useShopTracker(channelId: string | undefined, readOnly = false):
   }, [channelId]);
 
   const advanceKong = (key: string) => {
-    if (readOnly) return;
     setKongState((prev) => {
       const current = (prev[key] ?? SHOP_KONG_STATE.EMPTY) as ShopKongState;
       if (current >= SHOP_KONG_STATE.BOUGHT) return prev;
@@ -75,7 +74,6 @@ export function useShopTracker(channelId: string | undefined, readOnly = false):
   };
 
   const retreatKong = (key: string) => {
-    if (readOnly) return;
     setKongState((prev) => {
       const current = (prev[key] ?? SHOP_KONG_STATE.EMPTY) as ShopKongState;
       if (current <= SHOP_KONG_STATE.EMPTY) return prev;
@@ -98,15 +96,19 @@ export function useShopTracker(channelId: string | undefined, readOnly = false):
   };
 
   const cycleItem = (key: string, direction: 1 | -1) => {
-    if (readOnly) return;
     setItemState((prev) => {
       const current = prev[key];
       const currentIndex = current ? SHOP_TRACKER_ITEMS.indexOf(current as typeof SHOP_TRACKER_ITEMS[number]) : -1;
       const nextIndex = currentIndex + direction;
 
-      if (nextIndex < 0 || nextIndex >= SHOP_TRACKER_ITEMS.length) {
+      if (nextIndex >= SHOP_TRACKER_ITEMS.length) {
         const { [key]: _, ...rest } = prev;
         return rest;
+      }
+      if (nextIndex < 0) {
+        return current
+          ? (() => { const { [key]: _, ...rest } = prev; return rest; })()
+          : { ...prev, [key]: SHOP_TRACKER_ITEMS[SHOP_TRACKER_ITEMS.length - 1] };
       }
       return { ...prev, [key]: SHOP_TRACKER_ITEMS[nextIndex] };
     });

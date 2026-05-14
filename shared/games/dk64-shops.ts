@@ -10,11 +10,3 @@ export const DK64_SHOP_LEVELS: Record<string, string[]> = {
 };
 
 export const DK64_KONGS = ['DK', 'Diddy', 'Lanky', 'Tiny', 'Chunky'] as const;
-
-export const KONG_COLORS: Record<string, string> = {
-  DK: '#f5c518',
-  Diddy: '#e63946',
-  Lanky: '#4488cc',
-  Tiny: '#9b59b6',
-  Chunky: '#2ecc71',
-};

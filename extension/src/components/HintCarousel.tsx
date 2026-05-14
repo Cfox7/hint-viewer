@@ -4,7 +4,7 @@ import { MdNotificationImportant } from 'react-icons/md';
 import CRightSvg from '../assets/C_Right.svg';
 import CLeftSvg from '../assets/C_Left.svg';
 import { LevelNav } from './LevelNav';
-import { buildSlides } from '@hint-viewer/shared/buildSlides';
+import { buildSlides } from '@hint-viewer/shared/components/buildSlides';
 import { useGame } from '../contexts/GameContext';
 
 export interface HintCarouselProps {
@@ -13,13 +13,15 @@ export interface HintCarouselProps {
   revealedHints: Set<string>;
   completedHints: Set<string>;
   hintedItems: Record<string, string>;
+  showLevelNav: boolean;
+  onHideLevelNav: () => void;
 }
 
 const DIRECT_PER_PAGE = 5;
 const FOOLISH_PER_PAGE = 5;
 const WOTH_PER_PAGE = 5;
 
-export function HintCarousel({ hints, className = '', revealedHints, completedHints, hintedItems }: HintCarouselProps) {
+export function HintCarousel({ hints, className = '', revealedHints, completedHints, hintedItems, showLevelNav, onHideLevelNav }: HintCarouselProps) {
   const { game } = useGame();
   const { slides, levels } = buildSlides(hints, game.levelOrder, game.sortHints, game.getLevelCategory, DIRECT_PER_PAGE, FOOLISH_PER_PAGE, WOTH_PER_PAGE);
 
@@ -45,6 +47,8 @@ export function HintCarousel({ hints, className = '', revealedHints, completedHi
     <div className={`carousel-bg-container ${className}`}>
       <h3 className="level-title theme-gradient-text">{levelTitle}</h3>
       <LevelNav
+        show={showLevelNav}
+        onHide={onHideLevelNav}
         slides={slides}
         activeIndex={activeIndex}
         onSelect={setActiveIndex}

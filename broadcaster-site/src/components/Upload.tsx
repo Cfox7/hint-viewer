@@ -5,7 +5,7 @@ import { FaUpload } from 'react-icons/fa';
 import { HintCarousel } from './HintCarousel';
 import { useUpload } from '../hooks/useUpload';
 import { UploadModals } from './UploadModals';
-import { buildSlides } from '@hint-viewer/shared/buildSlides';
+import { buildSlides } from '@hint-viewer/shared/components/buildSlides';
 import { useNav } from '../contexts/NavContext';
 import { useGame } from '../contexts/GameContext';
 
