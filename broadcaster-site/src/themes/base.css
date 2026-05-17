@@ -1086,9 +1086,26 @@ html { font-size: 18px; }
   border-bottom: 1px solid var(--border-color);
 }
 
+.seed-settings-offcanvas .offcanvas-header {
+  flex-wrap: nowrap;
+}
+
+.seed-settings-offcanvas .offcanvas-title {
+  flex: 0 0 auto;
+}
+
+.seed-settings-header-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex: 1;
+  justify-content: flex-end;
+  padding-right: 0.75rem;
+}
+
 .seed-settings-offcanvas .offcanvas-title {
   color: var(--text-accent);
   font-family: var(--font-primary);
+  font-size: 1.5rem;
 }
 
 .seed-settings-offcanvas .btn-close {
@@ -1261,6 +1278,19 @@ html { font-size: 18px; }
   gap: 10px;
 }
 
+.setting-editor-category {
+  margin-bottom: 8px;
+}
+
+.setting-editor-category-title {
+  color: var(--text-accent);
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--border-color);
+}
+
 .setting-editor-row {
   display: flex;
   align-items: center;
@@ -1291,6 +1321,7 @@ html { font-size: 18px; }
   max-width: 200px;
   font-size: 0.85rem;
 }
+
 
 .setting-editor-row .form-select:focus,
 .setting-editor-row .form-control:focus {

@@ -3,7 +3,7 @@ import Button from 'react-bootstrap/Button';
 import Spinner from 'react-bootstrap/Spinner';
 import DualListBox from 'react-dual-listbox';
 import 'react-dual-listbox/lib/react-dual-listbox.css';
-import { FaChevronRight, FaChevronLeft, FaAngleDoubleRight, FaAngleDoubleLeft } from 'react-icons/fa';
+import { FaChevronRight, FaChevronLeft, FaAngleDoubleRight, FaAngleDoubleLeft, FaUndo, FaEraser } from 'react-icons/fa';
 import { useGame } from '../../contexts/GameContext';
 import { useSeedSettings } from '../../hooks/use-seed-settings';
 import { SettingEditor } from './SettingEditor';
@@ -69,27 +69,27 @@ export function SeedSettingsOffcanvas({ show, onHide, onSaveSuccess, channelId, 
   return (
     <Offcanvas show={show} onHide={onHide} placement="top" className="seed-settings-offcanvas">
       <Offcanvas.Header closeButton>
-        <Offcanvas.Title className="d-flex align-items-center gap-2">
-          Seed Settings
+        <Offcanvas.Title>Seed Settings</Offcanvas.Title>
+        <div className="seed-settings-header-actions">
           <Button
             variant="outline-danger"
             size="sm"
-            className="reset-defaults-button"
+            className="reset-defaults-button d-flex align-items-center gap-1"
             onClick={() => { setSelectedKeys(defaultSelected); setActivePreset(null); }}
             disabled={saving}
           >
-            Default Selection
+            <FaUndo /> Default Selection
           </Button>
           <Button
             variant="outline-danger"
             size="sm"
-            className="reset-defaults-button"
+            className="reset-defaults-button d-flex align-items-center gap-1"
             onClick={() => { setValues({}); setActivePreset(null); }}
             disabled={saving}
           >
-            Clear Values
+            <FaEraser /> Clear Values
           </Button>
-        </Offcanvas.Title>
+        </div>
       </Offcanvas.Header>
       <Offcanvas.Body>
         {loading ? (
@@ -126,7 +126,6 @@ export function SeedSettingsOffcanvas({ show, onHide, onSaveSuccess, channelId, 
 
               {orderedSelectedKeys.length > 0 && (
                 <div className="seed-settings-editor mb-3">
-                  <h6>Values</h6>
                   <SettingEditor
                     selectedKeys={orderedSelectedKeys}
                     settingDefinitions={settingDefinitions}

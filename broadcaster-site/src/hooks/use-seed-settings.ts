@@ -78,7 +78,7 @@ export function useSeedSettings(channelId: string | undefined): UseSeedSettingsR
   const settingsByKey = new Map((game.availableSettings ?? []).map(s => [s.key, s]));
   const hasMissingValues = selectedKeys.some(key => {
     const setting = settingsByKey.get(key);
-    if (!setting || setting.type === 'boolean') return false;
+    if (!setting || setting.type !== 'string') return false;
     const val = values[key];
     return val == null || val === '';
   });

@@ -404,6 +404,11 @@ function extractSettings(raw: unknown): SeedSettingsData {
   const settings = input.Settings ?? {};
   const result: SeedSettingsData = {};
 
+  // Only setting that may be absent from the spoiler log; default to 'off' when missing
+  if (!('Progressive Hint Item' in settings)) {
+    result['Progressive Hint Item'] = 'off';
+  }
+
   for (const [key, value] of Object.entries(settings)) {
     if (key === 'Settings String') continue;
     if (Array.isArray(value)) continue;
