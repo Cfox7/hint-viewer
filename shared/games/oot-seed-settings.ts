@@ -1,0 +1,420 @@
+import type { SettingDefinition, SeedSettingsPreset, SeedSettingsData } from '../seed-settings-types';
+
+export const availableSettings: SettingDefinition[] = [
+  // Main Rules - Open
+  { key: 'logic_rules', label: 'Logic Rules', category: 'Main Rules - Open', type: 'string', options: [
+    { value: 'glitchless', label: 'Glitchless' },
+    { value: 'glitched', label: 'Glitched' },
+    { value: 'no_logic', label: 'No Logic' },
+  ] },
+  { key: 'reachable_locations', label: 'Reachable Locations', category: 'Main Rules - Open', type: 'string', options: [
+    { value: 'all', label: 'All' },
+    { value: 'goals', label: 'Goals' },
+    { value: 'beatable', label: 'Beatable' },
+  ] },
+
+  { key: 'open_forest', label: 'Open Forest', category: 'Main Rules - Open', type: 'string', options: [
+    { value: 'closed', label: 'Closed' },
+    { value: 'closed_deku', label: 'Closed Deku' },
+    { value: 'open', label: 'Open' },
+  ] },
+  { key: 'open_kakariko', label: 'Open Kakariko', category: 'Main Rules - Open', type: 'string', options: [
+    { value: 'open', label: 'Open' },
+    { value: 'zelda', label: 'Zelda' },
+    { value: 'closed', label: 'Closed' },
+  ] },
+  { key: 'open_door_of_time', label: 'Open Door of Time', category: 'Main Rules - Open', type: 'string', options: [
+    { value: 'open', label: 'Open' },
+    { value: 'closed', label: 'Closed' },
+    { value: 'song_only', label: 'Song Only' },
+  ] },
+  { key: 'zora_fountain', label: 'Zora Fountain', category: 'Main Rules - Open', type: 'string', options: [
+    { value: 'closed', label: 'Closed' },
+    { value: 'adult', label: 'Adult' },
+    { value: 'open', label: 'Open' },
+  ] },
+  { key: 'gerudo_fortress', label: 'Gerudo Fortress', category: 'Main Rules - Open', type: 'string', options: [
+    { value: 'normal', label: 'Normal' },
+    { value: 'fast', label: 'Fast' },
+    { value: 'open', label: 'Open' },
+  ] },
+  { key: 'starting_age', label: 'Starting Age', category: 'Main Rules - Open', type: 'string', options: [
+    { value: 'child', label: 'Child' },
+    { value: 'adult', label: 'Adult' },
+    { value: 'random', label: 'Random' },
+  ] },
+
+  { key: 'bridge', label: 'Bridge Requirement', category: 'Main Rules - Open', type: 'string', options: [
+    { value: 'open', label: 'Open' },
+    { value: 'vanilla', label: 'Vanilla' },
+    { value: 'stones', label: 'Stones' },
+    { value: 'medallions', label: 'Medallions' },
+    { value: 'dungeons', label: 'Dungeons' },
+    { value: 'tokens', label: 'Tokens' },
+    { value: 'hearts', label: 'Hearts' },
+  ] },
+  { key: 'triforce_hunt', label: 'Triforce Hunt', category: 'Main Rules - Open', type: 'boolean' },
+  { key: 'lacs_condition', label: 'LACS Condition', category: 'Main Rules - Open', type: 'string', options: [
+    { value: 'vanilla', label: 'Vanilla' },
+    { value: 'stones', label: 'Stones' },
+    { value: 'medallions', label: 'Medallions' },
+    { value: 'dungeons', label: 'Dungeons' },
+    { value: 'tokens', label: 'Tokens' },
+    { value: 'hearts', label: 'Hearts' },
+  ] },
+  { key: 'shuffle_ganon_bosskey', label: 'Ganon Boss Key', category: 'Main Rules - Open', type: 'string', options: [
+    { value: 'remove', label: 'Removed' },
+    { value: 'vanilla', label: 'Vanilla' },
+    { value: 'dungeon', label: 'Dungeon' },
+    { value: 'regional', label: 'Regional' },
+    { value: 'overworld', label: 'Overworld' },
+    { value: 'any_dungeon', label: 'Any Dungeon' },
+    { value: 'keysanity', label: 'Keysanity' },
+    { value: 'on_lacs', label: 'On LACS' },
+    { value: 'stones', label: 'Stones' },
+    { value: 'medallions', label: 'Medallions' },
+    { value: 'dungeons', label: 'Dungeons' },
+    { value: 'tokens', label: 'Tokens' },
+    { value: 'hearts', label: 'Hearts' },
+  ] },
+  { key: 'trials', label: 'Trials', category: 'Main Rules - Open', type: 'number' },
+  { key: 'trials_random', label: 'Random Trials', category: 'Main Rules - Open', type: 'boolean' },
+
+  { key: 'mq_dungeons_mode', label: 'MQ Dungeons', category: 'Main Rules - Open', type: 'string', options: [
+    { value: 'vanilla', label: 'Vanilla' },
+    { value: 'mq', label: 'MQ' },
+    { value: 'specific', label: 'Specific' },
+    { value: 'count', label: 'Count' },
+    { value: 'random', label: 'Random' },
+  ] },
+  { key: 'empty_dungeons_mode', label: 'Empty Dungeons', category: 'Main Rules - Open', type: 'string', options: [
+    { value: 'none', label: 'None' },
+    { value: 'specific', label: 'Specific' },
+    { value: 'count', label: 'Count' },
+    { value: 'random', label: 'Random' },
+  ] },
+  { key: 'dungeon_shortcuts_choice', label: 'Dungeon Shortcuts', category: 'Main Rules - Open', type: 'string', options: [
+    { value: 'off', label: 'Off' },
+    { value: 'choice', label: 'Choice' },
+    { value: 'all', label: 'All' },
+    { value: 'random', label: 'Random' },
+  ] },
+
+  // Main Rules - World
+  { key: 'shuffle_interior_entrances', label: 'Interior Entrances', category: 'Main Rules - World', type: 'string', options: [
+    { value: 'off', label: 'Off' },
+    { value: 'simple', label: 'Simple' },
+    { value: 'all', label: 'All' },
+  ] },
+  { key: 'shuffle_grotto_entrances', label: 'Grotto Entrances', category: 'Main Rules - World', type: 'boolean' },
+  { key: 'shuffle_dungeon_entrances', label: 'Dungeon Entrances', category: 'Main Rules - World', type: 'string', options: [
+    { value: 'off', label: 'Off' },
+    { value: 'simple', label: 'Simple' },
+    { value: 'all', label: 'All' },
+  ] },
+  { key: 'shuffle_bosses', label: 'Boss Entrances', category: 'Main Rules - World', type: 'string', options: [
+    { value: 'off', label: 'Off' },
+    { value: 'limited', label: 'Limited' },
+    { value: 'full', label: 'Full' },
+  ] },
+  { key: 'shuffle_overworld_entrances', label: 'Overworld Entrances', category: 'Main Rules - World', type: 'boolean' },
+  { key: 'owl_drops', label: 'Owl Drops', category: 'Main Rules - World', type: 'boolean' },
+  { key: 'warp_songs', label: 'Warp Songs', category: 'Main Rules - World', type: 'boolean' },
+
+  // Main Rules - Shuffle
+  { key: 'shuffle_song_items', label: 'Song Shuffle', category: 'Main Rules - Shuffle', type: 'string', options: [
+    { value: 'song', label: 'Song Locations' },
+    { value: 'dungeon', label: 'Dungeon Rewards' },
+    { value: 'any', label: 'Anywhere' },
+  ] },
+  { key: 'shopsanity', label: 'Shopsanity', category: 'Main Rules - Shuffle', type: 'string', options: [
+    { value: 'off', label: 'Off' },
+    { value: '0', label: '0' },
+    { value: '1', label: '1' },
+    { value: '2', label: '2' },
+    { value: '3', label: '3' },
+    { value: '4', label: '4' },
+    { value: 'random', label: 'Random' },
+  ] },
+  { key: 'tokensanity', label: 'Tokensanity', category: 'Main Rules - Shuffle', type: 'string', options: [
+    { value: 'off', label: 'Off' },
+    { value: 'dungeons', label: 'Dungeons' },
+    { value: 'overworld', label: 'Overworld' },
+    { value: 'all', label: 'All' },
+  ] },
+  { key: 'shuffle_scrubs', label: 'Scrub Shuffle', category: 'Main Rules - Shuffle', type: 'string', options: [
+    { value: 'off', label: 'Off' },
+    { value: 'affordable', label: 'Affordable' },
+    { value: 'expensive', label: 'Expensive' },
+    { value: 'random', label: 'Random' },
+  ] },
+  { key: 'shuffle_kokiri_sword', label: 'Shuffle Kokiri Sword', category: 'Main Rules - Shuffle', type: 'boolean' },
+  { key: 'shuffle_ocarinas', label: 'Shuffle Ocarinas', category: 'Main Rules - Shuffle', type: 'boolean' },
+  { key: 'shuffle_gerudo_card', label: 'Shuffle Gerudo Card', category: 'Main Rules - Shuffle', type: 'boolean' },
+  { key: 'shuffle_beans', label: 'Shuffle Beans', category: 'Main Rules - Shuffle', type: 'boolean' },
+  { key: 'shuffle_cows', label: 'Shuffle Cows', category: 'Main Rules - Shuffle', type: 'boolean' },
+  { key: 'shuffle_beehives', label: 'Shuffle Beehives', category: 'Main Rules - Shuffle', type: 'boolean' },
+  { key: 'shuffle_freestanding_items', label: 'Freestanding Items', category: 'Main Rules - Shuffle', type: 'string', options: [
+    { value: 'off', label: 'Off' },
+    { value: 'dungeons', label: 'Dungeons' },
+    { value: 'overworld', label: 'Overworld' },
+    { value: 'all', label: 'All' },
+  ] },
+  { key: 'shuffle_pots', label: 'Shuffle Pots', category: 'Main Rules - Shuffle', type: 'string', options: [
+    { value: 'off', label: 'Off' },
+    { value: 'dungeons', label: 'Dungeons' },
+    { value: 'overworld', label: 'Overworld' },
+    { value: 'all', label: 'All' },
+  ] },
+  { key: 'shuffle_crates', label: 'Shuffle Crates', category: 'Main Rules - Shuffle', type: 'string', options: [
+    { value: 'off', label: 'Off' },
+    { value: 'dungeons', label: 'Dungeons' },
+    { value: 'overworld', label: 'Overworld' },
+    { value: 'all', label: 'All' },
+  ] },
+  { key: 'adult_trade_shuffle', label: 'Adult Trade Shuffle', category: 'Main Rules - Shuffle', type: 'boolean' },
+  { key: 'free_bombchu_drops', label: 'Free Bombchu Drops', category: 'Main Rules - Shuffle', type: 'boolean' },
+
+  { key: 'shuffle_dungeon_rewards', label: 'Dungeon Rewards', category: 'Main Rules - Shuffle', type: 'string', options: [
+    { value: 'reward', label: 'Reward' },
+    { value: 'dungeon', label: 'Dungeon' },
+    { value: 'regional', label: 'Regional' },
+    { value: 'overworld', label: 'Overworld' },
+    { value: 'any_dungeon', label: 'Any Dungeon' },
+    { value: 'anywhere', label: 'Anywhere' },
+  ] },
+  { key: 'shuffle_mapcompass', label: 'Maps & Compasses', category: 'Main Rules - Shuffle', type: 'string', options: [
+    { value: 'remove', label: 'Removed' },
+    { value: 'startwith', label: 'Start With' },
+    { value: 'vanilla', label: 'Vanilla' },
+    { value: 'dungeon', label: 'Dungeon' },
+    { value: 'regional', label: 'Regional' },
+    { value: 'overworld', label: 'Overworld' },
+    { value: 'any_dungeon', label: 'Any Dungeon' },
+    { value: 'keysanity', label: 'Keysanity' },
+  ] },
+  { key: 'shuffle_smallkeys', label: 'Small Keys', category: 'Main Rules - Shuffle', type: 'string', options: [
+    { value: 'remove', label: 'Removed' },
+    { value: 'vanilla', label: 'Vanilla' },
+    { value: 'dungeon', label: 'Dungeon' },
+    { value: 'regional', label: 'Regional' },
+    { value: 'overworld', label: 'Overworld' },
+    { value: 'any_dungeon', label: 'Any Dungeon' },
+    { value: 'keysanity', label: 'Keysanity' },
+  ] },
+  { key: 'shuffle_bosskeys', label: 'Boss Keys', category: 'Main Rules - Shuffle', type: 'string', options: [
+    { value: 'remove', label: 'Removed' },
+    { value: 'vanilla', label: 'Vanilla' },
+    { value: 'dungeon', label: 'Dungeon' },
+    { value: 'regional', label: 'Regional' },
+    { value: 'overworld', label: 'Overworld' },
+    { value: 'any_dungeon', label: 'Any Dungeon' },
+    { value: 'keysanity', label: 'Keysanity' },
+  ] },
+  { key: 'shuffle_silver_rupees', label: 'Silver Rupees', category: 'Main Rules - Shuffle', type: 'string', options: [
+    { value: 'vanilla', label: 'Vanilla' },
+    { value: 'dungeon', label: 'Dungeon' },
+    { value: 'regional', label: 'Regional' },
+    { value: 'overworld', label: 'Overworld' },
+    { value: 'any_dungeon', label: 'Any Dungeon' },
+    { value: 'keysanity', label: 'Keysanity' },
+    { value: 'anywhere', label: 'Anywhere' },
+  ] },
+  { key: 'key_rings_choice', label: 'Key Rings', category: 'Main Rules - Shuffle', type: 'string', options: [
+    { value: 'off', label: 'Off' },
+    { value: 'choice', label: 'Choice' },
+    { value: 'all', label: 'All' },
+    { value: 'random', label: 'Random' },
+  ] },
+
+  // Gameplay
+  { key: 'damage_multiplier', label: 'Damage Multiplier', category: 'Gameplay', type: 'string', options: [
+    { value: 'half', label: 'Half' },
+    { value: 'normal', label: 'Normal' },
+    { value: 'double', label: 'Double' },
+    { value: 'quadruple', label: 'Quadruple' },
+    { value: 'ohko', label: 'OHKO' },
+  ] },
+  { key: 'deadly_bonks', label: 'Deadly Bonks', category: 'Gameplay', type: 'string', options: [
+    { value: 'none', label: 'None' },
+    { value: 'half', label: 'Half' },
+    { value: 'normal', label: 'Normal' },
+    { value: 'double', label: 'Double' },
+    { value: 'quadruple', label: 'Quadruple' },
+    { value: 'ohko', label: 'OHKO' },
+  ] },
+  { key: 'starting_hearts', label: 'Starting Hearts', category: 'Gameplay', type: 'number' },
+  { key: 'starting_tod', label: 'Starting Time of Day', category: 'Gameplay', type: 'string', options: [
+    { value: 'default', label: 'Default' },
+    { value: 'random', label: 'Random' },
+    { value: 'sunrise', label: 'Sunrise' },
+    { value: 'morning', label: 'Morning' },
+    { value: 'noon', label: 'Noon' },
+    { value: 'afternoon', label: 'Afternoon' },
+    { value: 'sunset', label: 'Sunset' },
+    { value: 'evening', label: 'Evening' },
+    { value: 'midnight', label: 'Midnight' },
+    { value: 'witching_hour', label: 'Witching Hour' },
+  ] },
+  { key: 'item_pool_value', label: 'Item Pool', category: 'Gameplay', type: 'string', options: [
+    { value: 'plentiful', label: 'Plentiful' },
+    { value: 'balanced', label: 'Balanced' },
+    { value: 'scarce', label: 'Scarce' },
+    { value: 'minimal', label: 'Minimal' },
+  ] },
+  { key: 'junk_ice_traps', label: 'Ice Traps', category: 'Gameplay', type: 'string', options: [
+    { value: 'off', label: 'Off' },
+    { value: 'normal', label: 'Normal' },
+    { value: 'on', label: 'Extra' },
+    { value: 'mayhem', label: 'Mayhem' },
+    { value: 'onslaught', label: 'Onslaught' },
+  ] },
+
+  // Timesavers
+  { key: 'no_escape_sequence', label: 'Skip Tower Escape', category: 'Timesavers', type: 'boolean' },
+  { key: 'no_guard_stealth', label: 'Skip Guard Stealth', category: 'Timesavers', type: 'boolean' },
+  { key: 'no_epona_race', label: 'Skip Epona Race', category: 'Timesavers', type: 'boolean' },
+  { key: 'skip_some_minigame_phases', label: 'Skip Minigame Phases', category: 'Timesavers', type: 'boolean' },
+  { key: 'fast_chests', label: 'Fast Chests', category: 'Timesavers', type: 'boolean' },
+  { key: 'fast_bunny_hood', label: 'Fast Bunny Hood', category: 'Timesavers', type: 'boolean' },
+  { key: 'chicken_count', label: 'Chicken Count', category: 'Timesavers', type: 'number' },
+  { key: 'big_poe_count', label: 'Big Poe Count', category: 'Timesavers', type: 'number' },
+  { key: 'start_with_consumables', label: 'Start With Consumables', category: 'Timesavers', type: 'boolean' },
+  { key: 'start_with_rupees', label: 'Start With Rupees', category: 'Timesavers', type: 'boolean' },
+  { key: 'skip_reward_from_rauru', label: 'Skip Reward From Rauru', category: 'Timesavers', type: 'boolean' },
+  { key: 'blue_fire_arrows', label: 'Blue Fire Arrows', category: 'Timesavers', type: 'boolean' },
+
+  // Hints and Information
+  { key: 'hints', label: 'Hints', category: 'Hints and Information', type: 'string', options: [
+    { value: 'none', label: 'None' },
+    { value: 'mask', label: 'Mask' },
+    { value: 'agony', label: 'Agony' },
+    { value: 'always', label: 'Always' },
+  ] },
+  { key: 'hint_dist', label: 'Hint Distribution', category: 'Hints and Information', type: 'string', options: [
+    { value: 'balanced', label: 'Balanced' },
+    { value: 'strong', label: 'Strong' },
+    { value: 'very_strong', label: 'Very Strong' },
+    { value: 'tournament', label: 'Tournament' },
+    { value: 'scrubs', label: 'Scrubs' },
+    { value: 'playthrough', label: 'Playthrough' },
+    { value: 'useless', label: 'Useless' },
+  ] },
+  { key: 'clearer_hints', label: 'Clearer Hints', category: 'Hints and Information', type: 'boolean' },
+];
+
+export const defaultSettings: string[] = [
+  'logic_rules',
+  'bridge',
+  'shuffle_ganon_bosskey',
+  'open_forest',
+  'open_kakariko',
+  'open_door_of_time',
+  'zora_fountain',
+  'gerudo_fortress',
+  'starting_age',
+  'shuffle_dungeon_entrances',
+  'shuffle_song_items',
+  'shuffle_smallkeys',
+  'shuffle_bosskeys',
+  'shuffle_mapcompass',
+  'hints',
+  'hint_dist',
+];
+
+export const settingsPresets: SeedSettingsPreset[] = [
+  {
+    name: 'S9 Tournament',
+    description: 'OoTR Season 9 Tournament settings',
+    selectedKeys: [
+      'logic_rules',
+      'bridge',
+      'trials',
+      'shuffle_ganon_bosskey',
+      'ganon_bosskey_medallions',
+      'lacs_condition',
+      'open_forest',
+      'open_kakariko',
+      'open_door_of_time',
+      'zora_fountain',
+      'gerudo_fortress',
+      'starting_age',
+      'mq_dungeons_mode',
+      'shuffle_dungeon_entrances',
+      'shuffle_bosses',
+      'shuffle_song_items',
+      'shuffle_kokiri_sword',
+      'shuffle_dungeon_rewards',
+      'shuffle_mapcompass',
+      'shuffle_smallkeys',
+      'shuffle_bosskeys',
+      'shuffle_silver_rupees',
+      'damage_multiplier',
+      'item_pool_value',
+      'junk_ice_traps',
+      'starting_hearts',
+      'start_with_consumables',
+      'skip_reward_from_rauru',
+      'chicken_count',
+      'big_poe_count',
+      'hints',
+      'hint_dist',
+      'clearer_hints',
+      'blue_fire_arrows',
+    ],
+    values: {
+      'logic_rules': 'glitchless',
+      'bridge': 'vanilla',
+      'trials': 0,
+      'shuffle_ganon_bosskey': 'medallions',
+      'ganon_bosskey_medallions': 6,
+      'lacs_condition': 'vanilla',
+      'open_forest': 'closed_deku',
+      'open_kakariko': 'open',
+      'open_door_of_time': 'open',
+      'zora_fountain': 'closed',
+      'gerudo_fortress': 'fast',
+      'starting_age': 'random',
+      'mq_dungeons_mode': 'vanilla',
+      'shuffle_dungeon_entrances': 'simple',
+      'shuffle_bosses': 'off',
+      'shuffle_song_items': 'song',
+      'shuffle_kokiri_sword': true,
+      'shuffle_dungeon_rewards': 'reward',
+      'shuffle_mapcompass': 'startwith',
+      'shuffle_smallkeys': 'dungeon',
+      'shuffle_bosskeys': 'dungeon',
+      'shuffle_silver_rupees': 'vanilla',
+      'damage_multiplier': 'normal',
+      'item_pool_value': 'balanced',
+      'junk_ice_traps': 'off',
+      'starting_hearts': 3,
+      'start_with_consumables': true,
+      'skip_reward_from_rauru': true,
+      'chicken_count': 3,
+      'big_poe_count': 1,
+      'hints': 'always',
+      'hint_dist': 'tournament',
+      'clearer_hints': true,
+      'blue_fire_arrows': true,
+    },
+  },
+];
+
+export function extractSettings(raw: unknown): SeedSettingsData {
+  const input = raw as Record<string, unknown>;
+  const settings = (input['settings'] ?? input['Settings'] ?? {}) as Record<string, unknown>;
+  const result: SeedSettingsData = {};
+
+  for (const [key, value] of Object.entries(settings)) {
+    if (Array.isArray(value)) continue;
+    if (typeof value === 'object' && value !== null) continue;
+    if (typeof value === 'boolean' || typeof value === 'number') {
+      result[key] = value;
+    } else if (typeof value === 'string') {
+      result[key] = value;
+    }
+  }
+
+  return result;
+}

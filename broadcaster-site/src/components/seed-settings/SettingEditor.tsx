@@ -39,7 +39,7 @@ export function SettingEditor({ selectedKeys, settingDefinitions, values, onUpda
               >
                 <option value="">--</option>
                 {setting.options.map(opt => (
-                  <option key={opt} value={opt}>{opt}</option>
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
                 ))}
               </Form.Select>
             )}

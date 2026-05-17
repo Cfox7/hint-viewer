@@ -1,6 +1,7 @@
 import React from 'react';
 import type { GameConfig, LevelCategory, SpoilerLog } from './types';
 import OotHome from '../../broadcaster-site/src/components/OotHome';
+import { availableSettings, defaultSettings, settingsPresets, extractSettings } from './oot-seed-settings';
 
 const ootColorMap: Record<string, string> = {
   "Red": "#FF5555",
@@ -398,6 +399,10 @@ export const ootConfig: GameConfig = {
   categorizeHints,
   getEmptyHintTemplate,
   homeComponent: OotHome,
+  availableSettings,
+  defaultSettings,
+  settingsPresets,
+  extractSettings,
   toServerPayload: (hints): Record<string, unknown> => ({ gossip_stones: hints }),
   fromServerPayload: (raw) => {
     const obj = raw as Record<string, unknown>;

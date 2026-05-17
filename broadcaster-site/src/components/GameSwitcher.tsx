@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGame } from '../contexts/GameContext';
 import { useNav } from '../contexts/NavContext';
-import { deleteSpoiler, getState } from '../api/spoilerApi';
+import { deleteSpoiler, getState, postSeedSettings } from '../api/spoilerApi';
 import { ConfirmModal } from './ConfirmModal';
 import type { GameConfig } from '@hint-viewer/shared/games';
 
@@ -33,6 +33,7 @@ const GameSwitcher: React.FC<GameSwitcherProps> = ({ channelId }) => {
     try {
       if (channelId) {
         await deleteSpoiler(channelId, pendingGame.id);
+        await postSeedSettings(channelId, {});
       }
       setGame(pendingGame);
       setSlides([]);

@@ -1,6 +1,6 @@
-import type { SettingDefinition, SeedSettingsData } from '../seed-settings-types';
+import type { SettingDefinition, SeedSettingsData, SeedSettingsPreset } from '../seed-settings-types';
 
-export type { SettingDefinition, SeedSettingsData };
+export type { SettingDefinition, SeedSettingsData, SeedSettingsPreset };
 
 export interface SpoilerLog {
   hints: Record<string, string>;
@@ -36,5 +36,6 @@ export interface GameConfig {
   validateSpoilerLog: (raw: unknown) => boolean;
   availableSettings?: SettingDefinition[];
   defaultSettings?: string[];
+  settingsPresets?: SeedSettingsPreset[];
   extractSettings?: (raw: unknown) => SeedSettingsData;
 }

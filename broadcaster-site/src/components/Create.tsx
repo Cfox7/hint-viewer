@@ -22,6 +22,7 @@ function Create({ channelId }: CreateProps) {
   const [showSavedToast, setShowSavedToast] = useState(false);
   const [showSeedSettings, setShowSeedSettings] = useState(false);
   const [showSettingsSavedToast, setShowSettingsSavedToast] = useState(false);
+  const [seedSettingsClearTrigger, setSeedSettingsClearTrigger] = useState(0);
   const {
     initialLoading,
     hints,
@@ -97,6 +98,7 @@ function Create({ channelId }: CreateProps) {
     setClearing(true);
     try {
       await clearAll();
+      setSeedSettingsClearTrigger(prev => prev + 1);
       setShowClearModal(false);
       setShowClearedToast(true);
       setActiveIndex(0);
@@ -217,12 +219,13 @@ function Create({ channelId }: CreateProps) {
         </>
       )}
 
-      {game.availableSettings && showSeedSettings && (
+      {game.availableSettings && (
         <SeedSettingsOffcanvas
           show={showSeedSettings}
           onHide={() => setShowSeedSettings(false)}
           onSaveSuccess={() => setShowSettingsSavedToast(true)}
           channelId={channelId}
+          clearTrigger={seedSettingsClearTrigger}
         />
       )}
     </>

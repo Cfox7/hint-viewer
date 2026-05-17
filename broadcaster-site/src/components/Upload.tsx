@@ -182,7 +182,7 @@ function Upload({ channelId }: UploadProps) {
         </div>
       )}
 
-      {game.availableSettings && showSeedSettings && (
+      {game.availableSettings && (
         <SeedSettingsOffcanvas
           show={showSeedSettings}
           onHide={() => setShowSeedSettings(false)}

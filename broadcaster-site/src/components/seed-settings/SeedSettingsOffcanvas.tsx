@@ -7,8 +7,8 @@ import { FaChevronRight, FaChevronLeft, FaAngleDoubleRight, FaAngleDoubleLeft } 
 import { useGame } from '../../contexts/GameContext';
 import { useSeedSettings } from '../../hooks/use-seed-settings';
 import { SettingEditor } from './SettingEditor';
-import type { SeedSettingsData } from '@hint-viewer/shared/seed-settings-types';
-import { useEffect } from 'react';
+import type { SeedSettingsData, SeedSettingsPreset } from '@hint-viewer/shared/seed-settings-types';
+import { useEffect, useState } from 'react';
 
 const listboxIcons = {
   moveToSelected: <FaChevronRight />,
@@ -23,9 +23,10 @@ interface SeedSettingsOffcanvasProps {
   onSaveSuccess: () => void;
   channelId: string;
   extractedSettings?: SeedSettingsData;
+  clearTrigger?: number;
 }
 
-export function SeedSettingsOffcanvas({ show, onHide, onSaveSuccess, channelId, extractedSettings }: SeedSettingsOffcanvasProps) {
+export function SeedSettingsOffcanvas({ show, onHide, onSaveSuccess, channelId, extractedSettings, clearTrigger }: SeedSettingsOffcanvasProps) {
   const { game } = useGame();
   const { selectedKeys, setSelectedKeys, values, setValues, updateValue, save, loading, saving, hasUnsavedChanges, hasMissingValues } = useSeedSettings(channelId);
 
@@ -40,9 +41,24 @@ export function SeedSettingsOffcanvas({ show, onHide, onSaveSuccess, channelId, 
     }
   }, [extractedSettings]);
 
+  useEffect(() => {
+    if (!clearTrigger) return;
+    setValues({});
+    setSelectedKeys(defaultSelected);
+  }, [clearTrigger]);
+
+  const presets = game.settingsPresets ?? [];
+  const [activePreset, setActivePreset] = useState<string | null>(null);
+
   const listboxOptions = buildGroupedOptions(settingDefinitions);
   const definitionOrder = new Map(settingDefinitions.map((s, i) => [s.key, i]));
   const orderedSelectedKeys = [...selectedKeys].sort((a, b) => (definitionOrder.get(a) ?? 0) - (definitionOrder.get(b) ?? 0));
+
+  const handleApplyPreset = (preset: SeedSettingsPreset) => {
+    setSelectedKeys(preset.selectedKeys);
+    setValues(preset.values);
+    setActivePreset(preset.name);
+  };
 
   const handleSave = async () => {
     await save();
@@ -53,7 +69,27 @@ export function SeedSettingsOffcanvas({ show, onHide, onSaveSuccess, channelId, 
   return (
     <Offcanvas show={show} onHide={onHide} placement="top" className="seed-settings-offcanvas">
       <Offcanvas.Header closeButton>
-        <Offcanvas.Title>Seed Settings</Offcanvas.Title>
+        <Offcanvas.Title className="d-flex align-items-center gap-2">
+          Seed Settings
+          <Button
+            variant="outline-danger"
+            size="sm"
+            className="reset-defaults-button"
+            onClick={() => { setSelectedKeys(defaultSelected); setActivePreset(null); }}
+            disabled={saving}
+          >
+            Default Selection
+          </Button>
+          <Button
+            variant="outline-danger"
+            size="sm"
+            className="reset-defaults-button"
+            onClick={() => { setValues({}); setActivePreset(null); }}
+            disabled={saving}
+          >
+            Clear Values
+          </Button>
+        </Offcanvas.Title>
       </Offcanvas.Header>
       <Offcanvas.Body>
         {loading ? (
@@ -61,45 +97,64 @@ export function SeedSettingsOffcanvas({ show, onHide, onSaveSuccess, channelId, 
             <Spinner animation="border" variant="primary" />
           </div>
         ) : (
-          <>
-            <div className="seed-settings-selector mb-3">
-              <DualListBox
-                options={listboxOptions}
-                selected={selectedKeys}
-                onChange={setSelectedKeys}
-                canFilter
-                icons={listboxIcons}
-              />
-            </div>
-
-            {orderedSelectedKeys.length > 0 && (
-              <div className="seed-settings-editor mb-3">
-                <h6>Values</h6>
-                <SettingEditor
-                  selectedKeys={orderedSelectedKeys}
-                  settingDefinitions={settingDefinitions}
-                  values={values}
-                  onUpdateValue={updateValue}
+          <div className="seed-settings-layout">
+            {presets.length > 0 && (
+              <div className="seed-settings-presets">
+                <h6>Presets</h6>
+                {presets.map(preset => (
+                  <button
+                    key={preset.name}
+                    className={`seed-settings-preset-button ${activePreset === preset.name ? 'active' : ''}`}
+                    onClick={() => handleApplyPreset(preset)}
+                    title={preset.description}
+                  >
+                    {preset.name}
+                  </button>
+                ))}
+              </div>
+            )}
+            <div className="seed-settings-main">
+              <div className="seed-settings-selector mb-3">
+                <DualListBox
+                  options={listboxOptions}
+                  selected={selectedKeys}
+                  onChange={(keys: string[]) => { setSelectedKeys(keys); setActivePreset(null); }}
+                  canFilter
+                  icons={listboxIcons}
                 />
               </div>
-            )}
 
-            {hasMissingValues && (
-              <div className="text-warning mb-2 text-center" style={{ fontSize: '0.875rem' }}>
-                All selected settings must have a value before saving.
-              </div>
-            )}
-            <Button
-              variant="primary"
-              onClick={handleSave}
-              disabled={saving || !hasUnsavedChanges || hasMissingValues}
-              className="w-100"
-            >
-              {saving ? <Spinner size="sm" animation="border" /> : 'Save to Viewers'}
-            </Button>
-          </>
+              {orderedSelectedKeys.length > 0 && (
+                <div className="seed-settings-editor mb-3">
+                  <h6>Values</h6>
+                  <SettingEditor
+                    selectedKeys={orderedSelectedKeys}
+                    settingDefinitions={settingDefinitions}
+                    values={values}
+                    onUpdateValue={updateValue}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
         )}
       </Offcanvas.Body>
+      {!loading && (
+        <div className="seed-settings-footer d-flex flex-column align-items-center py-2">
+          {hasMissingValues && (
+            <div className="text-warning text-center mb-2" style={{ fontSize: '0.875rem' }}>
+              All selected settings must have a value before saving.
+            </div>
+          )}
+          <Button
+            variant="primary"
+            onClick={handleSave}
+            disabled={saving || !hasUnsavedChanges || hasMissingValues}
+          >
+            {saving ? <Spinner size="sm" animation="border" /> : 'Save to Viewers'}
+          </Button>
+        </div>
+      )}
     </Offcanvas>
   );
 }

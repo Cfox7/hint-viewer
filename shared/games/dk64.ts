@@ -1,7 +1,7 @@
 import React from 'react';
 import type { GameConfig, LevelCategory, SpoilerLog, SeedSettingsData } from './types';
 import DkHome from '../../broadcaster-site/src/components/DkHome';
-import { availableSettings, defaultSettings } from './dk64-seed-settings';
+import { availableSettings, defaultSettings, settingsPresets } from './dk64-seed-settings';
 
 const dk64ColorMap: Record<string, string> = {
   "Way of the hoard": "#FFA010", woth: "#FFA010", keys: "#FFA010", key: "#FFA010",
@@ -451,6 +451,7 @@ export const dk64Config: GameConfig = {
   homeComponent: DkHome,
   availableSettings,
   defaultSettings,
+  settingsPresets,
   extractSettings,
   toServerPayload: (hints, raw): Record<string, unknown> => {
     const payload: Record<string, unknown> = { "Wrinkly Hints": hints };
