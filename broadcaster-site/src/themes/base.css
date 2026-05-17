@@ -595,12 +595,13 @@ input[type="file"]:disabled {
   color: var(--chip-color);
   font-family: var(--font-primary);
   font-size: 0.72rem;
-  padding: 4px 10px;
+  padding: 4px 18px 4px 10px;
   border-radius: 6px;
   cursor: pointer;
   white-space: nowrap;
   box-shadow: var(--chip-shadow);
   transition: all 0.15s ease;
+  position: relative;
 }
 
 .level-nav-chip:hover {
@@ -621,6 +622,28 @@ input[type="file"]:disabled {
   border-color: var(--chip-active-border);
   color: var(--chip-active-color);
   box-shadow: var(--chip-active-shadow);
+}
+
+.level-nav-dot {
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-accent-alt);
+  box-shadow: 0 0 4px var(--text-accent-alt);
+}
+
+.level-nav-check {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.55rem;
+  color: #2ecc71;
+  filter: drop-shadow(0 0 3px rgba(46, 204, 113, 0.5));
 }
 
 /* Sidebar nav */
@@ -748,4 +771,270 @@ html { font-size: 18px; }
   border-radius: 6px;
   font-size: 0.9rem;
   color: #aaa;
+}
+
+/* Shop Tracker */
+.shop-tracker-offcanvas {
+  background-color: var(--bg-offcanvas) !important;
+  color: var(--text-primary) !important;
+  width: 480px !important;
+  font-family: var(--font-primary);
+}
+
+.shop-tracker-offcanvas .offcanvas-header {
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.shop-tracker-offcanvas .offcanvas-title {
+  color: var(--text-accent);
+  font-family: var(--font-primary);
+  flex: 1;
+}
+
+.shop-tracker-offcanvas .btn-close {
+  filter: invert(1);
+}
+
+.shop-tracker-reset {
+  font-size: 0.85rem;
+  padding: 4px 12px;
+}
+
+.shop-tracker-loading {
+  padding: 24px;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.shop-tracker-levels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.shop-tracker-level-chip {
+  background: var(--chip-bg);
+  border: 1px solid var(--chip-border);
+  color: var(--chip-color);
+  font-family: var(--font-primary);
+  font-size: 0.85rem;
+  padding: 6px 22px 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: var(--chip-shadow);
+  transition: all 0.15s ease;
+  position: relative;
+}
+
+.shop-tracker-level-chip:hover {
+  background: var(--chip-hover-bg);
+  border-color: var(--chip-hover-border);
+  box-shadow: var(--chip-hover-shadow);
+  color: var(--chip-active-color);
+  transform: translateY(-1px);
+}
+
+.shop-tracker-level-chip.active {
+  background: var(--chip-active-bg);
+  border-color: var(--text-accent-alt);
+  color: var(--chip-active-color);
+  box-shadow: var(--chip-active-shadow), 0 0 12px rgba(255, 215, 0, 0.25), inset 0 0 0 1px var(--text-accent-alt);
+}
+
+.shop-tracker-level-dot {
+  position: absolute;
+  right: 7px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-accent-alt);
+  box-shadow: 0 0 4px var(--text-accent-alt);
+}
+
+.shop-tracker-level-check {
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.65rem;
+  color: #2ecc71;
+  filter: drop-shadow(0 0 3px rgba(46, 204, 113, 0.5));
+}
+
+.shop-tracker-grid {
+  padding: 8px 12px;
+}
+
+.shop-tracker-row {
+  display: grid;
+  grid-template-columns: 110px repeat(5, 1fr);
+  align-items: start;
+  gap: 6px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.shop-tracker-row:last-child {
+  border-bottom: none;
+}
+
+.shop-tracker-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 1rem;
+  color: var(--text-accent);
+  padding-top: 10px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.shop-tracker-shop-icon {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+.shop-tracker-kongs {
+  display: contents;
+}
+
+.kong-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.kong-toggle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: opacity 0.15s ease;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.kong-toggle-icon {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.kong-toggle:hover {
+  transform: scale(1.1);
+}
+
+.kong-toggle:active {
+  transform: scale(0.95);
+}
+
+.kong-toggle-check {
+  position: absolute;
+  z-index: 1;
+  color: #2ecc71;
+  font-size: 22px;
+  filter: drop-shadow(0 0 4px rgba(0, 0, 0, 1)) drop-shadow(0 0 8px rgba(0, 0, 0, 0.8)) drop-shadow(0 1px 3px rgba(0, 0, 0, 0.9));
+}
+
+.item-cycle {
+  width: 44px;
+  height: 34px;
+  border-radius: 4px;
+  border: 1px dashed var(--border-color);
+  background: var(--bg-nav-button);
+  color: var(--text-primary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: border-color 0.15s;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.item-cycle:hover:not(.item-cycle-hidden) {
+  border-color: var(--text-accent-alt);
+  background: var(--bg-nav-button-active);
+}
+
+.item-cycle-icon {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.item-cycle-hidden {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.shop-tracker-offcanvas .offcanvas-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.shop-tracker-instructions {
+  margin-top: auto;
+  border-top: 1px solid var(--border-color);
+}
+
+.shop-tracker-instructions .accordion-item {
+  background-color: transparent;
+  border: none;
+}
+
+.shop-tracker-instructions .accordion-button {
+  background-color: var(--bg-nav-button);
+  color: var(--text-accent);
+  font-family: var(--font-primary);
+  font-size: 1.1rem;
+  padding: 10px 14px;
+  box-shadow: none;
+}
+
+.shop-tracker-instructions .accordion-button:not(.collapsed) {
+  background-color: var(--bg-nav-button-active);
+  color: var(--text-accent);
+  box-shadow: none;
+}
+
+.shop-tracker-instructions .accordion-button::after {
+  filter: invert(1);
+}
+
+.shop-tracker-instructions .accordion-body {
+  background-color: var(--bg-offcanvas);
+  color: var(--text-primary);
+  font-size: 1rem;
+  padding: 12px 16px;
+}
+
+.shop-tracker-instructions-list {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { FaEdit, FaSave, FaTasks } from 'react-icons/fa';
 import { MdNoteAdd } from 'react-icons/md';
 import { HintCarousel } from './HintCarousel';
-import { buildSlides } from '@hint-viewer/shared/buildSlides';
+import { buildSlides } from '@hint-viewer/shared/components/buildSlides';
 import { useNav } from '../contexts/NavContext';
 import { useGame } from '../contexts/GameContext';
 import { useManual } from '../hooks/useManual';
@@ -33,10 +33,9 @@ function Create({ channelId }: CreateProps) {
     saveSpoiler,
   } = useManual(channelId);
 
-  const { slides, activeIndex, setActiveIndex, setSlides } = useNav();
+  const { slides, activeIndex, setActiveIndex, setSlides, setRevealedHints, setCompletedHints } = useNav();
   const { game } = useGame();
 
-  // Sync slides into nav context whenever hints or editHints change
   useEffect(() => {
     const sourceHints = isEditing && editHints ? editHints : hints;
     const { slides: newSlides } = sourceHints && Object.keys(sourceHints).length > 0
@@ -44,6 +43,11 @@ function Create({ channelId }: CreateProps) {
       : { slides: [] };
     setSlides(newSlides);
   }, [hints, editHints, isEditing]);
+
+  useEffect(() => {
+    setRevealedHints(revealedHints);
+    setCompletedHints(completedHints);
+  }, [revealedHints, completedHints]);
 
   const handleEditToggle = () => {
     if (!isEditing) {

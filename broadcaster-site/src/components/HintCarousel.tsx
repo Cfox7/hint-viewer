@@ -1,6 +1,6 @@
 import { Carousel } from 'react-bootstrap';
 import RevealButtons from './RevealButtons';
-import { buildSlides } from '@hint-viewer/shared/buildSlides';
+import { buildSlides } from '@hint-viewer/shared/components/buildSlides';
 import { useGame } from '../contexts/GameContext';
 import HintItem from './HintItem';
 

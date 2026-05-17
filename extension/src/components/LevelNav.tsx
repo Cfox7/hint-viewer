@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Offcanvas, Accordion } from 'react-bootstrap';
 import { useGame } from '../contexts/GameContext';
 import type { LevelCategory } from '@hint-viewer/shared/games/types';
@@ -9,6 +8,8 @@ export interface LevelSlide {
 }
 
 export interface LevelNavProps {
+  show: boolean;
+  onHide: () => void;
   slides: LevelSlide[];
   activeIndex: number;
   onSelect: (index: number) => void;
@@ -17,8 +18,7 @@ export interface LevelNavProps {
 
 const SECTION_ORDER: LevelCategory[] = ['regions', 'direct', 'foolish', 'woth'];
 
-export function LevelNav({ slides, activeIndex, onSelect, levelDisplayNames }: LevelNavProps) {
-  const [show, setShow] = useState(false);
+export function LevelNav({ show, onHide, slides, activeIndex, onSelect, levelDisplayNames }: LevelNavProps) {
   const { game } = useGame();
   const isProgressive = slides.some((s) => s.level.startsWith('Batch'));
   const sectionLabels = { ...game.sectionLabels, regions: isProgressive ? 'Batches' : game.sectionLabels.regions };
@@ -48,18 +48,13 @@ export function LevelNav({ slides, activeIndex, onSelect, levelDisplayNames }: L
 
   const handleSelect = (idx: number) => {
     onSelect(idx);
-    setShow(false);
+    onHide();
   };
 
   return (
-    <>
-      <button className="level-nav-toggle" onClick={() => setShow(true)} aria-label="Open level navigation">
-        Quick Nav
-      </button>
-
-      <Offcanvas
-        show={show}
-        onHide={() => setShow(false)}
+    <Offcanvas
+      show={show}
+      onHide={onHide}
         placement="start"
         className="level-nav-offcanvas"
       >
@@ -88,7 +83,6 @@ export function LevelNav({ slides, activeIndex, onSelect, levelDisplayNames }: L
             ))}
           </Accordion>
         </Offcanvas.Body>
-      </Offcanvas>
-    </>
+    </Offcanvas>
   );
 }

@@ -18,26 +18,68 @@ def handler(event, context):
         }
 
     channel_id = body.get("channelId")
-    revealed_hints = body.get("revealedHints")
-    completed_hints = body.get("completedHints")
-    hinted_hints = body.get("hintedItems", {})
-
-    if not channel_id or not isinstance(revealed_hints, list) or not isinstance(completed_hints, list) or not isinstance(hinted_hints, dict):
+    if not channel_id:
         return {
             "statusCode": 400,
             "headers": {"Content-Type": "application/json"},
-            "body": json.dumps({"error": "Invalid payload"}),
+            "body": json.dumps({"error": "Missing channelId"}),
+        }
+
+    updates = []
+    values = {}
+
+    if "revealedHints" in body:
+        if not isinstance(body["revealedHints"], list):
+            return {
+                "statusCode": 400,
+                "headers": {"Content-Type": "application/json"},
+                "body": json.dumps({"error": "revealedHints must be a list"}),
+            }
+        updates.append("revealedHints = :revealed")
+        values[":revealed"] = body["revealedHints"]
+
+    if "completedHints" in body:
+        if not isinstance(body["completedHints"], list):
+            return {
+                "statusCode": 400,
+                "headers": {"Content-Type": "application/json"},
+                "body": json.dumps({"error": "completedHints must be a list"}),
+            }
+        updates.append("completedHints = :completed")
+        values[":completed"] = body["completedHints"]
+
+    if "hintedItems" in body:
+        if not isinstance(body["hintedItems"], dict):
+            return {
+                "statusCode": 400,
+                "headers": {"Content-Type": "application/json"},
+                "body": json.dumps({"error": "hintedItems must be a dict"}),
+            }
+        updates.append("hintedItems = :hinted")
+        values[":hinted"] = body["hintedItems"]
+
+    if "shopTracker" in body:
+        if not isinstance(body["shopTracker"], dict):
+            return {
+                "statusCode": 400,
+                "headers": {"Content-Type": "application/json"},
+                "body": json.dumps({"error": "shopTracker must be a dict"}),
+            }
+        updates.append("shopTracker = :shop")
+        values[":shop"] = body["shopTracker"]
+
+    if not updates:
+        return {
+            "statusCode": 400,
+            "headers": {"Content-Type": "application/json"},
+            "body": json.dumps({"error": "No valid fields to update"}),
         }
 
     table = dynamodb.Table(TABLE_NAME)
     table.update_item(
         Key={"channelId": channel_id},
-        UpdateExpression="SET revealedHints = :revealed, completedHints = :completed, hintedItems = :hinted",
-        ExpressionAttributeValues={
-            ":revealed": revealed_hints,
-            ":completed": completed_hints,
-            ":hinted": hinted_hints,
-        },
+        UpdateExpression="SET " + ", ".join(updates),
+        ExpressionAttributeValues=values,
     )
 
     return {
