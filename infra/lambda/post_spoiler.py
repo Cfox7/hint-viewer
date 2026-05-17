@@ -38,7 +38,7 @@ def handler(event, context):
             "body": json.dumps({"error": "Missing or invalid spoiler data"}),
         }
 
-    hint_fields = ["Wrinkly Hints", "gossip_stones"]
+    hint_fields = ["Wrinkly Hints", "gossip_stones", "Settings", "settings"]
 
     hints = {key: body[key] for key in hint_fields if key in body}
     if not hints:

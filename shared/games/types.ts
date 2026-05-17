@@ -1,3 +1,7 @@
+import type { SettingDefinition, SeedSettingsData } from '../seed-settings-types';
+
+export type { SettingDefinition, SeedSettingsData };
+
 export interface SpoilerLog {
   hints: Record<string, string>;
 }
@@ -27,7 +31,10 @@ export interface GameConfig {
   homeComponent: React.FC;
   categorizeHints: (hints: Record<string, string>) => Record<string, string>;
   getEmptyHintTemplate: () => Record<string, string>;
-  toServerPayload: (hints: Record<string, string>) => Record<string, unknown>;
+  toServerPayload: (hints: Record<string, string>, raw?: unknown) => Record<string, unknown>;
   fromServerPayload: (raw: unknown) => SpoilerLog;
   validateSpoilerLog: (raw: unknown) => boolean;
+  availableSettings?: SettingDefinition[];
+  defaultSettings?: string[];
+  extractSettings?: (raw: unknown) => SeedSettingsData;
 }

@@ -1,9 +1,10 @@
 import Toast from 'react-bootstrap/Toast';
 import ToastContainer from 'react-bootstrap/ToastContainer';
 import { useEffect, useState } from 'react';
-import { FaEdit, FaSave, FaTasks } from 'react-icons/fa';
+import { FaEdit, FaSave, FaTasks, FaCog } from 'react-icons/fa';
 import { MdNoteAdd } from 'react-icons/md';
 import { HintCarousel } from './HintCarousel';
+import { SeedSettingsOffcanvas } from './seed-settings/SeedSettingsOffcanvas';
 import { buildSlides } from '@hint-viewer/shared/components/buildSlides';
 import { useNav } from '../contexts/NavContext';
 import { useGame } from '../contexts/GameContext';
@@ -19,6 +20,8 @@ function Create({ channelId }: CreateProps) {
   const [clearing, setClearing] = useState(false);
   const [showClearedToast, setShowClearedToast] = useState(false);
   const [showSavedToast, setShowSavedToast] = useState(false);
+  const [showSeedSettings, setShowSeedSettings] = useState(false);
+  const [showSettingsSavedToast, setShowSettingsSavedToast] = useState(false);
   const {
     initialLoading,
     hints,
@@ -118,7 +121,7 @@ function Create({ channelId }: CreateProps) {
       <ConfirmModal
         show={showClearModal}
         loading={clearing}
-        message="Are you sure you want make a new template and delete any existing hints?"
+        message="Are you sure you want to make a new template? This will delete any existing hints and reset Seed Settings."
         confirmLabel="New Template"
         loadingText="Clearing..."
         onCancel={() => setShowClearModal(false)}
@@ -142,6 +145,14 @@ function Create({ channelId }: CreateProps) {
             Your new hints have been updated.
           </Toast.Body>
         </Toast>
+        <Toast show={showSettingsSavedToast} onClose={() => setShowSettingsSavedToast(false)} style={{ backgroundColor: '#218838' }} autohide delay={7000} animation>
+          <Toast.Header closeButton>
+            <strong className="me-auto">Settings saved!</strong>
+          </Toast.Header>
+          <Toast.Body className="text-white">
+            Viewers can now see your seed settings.
+          </Toast.Body>
+        </Toast>
       </ToastContainer>
 
       {initialLoading ? (
@@ -153,13 +164,23 @@ function Create({ channelId }: CreateProps) {
       ) : (
         <>
           <div className="d-flex justify-content-between align-items-center mb-3">
-            <button
-              className="btn btn-primary d-flex align-items-center gap-2"
-              onClick={() => setShowClearModal(true)}
-              disabled={isEditing}
-            >
-              <MdNoteAdd size={20} /> Create New Hint Template
-            </button>
+            <div className="d-flex gap-2">
+              <button
+                className="btn btn-primary d-flex align-items-center gap-2"
+                onClick={() => setShowClearModal(true)}
+                disabled={isEditing}
+              >
+                <MdNoteAdd size={20} /> Create New Hint Template
+              </button>
+              {game.availableSettings && (
+                <button
+                  className="twitch-btn btn btn-outline-primary btn-sm d-flex align-items-center gap-1"
+                  onClick={() => setShowSeedSettings(true)}
+                >
+                  <FaCog /> Seed Settings
+                </button>
+              )}
+            </div>
             {slides.length > 0 && (
               <button
                 className="btn btn-success btn-sm d-flex align-items-center gap-1"
@@ -194,6 +215,15 @@ function Create({ channelId }: CreateProps) {
             </div>
           )}
         </>
+      )}
+
+      {game.availableSettings && showSeedSettings && (
+        <SeedSettingsOffcanvas
+          show={showSeedSettings}
+          onHide={() => setShowSeedSettings(false)}
+          onSaveSuccess={() => setShowSettingsSavedToast(true)}
+          channelId={channelId}
+        />
       )}
     </>
   );
