@@ -147,7 +147,6 @@ export function useUpload(channelId: string | undefined): UseUploadReturn {
       if (syncTimerRef.current) { window.clearTimeout(syncTimerRef.current); syncTimerRef.current = null; }
       void postState(channelId, [], [], {});
       void postShopTracker(channelId, {});
-      window.dispatchEvent(new Event('shop-tracker-clear'));
 
       if (extracted && game.defaultSettings) {
         const defaultPayload: SeedSettingsData = {};

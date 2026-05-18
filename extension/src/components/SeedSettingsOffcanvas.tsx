@@ -34,6 +34,12 @@ export function SeedSettingsOffcanvas({ show, onHide, seedSettings }: SeedSettin
     grouped.set(category, group);
   }
 
+  const categories = Array.from(grouped.entries());
+  const pairs: [string, SettingEntry[]][][] = [];
+  for (let i = 0; i < categories.length; i += 2) {
+    pairs.push(categories.slice(i, i + 2));
+  }
+
   return (
     <Offcanvas
       show={show}
@@ -45,54 +51,69 @@ export function SeedSettingsOffcanvas({ show, onHide, seedSettings }: SeedSettin
         <Offcanvas.Title>Seed Settings</Offcanvas.Title>
       </Offcanvas.Header>
       <Offcanvas.Body className="px-2 pb-2 pt-0">
-        <Table size="sm" variant="dark" borderless striped className="seed-settings-viewer-table">
-          <tbody>
-            {Array.from(grouped.entries()).map(([category, settings]) => (
-              <CategoryGroup key={category} category={category} settings={settings} />
-            ))}
-          </tbody>
-        </Table>
+        {pairs.map(pair => (
+          <Table
+            key={pair[0][0]}
+            size="sm"
+            variant="dark"
+            borderless
+            striped
+            className="seed-settings-viewer-table"
+          >
+            <thead>
+              <tr>
+                {pair.map(([category]) => (
+                  <th key={category} colSpan={2} className="seed-settings-category-header">
+                    {category}
+                  </th>
+                ))}
+                {pair.length === 1 && <th colSpan={2} />}
+              </tr>
+            </thead>
+            <tbody>
+              <CategoryPairRows pair={pair} />
+            </tbody>
+          </Table>
+        ))}
       </Offcanvas.Body>
     </Offcanvas>
   );
 }
 
-interface CategoryGroupProps {
-  category: string;
-  settings: SettingEntry[];
-}
+function CategoryPairRows({ pair }: { pair: [string, SettingEntry[]][] }) {
+  const left = pair[0][1];
+  const right = pair[1]?.[1] ?? [];
+  const maxRows = Math.max(left.length, right.length);
+  const rows = [];
 
-function CategoryGroup({ category, settings }: CategoryGroupProps) {
-  const rows: [SettingEntry, SettingEntry | null][] = [];
-  for (let i = 0; i < settings.length; i += 2) {
-    rows.push([settings[i], settings[i + 1] ?? null]);
+  for (let i = 0; i < maxRows; i++) {
+    rows.push(
+      <tr key={i}>
+        {left[i] ? (
+          <>
+            <td className="seed-settings-label">{left[i].label}</td>
+            <td className="seed-settings-value">
+              <SettingValue value={left[i].value} setting={left[i].setting} />
+            </td>
+          </>
+        ) : (
+          <td colSpan={2} />
+        )}
+        {right[i] ? (
+          <>
+            <td className="seed-settings-label">{right[i].label}</td>
+            <td className="seed-settings-value">
+              <SettingValue value={right[i].value} setting={right[i].setting} />
+            </td>
+          </>
+        ) : (
+          <td colSpan={2} />
+        )}
+      </tr>
+    );
   }
 
-  return (
-    <>
-      <tr className="seed-settings-category-row">
-        <td colSpan={4}>{category}</td>
-      </tr>
-      {rows.map(([left, right]) => (
-        <tr key={left.key}>
-          <td className="seed-settings-label">{left.label}</td>
-          <td className="seed-settings-value">
-            <SettingValue value={left.value} setting={left.setting} />
-          </td>
-          {right ? (
-            <>
-              <td className="seed-settings-label">{right.label}</td>
-              <td className="seed-settings-value">
-                <SettingValue value={right.value} setting={right.setting} />
-              </td>
-            </>
-          ) : (
-            <td colSpan={2} />
-          )}
-        </tr>
-      ))}
-    </>
-  );
+  return <>{rows}</>;
 }
 
 function SettingValue({ value, setting }: { value: string | boolean | number; setting?: SettingDefinition }) {

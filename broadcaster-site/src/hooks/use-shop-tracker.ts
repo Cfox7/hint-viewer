@@ -63,15 +63,6 @@ export function useShopTracker(channelId: string | undefined): UseShopTrackerRet
     return () => { mounted = false; };
   }, [channelId]);
 
-  useEffect(() => {
-    const handleClear = () => {
-      setKongState({});
-      setItemState({});
-    };
-    window.addEventListener('shop-tracker-clear', handleClear);
-    return () => window.removeEventListener('shop-tracker-clear', handleClear);
-  }, []);
-
   const advanceKong = (key: string) => {
     setKongState((prev) => {
       const current = (prev[key] ?? SHOP_KONG_STATE.EMPTY) as ShopKongState;

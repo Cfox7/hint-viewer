@@ -693,8 +693,7 @@ a:hover {
   background-color: var(--bg-offcanvas) !important;
   color: var(--text-primary) !important;
   height: auto !important;
-  max-height: 250px !important;
-  max-width: 500px !important;
+  max-height: 50% !important;
   margin-inline: auto;
   font-family: var(--font-primary);
 }
@@ -720,29 +719,35 @@ a:hover {
 }
 
 .seed-settings-viewer-table {
-  margin: 0;
+  margin-bottom: 0 !important;
   font-size: 0.7rem;
   line-height: 1.2;
   table-layout: fixed;
 }
 
-.seed-settings-viewer-table td {
+.seed-settings-viewer-table td,
+.seed-settings-viewer-table th {
   padding: 1px 4px;
   vertical-align: middle;
 }
 
-.seed-settings-category-row td {
-  color: var(--text-accent);
+.seed-settings-viewer-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.seed-settings-category-header {
+  color: var(--text-accent) !important;
   font-weight: 700;
   font-size: 0.7rem;
   padding-top: 4px !important;
   padding-bottom: 2px !important;
-  border-bottom: 1px solid var(--border-color);
-  position: sticky;
-  top: 0;
-  background-color: var(--bg-offcanvas);
+  border-bottom: 1px solid var(--border-color) !important;
+  background-color: var(--bg-offcanvas) !important;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
-  z-index: 1;
+  --bs-table-bg: var(--bg-offcanvas);
+  --bs-table-striped-bg: var(--bg-offcanvas);
 }
 
 .seed-settings-label {
