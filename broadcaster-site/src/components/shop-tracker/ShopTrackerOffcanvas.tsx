@@ -12,7 +12,7 @@ interface ShopTrackerOffcanvasProps {
 const ASSET_BASE_PATH = '/assets/ShopTracker';
 
 export function ShopTrackerOffcanvas({ show, onHide, channelId }: ShopTrackerOffcanvasProps) {
-  const { kongState, itemState, advanceKong, retreatKong, cycleItem, resetAll, loading, resetting, showResetModal, setShowResetModal } = useShopTracker(channelId);
+  const { kongState, itemState, advanceKong, retreatKong, selectItem, resetAll, loading, resetting, showResetModal, setShowResetModal } = useShopTracker(channelId);
 
   return (
     <>
@@ -38,7 +38,7 @@ export function ShopTrackerOffcanvas({ show, onHide, channelId }: ShopTrackerOff
                 assetBasePath={ASSET_BASE_PATH}
                 onAdvanceKong={advanceKong}
                 onRetreatKong={retreatKong}
-                onCycleItem={cycleItem}
+                onSelectItem={selectItem}
               />
               <div className="shop-tracker-instructions">
                 <Accordion flush>
@@ -48,7 +48,7 @@ export function ShopTrackerOffcanvas({ show, onHide, channelId }: ShopTrackerOff
                       <ul className="shop-tracker-instructions-list">
                         <li><strong>Left click</strong> a kong circle to advance its state: dimmed (empty) to bright (has item) to checkmark (bought).</li>
                         <li><strong>Right click</strong> a kong circle to go back a step.</li>
-                        <li>When a kong is active, an item slot appears below it. <strong>Left click</strong> to cycle forward through items, <strong>right click</strong> to cycle backward.</li>
+                        <li>When a kong is active, an item slot appears below it. <strong>Click</strong> to open a picker and select the item.</li>
                         <li>Use the level chips above to switch between levels.</li>
                         <li>All changes are saved automatically.</li>
                       </ul>

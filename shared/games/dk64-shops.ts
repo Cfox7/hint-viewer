@@ -9,4 +9,4 @@ export const DK64_SHOP_LEVELS: Record<string, string[]> = {
   Castle: ['Cranky', 'Candy', 'Funky', 'Snide'],
 };
 
-export const DK64_KONGS = ['DK', 'Diddy', 'Lanky', 'Tiny', 'Chunky'] as const;
+export const DK64_KONGS = ['Any', 'DK', 'Diddy', 'Lanky', 'Tiny', 'Chunky'] as const;

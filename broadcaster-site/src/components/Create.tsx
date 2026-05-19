@@ -1,10 +1,11 @@
 import Toast from 'react-bootstrap/Toast';
 import ToastContainer from 'react-bootstrap/ToastContainer';
 import { useEffect, useState } from 'react';
-import { FaEdit, FaSave, FaTasks, FaCog } from 'react-icons/fa';
+import { FaEdit, FaSave, FaTasks, FaCog, FaStore } from 'react-icons/fa';
 import { MdNoteAdd } from 'react-icons/md';
 import { HintCarousel } from './HintCarousel';
 import { SeedSettingsOffcanvas } from './seed-settings/SeedSettingsOffcanvas';
+import { ShopTrackerOffcanvas } from './shop-tracker/ShopTrackerOffcanvas';
 import { buildSlides } from '@hint-viewer/shared/components/buildSlides';
 import { useNav } from '../contexts/NavContext';
 import { useGame } from '../contexts/GameContext';
@@ -23,6 +24,7 @@ function Create({ channelId }: CreateProps) {
   const [showSeedSettings, setShowSeedSettings] = useState(false);
   const [showSettingsSavedToast, setShowSettingsSavedToast] = useState(false);
   const [seedSettingsClearTrigger, setSeedSettingsClearTrigger] = useState(0);
+  const [showShopTracker, setShowShopTracker] = useState(false);
   const {
     initialLoading,
     hints,
@@ -168,12 +170,23 @@ function Create({ channelId }: CreateProps) {
           <div className="d-flex justify-content-between align-items-center mb-3">
             <div className="d-flex gap-2">
               <button
-                className="btn btn-primary d-flex align-items-center gap-2"
+                className="btn btn-primary btn-sm d-flex align-items-center gap-2"
                 onClick={() => setShowClearModal(true)}
                 disabled={isEditing}
               >
                 <MdNoteAdd size={20} /> Create New Hint Template
               </button>
+              {slides.length > 0 && (
+                <button
+                  className="btn btn-success btn-sm d-flex align-items-center gap-1"
+                  onClick={handleEditToggle}
+                  aria-pressed={isEditing}
+                >
+                  {isEditing ? <FaSave /> : <FaEdit />} {isEditing ? 'Done' : 'Edit'}
+                </button>
+              )}
+            </div>
+            <div className="d-flex gap-2">
               {game.availableSettings && (
                 <button
                   className="twitch-btn btn btn-outline-primary btn-sm d-flex align-items-center gap-1"
@@ -182,17 +195,15 @@ function Create({ channelId }: CreateProps) {
                   <FaCog /> Seed Settings
                 </button>
               )}
+              {game.id === 'dk64' && (
+                <button
+                  className="twitch-btn btn btn-outline-primary btn-sm d-flex align-items-center gap-1"
+                  onClick={() => setShowShopTracker(true)}
+                >
+                  <FaStore /> Shops
+                </button>
+              )}
             </div>
-            {slides.length > 0 && (
-              <button
-                className="btn btn-success btn-sm d-flex align-items-center gap-1"
-                onClick={handleEditToggle}
-                aria-pressed={isEditing}
-                style={{ minWidth: 60 }}
-              >
-                {isEditing ? <FaSave /> : <FaEdit />} {isEditing ? 'Done' : 'Edit'}
-              </button>
-            )}
           </div>
           {slides.length > 0 && (
             <div className="card">
@@ -226,6 +237,14 @@ function Create({ channelId }: CreateProps) {
           onSaveSuccess={() => setShowSettingsSavedToast(true)}
           channelId={channelId}
           clearTrigger={seedSettingsClearTrigger}
+        />
+      )}
+
+      {game.id === 'dk64' && (
+        <ShopTrackerOffcanvas
+          show={showShopTracker}
+          onHide={() => setShowShopTracker(false)}
+          channelId={channelId}
         />
       )}
     </>

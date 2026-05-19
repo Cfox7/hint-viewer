@@ -1,11 +1,12 @@
 import Toast from 'react-bootstrap/Toast';
 import ToastContainer from 'react-bootstrap/ToastContainer';
 import { useEffect, useState } from 'react';
-import { FaUpload, FaCog } from 'react-icons/fa';
+import { FaUpload, FaCog, FaStore } from 'react-icons/fa';
 import { HintCarousel } from './HintCarousel';
 import { useUpload } from '../hooks/useUpload';
 import { UploadModals } from './UploadModals';
 import { SeedSettingsOffcanvas } from './seed-settings/SeedSettingsOffcanvas';
+import { ShopTrackerOffcanvas } from './shop-tracker/ShopTrackerOffcanvas';
 import { buildSlides } from '@hint-viewer/shared/components/buildSlides';
 import { useNav } from '../contexts/NavContext';
 import { useGame } from '../contexts/GameContext';
@@ -38,6 +39,7 @@ function Upload({ channelId }: UploadProps) {
   const [showSuccess, setShowSuccess] = useState(false);
   const [showSeedSettings, setShowSeedSettings] = useState(false);
   const [showSettingsSavedToast, setShowSettingsSavedToast] = useState(false);
+  const [showShopTracker, setShowShopTracker] = useState(false);
 
   useEffect(() => {
     const { slides: newSlides } = spoilerData ? buildSlides(spoilerData.hints, game.levelOrder, game.sortHints, game.getLevelCategory, 5, 5, 5) : { slides: [] };
@@ -102,15 +104,26 @@ function Upload({ channelId }: UploadProps) {
               {file ? file.name : success ? 'Spoiler loaded' : 'No file chosen'}
             </span>
           </div>
-          {game.availableSettings && success && (
-            <button
-              type="button"
-              className="twitch-btn btn btn-outline-primary btn-sm d-flex align-items-center gap-1"
-              onClick={() => setShowSeedSettings(true)}
-            >
-              <FaCog /> Seed Settings
-            </button>
-          )}
+          <div className="d-flex gap-2">
+            {game.availableSettings && success && (
+              <button
+                type="button"
+                className="twitch-btn btn btn-outline-primary btn-sm d-flex align-items-center gap-1"
+                onClick={() => setShowSeedSettings(true)}
+              >
+                <FaCog /> Seed Settings
+              </button>
+            )}
+            {game.id === 'dk64' && success && (
+              <button
+                type="button"
+                className="twitch-btn btn btn-outline-primary btn-sm d-flex align-items-center gap-1"
+                onClick={() => setShowShopTracker(true)}
+              >
+                <FaStore /> Shops
+              </button>
+            )}
+          </div>
         </div>
 
         <ToastContainer position="bottom-end" className="p-3" style={{ zIndex: 9999, position: 'fixed', bottom: 0, right: 0 }}>
@@ -189,6 +202,14 @@ function Upload({ channelId }: UploadProps) {
           onSaveSuccess={() => setShowSettingsSavedToast(true)}
           channelId={channelId}
           extractedSettings={extractedSettings}
+        />
+      )}
+
+      {game.id === 'dk64' && (
+        <ShopTrackerOffcanvas
+          show={showShopTracker}
+          onHide={() => setShowShopTracker(false)}
+          channelId={channelId}
         />
       )}
     </>

@@ -1,14 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { getState, postShopTracker } from '../api/spoilerApi';
-import type { ShopKongState, ShopTrackerKongState, ShopTrackerItemState } from '@hint-viewer/shared/shop-tracker-types';
-import { SHOP_KONG_STATE, SHOP_TRACKER_ITEMS } from '@hint-viewer/shared/shop-tracker-types';
+import { SHOP_KONG_STATE, type ShopKongState, type ShopTrackerKongState, type ShopTrackerItemState } from '@hint-viewer/shared/shop-tracker-types';
 
 interface UseShopTrackerReturn {
   kongState: ShopTrackerKongState;
   itemState: ShopTrackerItemState;
   advanceKong: (key: string) => void;
   retreatKong: (key: string) => void;
-  cycleItem: (key: string, direction: 1 | -1) => void;
+  selectItem: (key: string, label: string | undefined) => void;
   resetAll: () => Promise<void>;
   loading: boolean;
   resetting: boolean;
@@ -95,22 +94,13 @@ export function useShopTracker(channelId: string | undefined): UseShopTrackerRet
     scheduleSync();
   };
 
-  const cycleItem = (key: string, direction: 1 | -1) => {
+  const selectItem = (key: string, label: string | undefined) => {
     setItemState((prev) => {
-      const current = prev[key];
-      const currentIndex = current ? SHOP_TRACKER_ITEMS.indexOf(current as typeof SHOP_TRACKER_ITEMS[number]) : -1;
-      const nextIndex = currentIndex + direction;
-
-      if (nextIndex >= SHOP_TRACKER_ITEMS.length) {
+      if (!label) {
         const { [key]: _, ...rest } = prev;
         return rest;
       }
-      if (nextIndex < 0) {
-        return current
-          ? (() => { const { [key]: _, ...rest } = prev; return rest; })()
-          : { ...prev, [key]: SHOP_TRACKER_ITEMS[SHOP_TRACKER_ITEMS.length - 1] };
-      }
-      return { ...prev, [key]: SHOP_TRACKER_ITEMS[nextIndex] };
+      return { ...prev, [key]: label };
     });
     scheduleSync();
   };
@@ -133,5 +123,5 @@ export function useShopTracker(channelId: string | undefined): UseShopTrackerRet
     }
   };
 
-  return { kongState, itemState, advanceKong, retreatKong, cycleItem, resetAll, loading, resetting, showResetModal, setShowResetModal };
+  return { kongState, itemState, advanceKong, retreatKong, selectItem, resetAll, loading, resetting, showResetModal, setShowResetModal };
 }

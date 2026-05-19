@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
-import { FaUpload, FaTasks, FaSignOutAlt, FaStore } from 'react-icons/fa';
+import React from 'react';
+import { FaUpload, FaTasks, FaSignOutAlt } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import { useGame } from '../contexts/GameContext';
 import GameSwitcher from './GameSwitcher';
-import { ShopTrackerOffcanvas } from './shop-tracker/ShopTrackerOffcanvas';
 
 interface HeaderProps {
   user?: {
@@ -18,7 +17,6 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ user, logout, loginButton }) => {
   const navigate = useNavigate();
   const { game } = useGame();
-  const [showShopTracker, setShowShopTracker] = useState(false);
   return (
     <header className="app-header">
       <div className="header-content">
@@ -55,16 +53,6 @@ const Header: React.FC<HeaderProps> = ({ user, logout, loginButton }) => {
             >
               <FaTasks style={{ marginRight: 4, verticalAlign: 'middle' }} /> Create
             </button>
-            {game.id === 'dk64' && (
-              <button
-                onClick={() => setShowShopTracker(true)}
-                className="twitch-btn"
-                aria-label="Open shop tracker"
-                style={{ marginRight: '0.5rem' }}
-              >
-                <FaStore style={{ marginRight: 4, verticalAlign: 'middle' }} /> Shops
-              </button>
-            )}
             {logout && (
               <button onClick={logout} className="twitch-btn">
                 <FaSignOutAlt style={{ marginRight: 4, verticalAlign: 'middle' }} /> Logout
@@ -79,13 +67,6 @@ const Header: React.FC<HeaderProps> = ({ user, logout, loginButton }) => {
           </div>
         )}
       </div>
-      {user && game.id === 'dk64' && (
-        <ShopTrackerOffcanvas
-          show={showShopTracker}
-          onHide={() => setShowShopTracker(false)}
-          channelId={user.id}
-        />
-      )}
     </header>
   );
 };
