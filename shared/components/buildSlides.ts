@@ -4,22 +4,37 @@ export interface Slide {
   locations: string[];
 }
 
+export interface BuildSlidesConfig {
+  levelOrder: string[];
+  sortHints: (grouped: Record<string, string[]>) => Record<string, string[]>;
+  getLevelCategory: (level: string) => string;
+  regionMerges?: [string, string][];
+  hintsPerPage: { direct: number; foolish: number; woth: number };
+}
+
 export function buildSlides(
   hints: Record<string, string>,
-  levelOrder: string[],
-  sortHints: (grouped: Record<string, string[]>) => Record<string, string[]>,
-  getLevelCategory: (level: string) => string,
-  DIRECT_HINTS_PER_PAGE: number,
-  FOOLISH_HINTS_PER_PAGE: number,
-  WOTH_HINTS_PER_PAGE: number
+  config: BuildSlidesConfig
 ): {
   slides: Slide[];
   levels: string[];
   groupedHints: Record<string, string[]>;
 } {
+  const { levelOrder, sortHints, getLevelCategory, regionMerges, hintsPerPage } = config;
+
+  const mergeMap: Record<string, string> = {};
+  if (regionMerges) {
+    for (const [a, b] of regionMerges) {
+      const merged = `${a} + ${b}`;
+      mergeMap[a] = merged;
+      mergeMap[b] = merged;
+    }
+  }
+
   const groupedHints: Record<string, string[]> = {};
   Object.keys(hints).forEach((location) => {
-    const level = location.split(' ')[0];
+    const raw = location.split(' ')[0];
+    const level = mergeMap[raw] ?? raw;
     if (!groupedHints[level]) groupedHints[level] = [];
     groupedHints[level].push(location);
   });
@@ -28,7 +43,6 @@ export function buildSlides(
     .filter((level) => levelOrder.includes(level))
     .sort((a, b) => levelOrder.indexOf(a) - levelOrder.indexOf(b));
 
-  // Use the provided sortHints function for game-specific sorting
   const sortedHints = sortHints(groupedHints);
 
   const slides: Slide[] = [];
@@ -36,9 +50,9 @@ export function buildSlides(
     const locs = (sortedHints[level] || []);
     const category = getLevelCategory(level);
     let perPage = locs.length || 1;
-    if (category === 'direct') perPage = DIRECT_HINTS_PER_PAGE;
-    else if (category === 'foolish') perPage = FOOLISH_HINTS_PER_PAGE;
-    else if (category === 'woth') perPage = WOTH_HINTS_PER_PAGE;
+    if (category === 'direct') perPage = hintsPerPage.direct;
+    else if (category === 'foolish') perPage = hintsPerPage.foolish;
+    else if (category === 'woth') perPage = hintsPerPage.woth;
     for (let i = 0; i < locs.length; i += perPage) {
       slides.push({
         level,

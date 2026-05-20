@@ -45,7 +45,10 @@ function Create({ channelId }: CreateProps) {
   useEffect(() => {
     const sourceHints = isEditing && editHints ? editHints : hints;
     const { slides: newSlides } = sourceHints && Object.keys(sourceHints).length > 0
-      ? buildSlides(sourceHints, game.levelOrder, game.sortHints, game.getLevelCategory, 5, 5, 5)
+      ? buildSlides(sourceHints, {
+          levelOrder: game.levelOrder, sortHints: game.sortHints, getLevelCategory: game.getLevelCategory,
+          regionMerges: game.regionMerges, hintsPerPage: { direct: 5, foolish: 5, woth: 5 },
+        })
       : { slides: [] };
     setSlides(newSlides);
   }, [hints, editHints, isEditing]);

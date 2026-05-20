@@ -38,4 +38,5 @@ export interface GameConfig {
   defaultSettings?: string[];
   settingsPresets?: SeedSettingsPreset[];
   extractSettings?: (raw: unknown) => SeedSettingsData;
+  regionMerges?: [string, string][];
 }

@@ -99,8 +99,10 @@ export function HintCarousel({
     toToggle.forEach((l) => onToggleReveal(l));
   };
 
-  // Group hints by level (extract level name from location) using game-specific sorting
-  const { slides, levels, groupedHints } = buildSlides(hints, game.levelOrder, game.sortHints, game.getLevelCategory, DIRECT_PER_PAGE, FOOLISH_PER_PAGE, WOTH_PER_PAGE);
+  const { slides, levels, groupedHints } = buildSlides(hints, {
+    levelOrder: game.levelOrder, sortHints: game.sortHints, getLevelCategory: game.getLevelCategory,
+    regionMerges: game.regionMerges, hintsPerPage: { direct: DIRECT_PER_PAGE, foolish: FOOLISH_PER_PAGE, woth: WOTH_PER_PAGE },
+  });
 
   const currentSlide = slides[activeIndex];
   const currentLevel = currentSlide ? currentSlide.level : undefined;

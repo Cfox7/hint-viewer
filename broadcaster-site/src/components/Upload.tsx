@@ -42,7 +42,10 @@ function Upload({ channelId }: UploadProps) {
   const [showShopTracker, setShowShopTracker] = useState(false);
 
   useEffect(() => {
-    const { slides: newSlides } = spoilerData ? buildSlides(spoilerData.hints, game.levelOrder, game.sortHints, game.getLevelCategory, 5, 5, 5) : { slides: [] };
+    const { slides: newSlides } = spoilerData ? buildSlides(spoilerData.hints, {
+      levelOrder: game.levelOrder, sortHints: game.sortHints, getLevelCategory: game.getLevelCategory,
+      regionMerges: game.regionMerges, hintsPerPage: { direct: 5, foolish: 5, woth: 5 },
+    }) : { slides: [] };
     setSlides(newSlides);
     setActiveIndex(0);
   }, [spoilerData]);

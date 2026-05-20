@@ -68,6 +68,10 @@
   --scrollbar-thumb-hover: #6b5a28;
 }
 
+[data-theme="dk64"] .level-nav-item {
+  font-size: 1rem;
+}
+
 /* DK64-specific styles */
 [data-theme="dk64"] .theme-gradient-text {
   font-family: 'Jumpman', Arial, sans-serif;

@@ -67,11 +67,11 @@ export function LevelNav({ show, onHide, slides, activeIndex, onSelect, levelDis
               <Accordion.Item key={cat} eventKey={cat}>
                 <Accordion.Header>{sectionLabels[cat]}</Accordion.Header>
                 <Accordion.Body className="p-1">
-                  <div className="level-nav-chips">
+                  <div className="level-nav-list">
                     {sections[cat].map(({ label, idx }) => (
                       <button
                         key={idx}
-                        className={`level-nav-chip${idx === activeIndex ? ' active' : ''}`}
+                        className={`level-nav-item${idx === activeIndex ? ' active' : ''}`}
                         onClick={() => handleSelect(idx)}
                       >
                         {label}
