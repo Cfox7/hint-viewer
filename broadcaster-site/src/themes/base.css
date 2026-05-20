@@ -412,20 +412,36 @@ input[type="file"]:disabled {
 .carousel-container .hint-item {
   text-align: center;
   border-radius: 6px;
-  padding: 4px 6px 24px;
+  padding: 4px 6px;
   transition: background 0.15s;
-  position: relative;
 }
 
-.hint-item-found-row {
-  position: absolute;
-  bottom: -5px;
-  left: 0;
-  right: 0;
+.hinted-item-inline {
+  margin-top: 2px;
+}
+
+.hinted-item-select-row {
   display: flex;
-  align-items: center;
   justify-content: center;
 }
+
+.hinted-item-add-btn {
+  color: #2ecc71;
+  font-size: 1.8rem;
+  font-weight: bold;
+  line-height: 1;
+  padding: 0 8px;
+  margin-top: -3px;
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+.hinted-item-add-btn:hover {
+  border-color: var(--select-border-hover);
+  color: #27ae60;
+}
+
 
 .carousel-container .hint-item:hover {
   background: rgba(255, 255, 255, 0.06);
@@ -438,12 +454,12 @@ input[type="file"]:disabled {
 }
 
 .carousel-container .hint-text {
-  font-size: 20px;
-  min-height: 3em;
+  font-size: 18px;
+  min-height: 2.4em;
   margin-bottom: 0;
   font-family: var(--font-primary) !important;
   font-weight: bold;
-  line-height: 1.5;
+  line-height: 1.4;
 }
 
 .carousel-container .hint-text.completed {

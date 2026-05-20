@@ -28,8 +28,8 @@ export function useSelectTheme(): StylesConfig<SelectOption> {
     return {
       container: (base) => ({ ...base, minWidth: 220, width: 'auto', maxWidth: 420 }),
       menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-      control: (base) => ({ ...base, background: selectBg, borderColor: selectBorder, minHeight: 26, boxShadow: 'none', '&:hover': { borderColor: selectBorderHover } }),
-      valueContainer: (base) => ({ ...base, padding: '0 4px' }),
+      control: (base) => ({ ...base, background: selectBg, borderColor: selectBorder, minHeight: 22, boxShadow: 'none', '&:hover': { borderColor: selectBorderHover } }),
+      valueContainer: (base) => ({ ...base, padding: '0 4px', flexWrap: 'wrap' as const }),
       input: (base) => ({ ...base, margin: 0, padding: 0, color: textPrimary }),
       menu: (base) => ({ ...base, background: bgPrimary, border: `1px solid ${selectBorder}` }),
       option: (base, state) => ({ ...base, background: state.isFocused ? bgSecondary : bgPrimary, color: textPrimary }),
@@ -39,6 +39,9 @@ export function useSelectTheme(): StylesConfig<SelectOption> {
       dropdownIndicator: (base) => ({ ...base, padding: '0 4px', color: selectBorder, '&:hover': { color: selectBorderHover } }),
       groupHeading: (base) => ({ ...base, color: textMuted, fontSize: '0.7rem', textTransform: 'uppercase' as const, marginBottom: 2, paddingBottom: 2 }),
       group: (base) => ({ ...base, paddingTop: 2, paddingBottom: 2, borderBottom: `1px solid ${borderColor}` }),
+      multiValue: (base) => ({ ...base, background: bgSecondary, border: `1px solid ${borderColor}`, borderRadius: 4 }),
+      multiValueLabel: (base) => ({ ...base, color: textPrimary, fontSize: '0.82rem', padding: '1px 4px' }),
+      multiValueRemove: (base) => ({ ...base, color: '#e74c3c', cursor: 'pointer', '&:hover': { background: 'transparent', color: '#c0392b' } }),
     };
   }, [game.id]);
 }
