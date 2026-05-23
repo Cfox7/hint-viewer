@@ -160,7 +160,7 @@ export function HintCarousel({
                             hintedItemOptions={game.hintedItemOptions}
                             hintedItem={hintedItems[primaryLocation] ?? ''}
                             hintedItemEditable={!isLinked}
-                            onHintedItemChange={onHintedItemChange}
+                            onHintedItemChange={(_, item) => onHintedItemChange?.(primaryLocation, item)}
                           />
                         );
                       })}

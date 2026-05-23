@@ -721,6 +721,15 @@ a:hover {
   overflow-y: auto;
 }
 
+.seed-settings-columns {
+  columns: 2;
+  column-gap: 12px;
+}
+
+.seed-settings-category-block {
+  break-inside: avoid;
+}
+
 .seed-settings-viewer-table {
   margin-bottom: 0 !important;
   font-size: 0.7rem;
@@ -756,17 +765,12 @@ a:hover {
 .seed-settings-label {
   color: var(--text-primary);
   opacity: 0.85;
-  width: 30%;
+  width: 60%;
 }
 
 .seed-settings-value {
   text-align: right;
   color: var(--text-primary);
   font-weight: 600;
-  width: 20%;
-}
-
-.seed-settings-viewer-table td:nth-child(3) {
-  border-left: 1px solid var(--border-color);
-  padding-left: 8px;
+  width: 40%;
 }

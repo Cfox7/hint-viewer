@@ -24,20 +24,29 @@ export function SeedSettingsOffcanvas({ show, onHide, seedSettings }: SeedSettin
   const entries = Object.entries(seedSettings);
   if (entries.length === 0) return null;
 
+  const categoryOrder = new Map<string, number>();
+  const definitionOrder = new Map<string, number>();
+  for (let i = 0; i < settingDefinitions.length; i++) {
+    const cat = settingDefinitions[i].category;
+    if (!categoryOrder.has(cat)) categoryOrder.set(cat, categoryOrder.size);
+    definitionOrder.set(settingDefinitions[i].key, i);
+  }
+
   const grouped = new Map<string, SettingEntry[]>();
   for (const [key, value] of entries) {
     const setting = settingsByKey.get(key);
-    const category = setting?.category ?? 'Other';
-    const label = setting?.label ?? key;
+    if (!setting) continue;
+    const category = setting.category;
+    const label = setting.label ?? key;
     const group = grouped.get(category) ?? [];
     group.push({ key, label, value, setting });
     grouped.set(category, group);
   }
 
-  const categories = Array.from(grouped.entries());
-  const pairs: [string, SettingEntry[]][][] = [];
-  for (let i = 0; i < categories.length; i += 2) {
-    pairs.push(categories.slice(i, i + 2));
+  const categories = Array.from(grouped.entries())
+    .sort((a, b) => (categoryOrder.get(a[0]) ?? Infinity) - (categoryOrder.get(b[0]) ?? Infinity));
+  for (const [, group] of categories) {
+    group.sort((a, b) => (definitionOrder.get(a.key) ?? Infinity) - (definitionOrder.get(b.key) ?? Infinity));
   }
 
   return (
@@ -51,69 +60,40 @@ export function SeedSettingsOffcanvas({ show, onHide, seedSettings }: SeedSettin
         <Offcanvas.Title>Seed Settings</Offcanvas.Title>
       </Offcanvas.Header>
       <Offcanvas.Body className="px-2 pb-2 pt-0">
-        {pairs.map(pair => (
-          <Table
-            key={pair[0][0]}
-            size="sm"
-            variant="dark"
-            borderless
-            striped
-            className="seed-settings-viewer-table"
-          >
-            <thead>
-              <tr>
-                {pair.map(([category]) => (
-                  <th key={category} colSpan={2} className="seed-settings-category-header">
-                    {category}
-                  </th>
-                ))}
-                {pair.length === 1 && <th colSpan={2} />}
-              </tr>
-            </thead>
-            <tbody>
-              <CategoryPairRows pair={pair} />
-            </tbody>
-          </Table>
-        ))}
+        <div className="seed-settings-columns">
+          {categories.map(([category, categoryEntries]) => (
+            <div key={category} className="seed-settings-category-block">
+              <Table
+                size="sm"
+                variant="dark"
+                borderless
+                striped
+                className="seed-settings-viewer-table"
+              >
+                <thead>
+                  <tr>
+                    <th colSpan={2} className="seed-settings-category-header">
+                      {category}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {categoryEntries.map(entry => (
+                    <tr key={entry.key}>
+                      <td className="seed-settings-label">{entry.label}</td>
+                      <td className="seed-settings-value">
+                        <SettingValue value={entry.value} setting={entry.setting} />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </div>
+          ))}
+        </div>
       </Offcanvas.Body>
     </Offcanvas>
   );
-}
-
-function CategoryPairRows({ pair }: { pair: [string, SettingEntry[]][] }) {
-  const left = pair[0][1];
-  const right = pair[1]?.[1] ?? [];
-  const maxRows = Math.max(left.length, right.length);
-  const rows = [];
-
-  for (let i = 0; i < maxRows; i++) {
-    rows.push(
-      <tr key={i}>
-        {left[i] ? (
-          <>
-            <td className="seed-settings-label">{left[i].label}</td>
-            <td className="seed-settings-value">
-              <SettingValue value={left[i].value} setting={left[i].setting} />
-            </td>
-          </>
-        ) : (
-          <td colSpan={2} />
-        )}
-        {right[i] ? (
-          <>
-            <td className="seed-settings-label">{right[i].label}</td>
-            <td className="seed-settings-value">
-              <SettingValue value={right[i].value} setting={right[i].setting} />
-            </td>
-          </>
-        ) : (
-          <td colSpan={2} />
-        )}
-      </tr>
-    );
-  }
-
-  return <>{rows}</>;
 }
 
 function SettingValue({ value, setting }: { value: string | boolean | number; setting?: SettingDefinition }) {
