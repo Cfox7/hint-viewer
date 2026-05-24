@@ -5,6 +5,7 @@ import Upload from './components/Upload';
 import Create from './components/Create';
 import Header from './components/Header';
 import { LevelNav } from './components/LevelNav';
+import { Footer } from './components/Footer';
 import { NavProvider, useNav } from './contexts/NavContext';
 import { GameProvider, useGame } from './contexts/GameContext';
 import './themes/base.css';
@@ -68,6 +69,7 @@ function AppBody() {
               </div>
             </main>
           </div>
+          <Footer />
         </div>
       )}
     </TwitchLogin>

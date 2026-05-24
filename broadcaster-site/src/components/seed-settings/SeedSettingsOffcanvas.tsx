@@ -97,6 +97,11 @@ export function SeedSettingsOffcanvas({ show, onHide, onSaveSuccess, channelId, 
             <Spinner animation="border" variant="primary" />
           </div>
         ) : (
+          <>
+          <div className="seed-settings-beta-warning">
+              This feature is still in development. Some settings or presets may be missing or incomplete.
+              Feedback welcome on <a href="https://bsky.app/profile/hintviewer.com" target="_blank" rel="noopener noreferrer">Bluesky</a>.
+          </div>
           <div className="seed-settings-layout">
             {presets.length > 0 && (
               <div className="seed-settings-presets">
@@ -136,6 +141,7 @@ export function SeedSettingsOffcanvas({ show, onHide, onSaveSuccess, channelId, 
               )}
             </div>
           </div>
+          </>
         )}
       </Offcanvas.Body>
       {!loading && (
