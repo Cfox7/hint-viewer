@@ -1,5 +1,18 @@
 # Changelog
 
+## v2.0.0
+
+### New
+- Seed Settings. After uploading a spoiler log, review and adjust gameplay-relevant settings for your seed. Settings are automatically extracted from the spoiler log and can be saved so viewers can see the rules of the seed in the extension. Supports both DK64 and OoT with game-specific presets. Also allows for manual setting entry.
+- Shop Tracker for DK64. Track moves and items purchased from Cranky, Funky, and Candy across each level during a run.
+- Seed Settings Viewer in the extension so viewers can see the seed's settings.
+- Multiple hinted items can now be assigned to a single hint.
+
+### Changed
+- OoT regions combined. Reworked buildSlides for improved level grouping.
+- LevelNav and refresh bar CSS updated. Including indicators for what levels are in progress/completed
+- OoT and DK64 home pages updated.
+
 ## v1.2.0
 
 ### New
