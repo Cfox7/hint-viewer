@@ -1,4 +1,4 @@
-import { FaUpload, FaTasks, FaEye, FaCheck, FaEdit } from 'react-icons/fa';
+import { FaUpload, FaTasks, FaEye, FaCheck, FaEdit, FaCog, FaStore } from 'react-icons/fa';
 
 function Step({ number, children }: { number: number; children: React.ReactNode }) {
   return (
@@ -29,6 +29,10 @@ function Config() {
         <Step number={4}>
           Activate the extension as a panel on your channel. Viewers will see hints update live.
         </Step>
+        <Step number={5}>
+          After uploading a spoiler log, use <FaCog className="config-inline-icon" /> <strong>Seed Settings</strong> to review and adjust
+          the settings for your seed. Save them so viewers can see the rules of the seed in the extension.
+        </Step>
       </section>
 
       <section className="config-section">
@@ -37,6 +41,10 @@ function Config() {
           <div className="config-legend-item"><FaEye className="config-inline-icon" /> Reveal a hint to viewers</div>
           <div className="config-legend-item"><FaCheck className="config-inline-icon" /> Mark a hint as completed</div>
           <div className="config-legend-item"><FaEdit className="config-inline-icon" /> Set the item found at that location</div>
+          <div className="config-legend-item">
+            <FaStore className="config-inline-icon" /> While playing DK64, use the <strong>Shop Tracker</strong> to track moves and items
+            purchased from Cranky, Funky, and Candy across each level.
+          </div>
         </div>
       </section>
     </div>
