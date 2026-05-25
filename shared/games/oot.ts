@@ -1,6 +1,7 @@
 import React from 'react';
 import type { GameConfig, LevelCategory, SpoilerLog } from './types';
 import OotHome from '../../broadcaster-site/src/components/OotHome';
+import { availableSettings, defaultSettings, settingsPresets, extractSettings } from './oot-seed-settings';
 
 const ootColorMap: Record<string, string> = {
   "Red": "#FF5555",
@@ -12,30 +13,74 @@ const ootColorMap: Record<string, string> = {
   "path to": "#FFA010",
 };
 
-const levelDisplayNames: Record<string, string> = {
-  Colossus: "Colossus",
-  DMC: "Death Mountain Crater",
-  DMT: "Death Mountain Trail",
-  Dodongos: "Dodongo's Cavern",
-  GC: "Goron City",
-  GV: "Gerudo Valley",
-  Graveyard: "Graveyard",
-  HC: "Hyrule Castle",
-  HF: "Hyrule Field",
-  KF: "Kokiri Forest",
-  Kak: "Kakariko Village",
-  LH: "Lake Hylia",
-  LW: "Lost Woods",
-  SFM: "Sacred Forest Meadow",
-  ToT: "Temple of Time",
-  ZD: "Zora's Domain",
-  ZF: "Zora's Fountain",
-  ZR: "Zora's River",
-  Foolish: "Foolish Hints",
-  Path: "Path/Major Hints",
-};
+interface RegionDefinition {
+  key: string;
+  displayName: string;
+  mergeWith?: string;
+  abbreviation?: string;
+}
 
-const levelOrder = Object.keys(levelDisplayNames);
+const regionDefinitions: RegionDefinition[] = [
+  { key: "DMC", displayName: "Death Mountain Crater", mergeWith: "DMT" },
+  { key: "DMT", displayName: "Death Mountain Trail" },
+  { key: "Dodongos", displayName: "Dodongo's Cavern", mergeWith: "GC", abbreviation: "DC" },
+  { key: "GC", displayName: "Goron City" },
+  { key: "GV", displayName: "Gerudo Valley", mergeWith: "Colossus" },
+  { key: "Colossus", displayName: "Colossus" },
+  { key: "Graveyard", displayName: "Graveyard", mergeWith: "Kak" },
+  { key: "Kak", displayName: "Kakariko Village" },
+  { key: "HC", displayName: "Hyrule Castle" },
+  { key: "HF", displayName: "Hyrule Field" },
+  { key: "KF", displayName: "Kokiri Forest" },
+  { key: "LH", displayName: "Lake Hylia" },
+  { key: "LW", displayName: "Lost Woods", mergeWith: "SFM" },
+  { key: "SFM", displayName: "Sacred Forest Meadow" },
+  { key: "ToT", displayName: "Temple of Time" },
+  { key: "ZD", displayName: "Zora's Domain", mergeWith: "ZF" },
+  { key: "ZF", displayName: "Zora's Fountain" },
+  { key: "ZR", displayName: "Zora's River" },
+  { key: "Foolish", displayName: "Foolish Hints" },
+  { key: "Path", displayName: "Path/Major Hints" },
+];
+
+function deriveRegionData(definitions: RegionDefinition[]) {
+  const byKey = new Map(definitions.map(r => [r.key, r]));
+  const mergeTargets = new Set(definitions.filter(r => r.mergeWith).map(r => r.mergeWith!));
+
+  const displayNames: Record<string, string> = {};
+  const order: string[] = [];
+  const merges: [string, string][] = [];
+  const abbreviations: Record<string, string> = {};
+
+  for (const region of definitions) {
+    // Skip merge partners -- they're handled when processing the primary
+    if (mergeTargets.has(region.key)) continue;
+
+    if (region.mergeWith) {
+      // Combine into "Key1 + Key2" for grouping and "DisplayName1 + DisplayName2" for titles
+      const partner = byKey.get(region.mergeWith)!;
+      const mergedKey = `${region.key} + ${region.mergeWith}`;
+      displayNames[mergedKey] = `${region.displayName} + ${partner.displayName}`;
+      order.push(mergedKey);
+      merges.push([region.key, region.mergeWith]);
+      // Abbreviations override the hint prefix label (e.g. "Dodongos" -> "DC")
+      if (region.abbreviation) abbreviations[region.key] = region.abbreviation;
+      if (partner.abbreviation) abbreviations[partner.key] = partner.abbreviation;
+    } else {
+      displayNames[region.key] = region.displayName;
+      order.push(region.key);
+    }
+  }
+
+  return { displayNames, order, merges, abbreviations };
+}
+
+const {
+  displayNames: levelDisplayNames,
+  order: levelOrder,
+  merges: regionMerges,
+  abbreviations: regionAbbreviations,
+} = deriveRegionData(regionDefinitions);
 const backgroundImage = './assets/oot-bg.png';
 
 const sectionLabels: Record<LevelCategory, string> = {
@@ -353,9 +398,14 @@ function colorizeHints(text: string): React.ReactNode {
   return React.createElement(React.Fragment, null, ...finalParts);
 }
 
-function getLocationLabel(location: string): string {
+function getLocationLabel(location: string, level: string): string {
   const match = location.match(/\((.+)\)/);
-  return match ? match[1] : location;
+  const label = match ? match[1] : location;
+  if (level.includes(' + ')) {
+    const prefix = location.split(' ')[0];
+    return `${regionAbbreviations[prefix] ?? prefix} ${label}`;
+  }
+  return label;
 }
 
 function getLevelTitle(
@@ -398,6 +448,11 @@ export const ootConfig: GameConfig = {
   categorizeHints,
   getEmptyHintTemplate,
   homeComponent: OotHome,
+  availableSettings,
+  defaultSettings,
+  settingsPresets,
+  extractSettings,
+  regionMerges,
   toServerPayload: (hints): Record<string, unknown> => ({ gossip_stones: hints }),
   fromServerPayload: (raw) => {
     const obj = raw as Record<string, unknown>;

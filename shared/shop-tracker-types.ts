@@ -8,18 +8,3 @@ export interface ShopTrackerState {
   kongs: ShopTrackerKongState;
   items: ShopTrackerItemState;
 }
-
-export const SHOP_TRACKER_ITEMS = [
-  'Golden Banana',
-  'Potion',
-  'Key',
-  'Bean',
-  'Pearl',
-  'Blueprint',
-  'Shop',
-  'Fairy',
-  'Medal',
-  'Crown',
-  'Nintendo Coin',
-  'Rareware Coin',
-] as const;

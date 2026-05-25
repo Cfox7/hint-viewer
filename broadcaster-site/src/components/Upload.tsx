@@ -1,10 +1,12 @@
 import Toast from 'react-bootstrap/Toast';
 import ToastContainer from 'react-bootstrap/ToastContainer';
 import { useEffect, useState } from 'react';
-import { FaUpload } from 'react-icons/fa';
+import { FaUpload, FaCog, FaStore } from 'react-icons/fa';
 import { HintCarousel } from './HintCarousel';
 import { useUpload } from '../hooks/useUpload';
 import { UploadModals } from './UploadModals';
+import { SeedSettingsOffcanvas } from './seed-settings/SeedSettingsOffcanvas';
+import { ShopTrackerOffcanvas } from './shop-tracker/ShopTrackerOffcanvas';
 import { buildSlides } from '@hint-viewer/shared/components/buildSlides';
 import { useNav } from '../contexts/NavContext';
 import { useGame } from '../contexts/GameContext';
@@ -25,6 +27,7 @@ function Upload({ channelId }: UploadProps) {
     revealedHints,
     completedHints,
     hintedItems,
+    extractedSettings,
     handleUpload,
     handleToggleReveal,
     handleToggleComplete,
@@ -34,9 +37,15 @@ function Upload({ channelId }: UploadProps) {
   const { slides, activeIndex, setActiveIndex, setSlides, setRevealedHints, setCompletedHints } = useNav();
   const { game } = useGame();
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showSeedSettings, setShowSeedSettings] = useState(false);
+  const [showSettingsSavedToast, setShowSettingsSavedToast] = useState(false);
+  const [showShopTracker, setShowShopTracker] = useState(false);
 
   useEffect(() => {
-    const { slides: newSlides } = spoilerData ? buildSlides(spoilerData.hints, game.levelOrder, game.sortHints, game.getLevelCategory, 5, 5, 5) : { slides: [] };
+    const { slides: newSlides } = spoilerData ? buildSlides(spoilerData.hints, {
+      levelOrder: game.levelOrder, sortHints: game.sortHints, getLevelCategory: game.getLevelCategory,
+      regionMerges: game.regionMerges, hintsPerPage: { direct: 5, foolish: 5, woth: 5 },
+    }) : { slides: [] };
     setSlides(newSlides);
     setActiveIndex(0);
   }, [spoilerData]);
@@ -68,7 +77,7 @@ function Upload({ channelId }: UploadProps) {
 
       {/* Upload */}
       <div className="form-group mb-4">
-        <div className="file-input-row">
+        <div className="file-input-row d-flex justify-content-between align-items-center">
           <div className="file-input-inner">
             <input
               id="fileUpload"
@@ -90,9 +99,33 @@ function Upload({ channelId }: UploadProps) {
               <FaUpload /> Choose file
             </button>
 
-            <span className="file-chosen" style={{ color: '#007bff', fontWeight: 500 }}>
+            <span
+              className="file-chosen"
+              style={{ color: '#007bff', fontWeight: 500 }}
+              title={uploadedAt ? `Uploaded at: ${new Date(uploadedAt).toLocaleString()}` : undefined}
+            >
               {file ? file.name : success ? 'Spoiler loaded' : 'No file chosen'}
             </span>
+          </div>
+          <div className="d-flex gap-2">
+            {game.availableSettings && success && (
+              <button
+                type="button"
+                className="twitch-btn btn btn-outline-primary btn-sm d-flex align-items-center gap-1"
+                onClick={() => setShowSeedSettings(true)}
+              >
+                <FaCog /> Seed Settings
+              </button>
+            )}
+            {game.id === 'dk64' && success && (
+              <button
+                type="button"
+                className="twitch-btn btn btn-outline-primary btn-sm d-flex align-items-center gap-1"
+                onClick={() => setShowShopTracker(true)}
+              >
+                <FaStore /> Shops
+              </button>
+            )}
           </div>
         </div>
 
@@ -127,13 +160,16 @@ function Upload({ channelId }: UploadProps) {
               {error}
             </Toast.Body>
           </Toast>
+          <Toast show={showSettingsSavedToast} onClose={() => setShowSettingsSavedToast(false)} style={{ backgroundColor: '#218838' }} autohide delay={7000} animation>
+            <Toast.Header closeButton>
+              <strong className="me-auto">Settings saved!</strong>
+            </Toast.Header>
+            <Toast.Body className="text-white">
+              Viewers can now see your seed settings.
+            </Toast.Body>
+          </Toast>
         </ToastContainer>
 
-        {success && uploadedAt && (
-          <div className="timestamp mt-2" style={{ color: '#007bff', fontWeight: 500 }}>
-            Uploaded at: {new Date(uploadedAt).toLocaleString()}
-          </div>
-        )}
       </div>
 
       {initialLoading ? (
@@ -160,6 +196,24 @@ function Upload({ channelId }: UploadProps) {
             />
           </div>
         </div>
+      )}
+
+      {game.availableSettings && (
+        <SeedSettingsOffcanvas
+          show={showSeedSettings}
+          onHide={() => setShowSeedSettings(false)}
+          onSaveSuccess={() => setShowSettingsSavedToast(true)}
+          channelId={channelId}
+          extractedSettings={extractedSettings}
+        />
+      )}
+
+      {game.id === 'dk64' && (
+        <ShopTrackerOffcanvas
+          show={showShopTracker}
+          onHide={() => setShowShopTracker(false)}
+          channelId={channelId}
+        />
       )}
     </>
   );

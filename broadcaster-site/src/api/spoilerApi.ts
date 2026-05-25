@@ -28,7 +28,7 @@ export const getState = async (channelId: string) => {
     headers: { 'Content-Type': 'application/json' },
   });
   if (!res.ok) return null;
-  return res.json() as Promise<{ game: string | null; spoilerData: unknown; uploadedAt: string | null; revealed: string[]; completed: string[]; hinted: Record<string, string>; shopTracker: Record<string, unknown> }>;
+  return res.json() as Promise<{ game: string | null; spoilerData: unknown; uploadedAt: string | null; revealed: string[]; completed: string[]; hinted: Record<string, string>; shopTracker: Record<string, unknown>; seedSettings: Record<string, unknown> }>;
 };
 
 export const postState = (channelId: string, revealedHints: string[], completedHints: string[], hintedItems: Record<string, string>) =>
@@ -43,4 +43,11 @@ export const postShopTracker = (channelId: string, shopTracker: Record<string, u
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...authHeaders() },
     body: JSON.stringify({ channelId, shopTracker }),
+  });
+
+export const postSeedSettings = (channelId: string, seedSettings: Record<string, unknown>) =>
+  fetch(`${API_URL}/api/state/${channelId}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
+    body: JSON.stringify({ channelId, seedSettings }),
   });

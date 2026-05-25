@@ -66,7 +66,7 @@ export function LevelNav({ slides, activeIndex, onSelect, levelDisplayNames, mod
         <Accordion.Item key={cat} eventKey={cat}>
           <Accordion.Header>{sectionLabels[cat]}</Accordion.Header>
           <Accordion.Body className="p-1">
-            <div className="level-nav-chips">
+            <div className="level-nav-list">
               {sections[cat].map(({ label, idx }) => {
                 const status = cat !== 'foolish'
                   ? getSlideStatus(navSlides[idx]?.locations ?? [], revealedHints, completedHints)
@@ -74,10 +74,10 @@ export function LevelNav({ slides, activeIndex, onSelect, levelDisplayNames, mod
                 return (
                   <button
                     key={idx}
-                    className={`level-nav-chip${idx === activeIndex ? ' active' : ''}`}
+                    className={`level-nav-item${idx === activeIndex ? ' active' : ''}`}
                     onClick={() => { onSelect(idx); setShow(false); }}
                   >
-                    {label}
+                    <span className="level-nav-item-label">{label}</span>
                     {status === 'revealed' && <span className="level-nav-dot" />}
                     {status === 'complete' && <FaCheck className="level-nav-check" />}
                   </button>

@@ -1,8 +1,10 @@
-import { ReactNode, useState, useEffect } from 'react';
+import { ReactNode, useState, useEffect, useRef } from 'react';
 import { Button } from 'react-bootstrap';
 import Select from 'react-select';
-import type { SingleValue } from 'react-select';
+import type { MultiValue, SelectInstance } from 'react-select';
 import { useSelectTheme } from '../hooks/useSelectTheme';
+
+interface ItemOption { value: string; label: string; }
 
 interface HintItemProps {
   location: string;
@@ -20,6 +22,14 @@ interface HintItemProps {
   hintedItem?: string;
   hintedItemEditable?: boolean;
   onHintedItemChange?: (location: string, item: string) => void;
+}
+
+function parseItemList(value: string): string[] {
+  return value ? value.split(', ').filter(Boolean) : [];
+}
+
+function serializeItemList(items: string[]): string {
+  return items.join(', ');
 }
 
 export default function HintItem({
@@ -51,17 +61,20 @@ export default function HintItem({
     if (onEditHint) onEditHint(location, e.target.value);
   };
 
+  const selectRef = useRef<SelectInstance<ItemOption, true>>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const itemList = parseItemList(hintedItem);
   const allOptions = hintedItemOptions.map((item) => ({ value: item, label: item }));
-  const selectedOption = hintedItem ? { value: hintedItem, label: hintedItem } : null;
+  const selectedValues = itemList.map((item) => ({ value: item, label: item }));
 
-  const groupedOptions = hintedItem
-    ? [{ label: `Current: ${hintedItem}`, options: allOptions.filter((o) => o.value !== hintedItem) }]
-    : allOptions;
+  const handleItemChange = (options: MultiValue<ItemOption>) => {
+    if (!onHintedItemChange) return;
+    onHintedItemChange(location, serializeItemList(options.map((o) => o.value)));
+  };
 
-  const handleItemSelect = (option: unknown) => {
-    const selected = option as SingleValue<{ value: string; label: string }>;
-    const value = selected?.value ?? '';
-    if (onHintedItemChange) onHintedItemChange(location, value);
+  const handleAddClick = () => {
+    setMenuOpen(true);
+    selectRef.current?.focus();
   };
 
   return (
@@ -95,25 +108,41 @@ export default function HintItem({
         </p>
       )}
       {isCompleted && !hintedItemEditable && hintedItem && (
-        <div className="hint-item-found-row">
+        <div className="hinted-item-inline">
           <span className="hint-location" style={{ color: 'var(--text-muted)' }}>
             Hinted Item: <strong style={{ color: 'var(--text-primary)' }}>{hintedItem}</strong>
           </span>
         </div>
       )}
-      {isCompleted && hintedItemEditable && (
-        <div className="hint-item-found-row">
-          <Select
-            classNamePrefix="hint-select"
-            options={groupedOptions}
-            value={selectedOption}
-            onChange={handleItemSelect}
-            isClearable
-            placeholder="Hinted Item..."
-            menuPortalTarget={document.body}
-            menuPlacement="auto"
-            styles={selectStyles}
-          />
+      {hintedItemEditable && (
+        <div className="hinted-item-inline" style={{ visibility: isCompleted ? 'visible' : 'hidden' }}>
+          <div className="hinted-item-select-row">
+            <Select<ItemOption, true>
+              ref={selectRef}
+              isMulti
+              classNamePrefix="hint-select"
+              options={allOptions}
+              value={selectedValues}
+              onChange={handleItemChange}
+              placeholder="Hinted Items..."
+              menuPortalTarget={document.body}
+              menuPlacement="auto"
+              menuIsOpen={menuOpen}
+              onMenuClose={() => setMenuOpen(false)}
+              openMenuOnClick={false}
+              openMenuOnFocus={false}
+              isSearchable={menuOpen}
+              styles={selectStyles}
+              components={{
+                DropdownIndicator: () => (
+                  <button className="hinted-item-add-btn" onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); handleAddClick(); }} aria-label="Add hinted item">+</button>
+                ),
+                IndicatorSeparator: () => null,
+                ClearIndicator: () => null,
+              }}
+              isClearable={false}
+            />
+          </div>
         </div>
       )}
     </div>

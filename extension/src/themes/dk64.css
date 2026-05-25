@@ -31,6 +31,10 @@
 
   --carousel-bg-image: url('../assets/bgfinal.webp');
 
+  --scrollbar-track: #1a1e1a;
+  --scrollbar-thumb: #4a3d1a;
+  --scrollbar-thumb-hover: #6b5a28;
+
   --chip-bg: linear-gradient(180deg, #3a2e10 0%, #1e1808 100%);
   --chip-border: #7a6520;
   --chip-color: #ffe066;

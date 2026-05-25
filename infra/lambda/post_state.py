@@ -68,6 +68,16 @@ def handler(event, context):
         updates.append("shopTracker = :shop")
         values[":shop"] = body["shopTracker"]
 
+    if "seedSettings" in body:
+        if not isinstance(body["seedSettings"], dict):
+            return {
+                "statusCode": 400,
+                "headers": {"Content-Type": "application/json"},
+                "body": json.dumps({"error": "seedSettings must be a dict"}),
+            }
+        updates.append("seedSettings = :seedSettings")
+        values[":seedSettings"] = body["seedSettings"]
+
     if not updates:
         return {
             "statusCode": 400,

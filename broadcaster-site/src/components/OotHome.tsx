@@ -37,6 +37,15 @@ function OotHome() {
         </ul>
       </Section>
 
+      <Section title="Reading Hints">
+        <p>
+          Hints come from Gossip Stones scattered throughout Hyrule. Each region in the carousel contains a list of gossip stone locations for that area. When you reach a stone in-game, find the matching entry and reveal it to show the hint text to your viewers.
+        </p>
+        <p>
+          For example, the <strong>Colossus</strong> region might list <strong>Spirit Temple</strong>. After reading the stone in-game, reveal that entry to display its hint.
+        </p>
+      </Section>
+
       <Section title="Revealing and Completing Hints">
         <ol>
           <li>Click <IconPill><FaEye /></IconPill> next to a hint to reveal it to your viewers.</li>
@@ -62,18 +71,17 @@ function OotHome() {
         </p>
       </Section>
 
-      <Section title="Reading Hints">
+      <Section title="Seed Settings">
         <p>
-          Hints come from Gossip Stones scattered throughout Hyrule. Each region in the carousel contains a list of gossip stone locations for that area. When you reach a stone in-game, find the matching entry and reveal it to show the hint text to your viewers.
+          When uploading a spoiler log, seed settings are automatically extracted and saved. You can also configure them manually
+          using the <strong>Seed Settings</strong> button on the <strong><FaUpload style={{ verticalAlign: 'middle' }} /> <Link to="/upload">Upload</Link></strong> or <strong><FaTasks style={{ verticalAlign: 'middle' }} /> <Link to="/create">Create</Link></strong> pages.
         </p>
         <p>
-          For example, the <strong>Colossus</strong> region might list <strong>Spirit Temple</strong>. After reading the stone in-game, reveal that entry to display its hint.
+          Choose from presets like <strong>S9 Tournament</strong>, <strong>SGL 2026</strong>, or <strong>League S9</strong> to quickly populate common tournament settings,
+          or pick individual settings from the full list. Selected settings and their values are displayed to viewers in the extension.
         </p>
       </Section>
 
-      <div className="dev-note">
-        This project is still in active development — expect occasional bugs and new features. Feedback is welcome!
-      </div>
     </>
   );
 }

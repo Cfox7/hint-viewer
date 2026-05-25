@@ -1,6 +1,7 @@
 import React from 'react';
-import type { GameConfig, LevelCategory, SpoilerLog } from './types';
+import type { GameConfig, LevelCategory, SpoilerLog, SeedSettingsData } from './types';
 import DkHome from '../../broadcaster-site/src/components/DkHome';
+import { availableSettings, defaultSettings, settingsPresets } from './dk64-seed-settings';
 
 const dk64ColorMap: Record<string, string> = {
   "Way of the hoard": "#FFA010", woth: "#FFA010", keys: "#FFA010", key: "#FFA010",
@@ -390,6 +391,51 @@ function getEmptyHintTemplate(isProgressive = false): Record<string, string> {
   return template;
 }
 
+const hintPresetLabels: Record<number, string> = {
+  1: 'Standard',
+  2: 'Cryptic',
+  3: 'Item Hinting',
+  4: 'Advanced Item Hinting',
+  5: 'Off',
+};
+
+function extractSettings(raw: unknown): SeedSettingsData {
+  const input = raw as DKSpoilerLog;
+  const settings = input.Settings ?? {};
+  const result: SeedSettingsData = {};
+
+  // Only setting that may be absent from the spoiler log; default to 'off' when missing
+  if (!('Progressive Hint Item' in settings)) {
+    result['Progressive Hint Item'] = 'off';
+  }
+
+  for (const [key, value] of Object.entries(settings)) {
+    if (key === 'Settings String') continue;
+    if (Array.isArray(value)) continue;
+    if (typeof value === 'boolean' || typeof value === 'number') {
+      if (key === 'Hint Preset' && typeof value === 'number') {
+        result[key] = hintPresetLabels[value] ?? String(value);
+      } else {
+        result[key] = value;
+      }
+    } else if (typeof value === 'string') {
+      if (value === 'True') result[key] = true;
+      else if (value === 'False') result[key] = false;
+      else if (!isNaN(Number(value)) && value.trim() !== '') {
+        const num = Number(value);
+        if (key === 'Hint Preset') {
+          result[key] = hintPresetLabels[num] ?? value;
+        } else {
+          result[key] = num;
+        }
+      }
+      else result[key] = value;
+    }
+  }
+
+  return result;
+}
+
 export const dk64Config: GameConfig = {
   id: 'dk64',
   displayName: 'Donkey Kong 64 Randomizer',
@@ -408,7 +454,16 @@ export const dk64Config: GameConfig = {
   categorizeHints,
   getEmptyHintTemplate,
   homeComponent: DkHome,
-  toServerPayload: (hints): Record<string, unknown> => ({ "Wrinkly Hints": hints }),
+  availableSettings,
+  defaultSettings,
+  settingsPresets,
+  extractSettings,
+  toServerPayload: (hints, raw): Record<string, unknown> => {
+    const payload: Record<string, unknown> = { "Wrinkly Hints": hints };
+    const input = raw as DKSpoilerLog | undefined;
+    if (input?.Settings) payload['Settings'] = input.Settings;
+    return payload;
+  },
   fromServerPayload: (raw) => {
     const obj = raw as Record<string, unknown>;
     if ('hints' in obj) return obj as unknown as SpoilerLog;

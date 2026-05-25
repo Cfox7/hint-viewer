@@ -1,11 +1,14 @@
 import type { RefObject } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import type { SpoilerLog } from '../types';
+import type { SeedSettingsData } from '@hint-viewer/shared/seed-settings-types';
 import {
   uploadSpoiler,
   deleteSpoiler,
   getState,
   postState,
+  postShopTracker,
+  postSeedSettings,
 } from '../api/spoilerApi';
 import { useGame } from '../contexts/GameContext';
 
@@ -23,6 +26,7 @@ interface UseUploadReturn {
   revealedHints: Set<string>;
   completedHints: Set<string>;
   hintedItems: Record<string, string>;
+  extractedSettings: SeedSettingsData | undefined;
   showClearModal: boolean;
   setShowClearModal: (v: boolean) => void;
   handleUpload: (e: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
@@ -47,6 +51,7 @@ export function useUpload(channelId: string | undefined): UseUploadReturn {
   const [revealedHints, setRevealedHints] = useState<Set<string>>(new Set());
   const [completedHints, setCompletedHints] = useState<Set<string>>(new Set());
   const [hintedItems, setHintedItems] = useState<Record<string, string>>({});
+  const [extractedSettings, setExtractedSettings] = useState<SeedSettingsData | undefined>(undefined);
 
   const revealedRef = useRef(revealedHints);
   useEffect(() => { revealedRef.current = revealedHints; }, [revealedHints]);
@@ -124,7 +129,13 @@ export function useUpload(channelId: string | undefined): UseUploadReturn {
       await deleteResources(channelId);
 
       const normalized = game.normalize(parsed);
-      const result = await uploadSpoiler(channelId, game.id, game.toServerPayload(normalized.hints));
+      const result = await uploadSpoiler(channelId, game.id, game.toServerPayload(normalized.hints, parsed));
+
+      let extracted: SeedSettingsData | undefined;
+      if (game.extractSettings) {
+        extracted = game.extractSettings(parsed);
+        setExtractedSettings(extracted);
+      }
 
       setSpoilerData(normalized);
       setUploadedAt(result.uploadedAt ?? new Date().toISOString());
@@ -135,6 +146,15 @@ export function useUpload(channelId: string | undefined): UseUploadReturn {
 
       if (syncTimerRef.current) { window.clearTimeout(syncTimerRef.current); syncTimerRef.current = null; }
       void postState(channelId, [], [], {});
+      void postShopTracker(channelId, {});
+
+      if (extracted && game.defaultSettings) {
+        const defaultPayload: SeedSettingsData = {};
+        for (const key of game.defaultSettings) {
+          if (key in extracted) defaultPayload[key] = extracted[key];
+        }
+        void postSeedSettings(channelId, defaultPayload);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to upload spoiler log');
       console.error('Upload error:', err);
@@ -215,6 +235,7 @@ export function useUpload(channelId: string | undefined): UseUploadReturn {
     revealedHints,
     completedHints,
     hintedItems,
+    extractedSettings,
     showClearModal,
     setShowClearModal,
     handleUpload,

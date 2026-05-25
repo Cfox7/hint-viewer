@@ -12,6 +12,13 @@ First-time setup
 3. The spoiler log is saved to the server; viewers can now see the ??? placeholders in the extension
 
 
+Before a run
+
+Configuring seed settings
+
+After uploading a spoiler log, click the Seed Settings button to review and adjust the settings for your seed. The settings are automatically extracted from the spoiler log, but you can change them before saving. Click "Save to Viewers" to publish the settings so viewers can see them in the extension. These settings help viewers understand the rules of the seed without needing to ask in chat.
+
+
 During a run
 
 Revealing a hint
@@ -25,6 +32,10 @@ Once a hint is revealed, a checkmark button appears next to it. Click it to mark
 Setting the hinted item
 
 Once a hint is completed you can hit the edit button and select the item the hint was hinting to.
+
+Using the shop tracker (DK64)
+
+While playing DK64, click the Shop Tracker button to open the shop tracker panel. Use it to track which moves and items you have purchased from Cranky, Funky, and Candy across each level. This helps you and your viewers keep track of what has been collected during the run.
 
 Navigating levels
 

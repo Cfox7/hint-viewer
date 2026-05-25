@@ -12,7 +12,7 @@ interface ShopTrackerGridProps {
   readOnly?: boolean;
   onAdvanceKong?: (key: string) => void;
   onRetreatKong?: (key: string) => void;
-  onCycleItem?: (key: string, direction: 1 | -1) => void;
+  onSelectItem?: (key: string, label: string | undefined) => void;
 }
 
 const LEVEL_NAMES = Object.keys(DK64_SHOP_LEVELS);
@@ -32,7 +32,7 @@ function getLevelStatus(level: string, kongState: Record<string, number>): Level
   return 'empty';
 }
 
-export function ShopTrackerGrid({ kongState, itemState, assetBasePath, readOnly = false, onAdvanceKong, onRetreatKong, onCycleItem }: ShopTrackerGridProps) {
+export function ShopTrackerGrid({ kongState, itemState, assetBasePath, readOnly = false, onAdvanceKong, onRetreatKong, onSelectItem }: ShopTrackerGridProps) {
   const [activeLevel, setActiveLevel] = useState(LEVEL_NAMES[0]);
   const shops = DK64_SHOP_LEVELS[activeLevel] ?? [];
 
@@ -78,7 +78,7 @@ export function ShopTrackerGrid({ kongState, itemState, assetBasePath, readOnly 
                     assetBasePath={assetBasePath}
                     onAdvanceKong={onAdvanceKong ? () => onAdvanceKong(key) : undefined}
                     onRetreatKong={onRetreatKong ? () => onRetreatKong(key) : undefined}
-                    onCycleItem={onCycleItem ? (dir) => onCycleItem(key, dir) : undefined}
+                    onSelectItem={onSelectItem ? (label) => onSelectItem(key, label) : undefined}
                     readOnly={readOnly}
                   />
                 );

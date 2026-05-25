@@ -46,14 +46,6 @@ function DkHome() {
         </ul>
       </Section>
 
-      <Section title="Revealing and Completing Hints">
-        <ol>
-          <li>Click <IconPill><FaEye /></IconPill> next to a hint to reveal it to your viewers.</li>
-          <li>Once revealed, click <IconPill><FaCheck /></IconPill> to mark it as completed.</li>
-          <li>After completing, use the dropdown to select the item found at that location. It will appear with a <IconPill><MdNotificationImportant /></IconPill> indicator in the extension.</li>
-        </ol>
-      </Section>
-
       <Section title="Reading Non-Progressive Hints">
         <p>
           Each hint belongs to a Kong based on the color of the Wrinkly Kong door frame in that level. The colors match the Kong's theme color in the base game:
@@ -67,8 +59,16 @@ function DkHome() {
           ))}
         </ul>
         <p>
-          For example: a red door frame in Jungle Japes means the hint is listed under <strong>Japes Japes, Diddy</strong>.
+          For example: a red door frame in Jungle Japes means the hint is listed under <strong>Jungle Japes, Diddy</strong>.
         </p>
+      </Section>
+
+      <Section title="Revealing and Completing Hints">
+        <ol>
+          <li>Click <IconPill><FaEye /></IconPill> next to a hint to reveal it to your viewers.</li>
+          <li>Once revealed, click <IconPill><FaCheck /></IconPill> to mark it as completed.</li>
+          <li>After completing, use the dropdown to select the item found at that location. It will appear with a <IconPill><MdNotificationImportant /></IconPill> indicator in the extension.</li>
+        </ol>
       </Section>
 
       <Section title="Creating Hints">
@@ -95,9 +95,25 @@ function DkHome() {
         </p>
       </Section>
 
-      <div className="dev-note">
-        This project is still in active development — expect occasional bugs and new features. Feedback is welcome!
-      </div>
+      <Section title="Shop Tracker">
+        <p>
+          The shop tracker lets you log which items are available at each shop as you discover them in-game.
+          Use the <strong>Shop</strong> button on the <strong><FaUpload style={{ verticalAlign: 'middle' }} /> <Link to="/upload">Upload</Link></strong> or <strong><FaTasks style={{ verticalAlign: 'middle' }} /> <Link to="/create">Create</Link></strong> pages to open the tracker.
+          All changes are saved automatically and displayed to viewers in the extension. See the <strong>Instructions</strong> section at the bottom of the shop tracker for details on how to use it.
+        </p>
+      </Section>
+
+      <Section title="Seed Settings">
+        <p>
+          When uploading a spoiler log, seed settings are automatically extracted and saved. You can also configure them manually
+          using the <strong>Seed Settings</strong> button on the <strong><FaUpload style={{ verticalAlign: 'middle' }} /> <Link to="/upload">Upload</Link></strong> or <strong><FaTasks style={{ verticalAlign: 'middle' }} /> <Link to="/create">Create</Link></strong> pages.
+        </p>
+        <p>
+          Choose from presets like <strong>Season 4</strong>, <strong>Balanced LZR</strong>, or <strong>Kevin 5.0</strong> to quickly populate common race settings,
+          or pick individual settings from the full list. Selected settings and their values are displayed to viewers in the extension.
+        </p>
+      </Section>
+
     </>
   );
 }

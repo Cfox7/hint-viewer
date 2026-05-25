@@ -23,7 +23,10 @@ const WOTH_PER_PAGE = 5;
 
 export function HintCarousel({ hints, className = '', revealedHints, completedHints, hintedItems, showLevelNav, onHideLevelNav }: HintCarouselProps) {
   const { game } = useGame();
-  const { slides, levels } = buildSlides(hints, game.levelOrder, game.sortHints, game.getLevelCategory, DIRECT_PER_PAGE, FOOLISH_PER_PAGE, WOTH_PER_PAGE);
+  const { slides, levels } = buildSlides(hints, {
+    levelOrder: game.levelOrder, sortHints: game.sortHints, getLevelCategory: game.getLevelCategory,
+    regionMerges: game.regionMerges, hintsPerPage: { direct: DIRECT_PER_PAGE, foolish: FOOLISH_PER_PAGE, woth: WOTH_PER_PAGE },
+  });
 
   const cleanedMap = new Map<string, string[]>();
   Object.keys(hints).forEach((loc) => {

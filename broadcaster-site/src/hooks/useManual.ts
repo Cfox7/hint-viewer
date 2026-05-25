@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { postState, getState, uploadSpoiler, deleteSpoiler } from '../api/spoilerApi';
+import { postState, getState, uploadSpoiler, deleteSpoiler, postSeedSettings } from '../api/spoilerApi';
 import { useGame } from '../contexts/GameContext';
 
 interface UseManualReturn {
@@ -135,6 +135,7 @@ export function useManual(channelId: string | undefined): UseManualReturn {
       // Upload the empty template and reset state in backend
       await uploadSpoiler(channelId, game.id, game.toServerPayload(emptyTemplate));
       await postState(channelId, [], [], {});
+      await postSeedSettings(channelId, {});
     } catch (err) {
       setError('Failed to clear hints');
     }

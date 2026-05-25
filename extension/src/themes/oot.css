@@ -31,6 +31,10 @@
 
   --carousel-bg-image: url('../assets/oot-bg.png');
 
+  --scrollbar-track: #0d1117;
+  --scrollbar-thumb: #1f3a5f;
+  --scrollbar-thumb-hover: #2d5a8a;
+
   --chip-bg: linear-gradient(180deg, #1a2744 0%, #0e1726 100%);
   --chip-border: #2d5a8a;
   --chip-color: #79c0ff;
@@ -88,7 +92,7 @@
 }
 
 [data-theme="oot"] .refresh-bar {
-  font-size: 16px;
+  font-size: 11px;
 }
 
 [data-theme="oot"] .hint-notification-icon {

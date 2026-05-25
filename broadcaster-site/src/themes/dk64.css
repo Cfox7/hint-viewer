@@ -62,6 +62,14 @@
   --chip-active-border: #ffd700;
   --chip-active-color: #fff;
   --chip-active-shadow: 0 1px 3px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,224,102,0.3), 0 0 8px rgba(255,215,0,0.3);
+
+  --scrollbar-track: #1a1e1a;
+  --scrollbar-thumb: #4a3d1a;
+  --scrollbar-thumb-hover: #6b5a28;
+}
+
+[data-theme="dk64"] .level-nav-item {
+  font-size: 1rem;
 }
 
 /* DK64-specific styles */

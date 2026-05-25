@@ -9,7 +9,7 @@ interface ShopTrackerOffcanvasProps {
   itemState: ShopTrackerItemState;
 }
 
-const ASSET_BASE_PATH = '/assets/ShopTracker';
+const ASSET_BASE_PATH = 'assets/ShopTracker';
 
 export function ShopTrackerOffcanvas({ show, onHide, kongState, itemState }: ShopTrackerOffcanvasProps) {
   return (

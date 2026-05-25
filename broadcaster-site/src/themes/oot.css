@@ -62,6 +62,14 @@
   --chip-active-border: #58a6ff;
   --chip-active-color: #fff;
   --chip-active-shadow: 0 1px 3px rgba(0,0,0,0.4), inset 0 1px 0 rgba(88,166,255,0.25), 0 0 8px rgba(88,166,255,0.3);
+
+  --scrollbar-track: #0d1117;
+  --scrollbar-thumb: #1f3a5f;
+  --scrollbar-thumb-hover: #2d5a8a;
+}
+
+[data-theme="oot"] .level-nav-item {
+  font-size: 0.82rem;
 }
 
 [data-theme="oot"] .carousel-bg-container {

@@ -1,9 +1,11 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { FaSearch, FaStore } from 'react-icons/fa';
+import { FaSearch, FaStore, FaCog } from 'react-icons/fa';
 import { HintCarousel } from './HintCarousel';
 import type { SpoilerLog } from '@hint-viewer/shared';
 import type { ShopTrackerKongState, ShopTrackerItemState } from '@hint-viewer/shared/shop-tracker-types';
+import type { SeedSettingsData } from '@hint-viewer/shared/seed-settings-types';
 import { ShopTrackerOffcanvas } from './ShopTrackerOffcanvas';
+import { SeedSettingsOffcanvas } from './SeedSettingsOffcanvas';
 import { useGame } from '../contexts/GameContext';
 
 interface ProcessHintsProps {
@@ -25,8 +27,10 @@ function ProcessHints({ channelId }: ProcessHintsProps) {
   const [lastFetch, setLastFetch] = useState<string | null>(null);
   const [lastPolled, setLastPolled] = useState<Date | null>(null);
   const [canRefresh, setCanRefresh] = useState(true);
+  const [seedSettings, setSeedSettings] = useState<SeedSettingsData>({});
   const [showLevelNav, setShowLevelNav] = useState(false);
   const [showShopTracker, setShowShopTracker] = useState(false);
+  const [showSeedSettings, setShowSeedSettings] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const fetchAll = useCallback(async () => {
@@ -66,6 +70,9 @@ function ProcessHints({ channelId }: ProcessHintsProps) {
         setKongState((tracker.kongs ?? {}) as ShopTrackerKongState);
         setItemState(tracker.items ?? {});
       }
+
+      const settings = (obj['seedSettings'] ?? {}) as SeedSettingsData;
+      setSeedSettings(settings);
 
       setLoading(false);
       setError(null);
@@ -149,7 +156,7 @@ function ProcessHints({ channelId }: ProcessHintsProps) {
           onHideLevelNav={() => setShowLevelNav(false)}
         />
       )}
-      {game.id === 'dk64' && Object.keys(kongState).length > 0 && (
+      {game.id === 'dk64' && (
         <ShopTrackerOffcanvas
           show={showShopTracker}
           onHide={() => setShowShopTracker(false)}
@@ -157,13 +164,23 @@ function ProcessHints({ channelId }: ProcessHintsProps) {
           itemState={itemState}
         />
       )}
+      {Object.keys(seedSettings).length > 0 && (
+        <SeedSettingsOffcanvas
+          show={showSeedSettings}
+          onHide={() => setShowSeedSettings(false)}
+          seedSettings={seedSettings}
+        />
+      )}
       {lastPolled && (
         <div className="refresh-bar">
           {lastFetch && <span className="refresh-uploaded">Uploaded: {new Date(lastFetch).toLocaleTimeString()}</span>}
           <div className="refresh-bar-nav">
             <button className="level-nav-toggle" onClick={() => setShowLevelNav(true)}><FaSearch /> Level Nav</button>
-            {game.id === 'dk64' && Object.keys(kongState).length > 0 && (
+            {game.id === 'dk64' && (
               <button className="shop-tracker-toggle" onClick={() => setShowShopTracker(true)}><FaStore /> Shop Tracker</button>
+            )}
+            {Object.keys(seedSettings).length > 0 && (
+              <button className="seed-settings-toggle" onClick={() => setShowSeedSettings(true)}><FaCog /> Seed Settings</button>
             )}
           </div>
           <span>
