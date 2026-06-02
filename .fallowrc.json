@@ -1,0 +1,10 @@
+{
+  "$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/schema.json",
+  "duplicates": {
+    "ignore": [
+      "extension/src/components/HintCarousel.tsx",
+      "extension/src/components/LevelNav.tsx",
+      "extension/src/contexts/GameContext.tsx"
+    ]
+  }
+}

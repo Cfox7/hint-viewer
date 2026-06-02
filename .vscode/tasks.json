@@ -1,0 +1,89 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Fallow: Dead Code",
+      "type": "shell",
+      "command": "npx fallow dead-code",
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Fallow: Duplicates",
+      "type": "shell",
+      "command": "npx fallow dupes",
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Fallow: Health (Top 10)",
+      "type": "shell",
+      "command": "npx fallow health --top 10",
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Fallow: Audit (vs main)",
+      "type": "shell",
+      "command": "npx fallow audit --base main",
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Fallow: Fix (Dry Run)",
+      "type": "shell",
+      "command": "npx fallow fix --dry-run",
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Fallow: Fix (Apply)",
+      "type": "shell",
+      "command": "npx fallow fix",
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Fallow: Full Analysis",
+      "type": "shell",
+      "command": "npx fallow",
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "clear": true
+      },
+      "problemMatcher": []
+    }
+  ]
+}
