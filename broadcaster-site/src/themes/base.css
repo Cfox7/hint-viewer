@@ -1440,3 +1440,225 @@ html { font-size: 18px; }
   border-color: var(--btn-primary-bg);
 }
 
+/* Hint List View */
+.hint-list-container {
+  max-width: 900px;
+  margin: 0 auto;
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.hint-list-sticky-header {
+  position: sticky;
+  top: var(--app-header-height);
+  z-index: 10;
+  background: var(--bg-secondary);
+  padding-bottom: 8px;
+}
+
+.hint-list-chips {
+  margin-bottom: 8px;
+}
+
+.hint-list-filter-label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.hint-list-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.hint-list-chip {
+  font-family: var(--font-primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 4px 14px;
+  border-radius: 20px;
+  border: 2px solid color-mix(in srgb, var(--chip-color) 50%, transparent);
+  background: var(--bg-secondary);
+  color: var(--chip-color);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.hint-list-chip:hover {
+  border-color: var(--chip-color);
+  background: color-mix(in srgb, var(--chip-color) 12%, var(--bg-secondary));
+}
+
+.hint-list-chip.active {
+  border-color: var(--chip-color);
+  background: color-mix(in srgb, var(--chip-color) 30%, var(--bg-secondary));
+  color: #fff;
+  box-shadow: 0 0 10px color-mix(in srgb, var(--chip-color) 50%, transparent),
+              inset 0 0 8px color-mix(in srgb, var(--chip-color) 15%, transparent);
+  text-shadow: 0 0 6px color-mix(in srgb, var(--chip-color) 60%, transparent);
+}
+
+.hint-list-search-row {
+  position: relative;
+  margin-bottom: 8px;
+}
+
+.hint-list-search {
+  background: var(--bg-input) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-color) !important;
+  font-family: var(--font-primary);
+  padding-right: 36px;
+}
+
+.hint-list-search:focus {
+  border-color: var(--text-accent-alt) !important;
+  box-shadow: none !important;
+}
+
+.hint-list-search::placeholder {
+  color: var(--text-muted);
+}
+
+.hint-list-clear-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px;
+  font-size: 0.9rem;
+}
+
+.hint-list-clear-btn:hover {
+  color: var(--text-primary);
+}
+
+.hint-list-count {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.hint-list-sections .accordion-item {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  margin-bottom: 4px;
+  border-radius: 8px !important;
+  overflow: visible !important;
+}
+
+
+.hint-list-sections .accordion-header {
+  position: sticky;
+  top: calc(var(--app-header-height) + var(--sticky-header-height, 0px));
+  z-index: 5;
+}
+
+.hint-list-sections .accordion-button {
+  background: var(--bg-secondary);
+  color: var(--text-accent);
+  font-family: var(--font-primary);
+  font-weight: 600;
+  padding: 10px 16px;
+  box-shadow: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hint-list-sections .accordion-button:not(.collapsed) {
+  background: color-mix(in srgb, var(--text-accent-alt) 10%, var(--bg-secondary));
+  color: var(--text-accent-alt);
+  border-left: 3px solid var(--text-accent-alt);
+}
+
+.hint-list-sections .accordion-button::after {
+  filter: invert(0.8);
+  transition: transform 0.25s ease;
+}
+
+.hint-list-expand-controls {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+}
+
+.hint-list-expand-btn {
+  font-family: var(--font-primary);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+}
+
+.hint-list-expand-btn:hover {
+  color: var(--text-primary);
+}
+
+.hint-list-section-count {
+  font-size: 0.75rem;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1px 8px;
+  border-radius: 10px;
+  color: var(--text-muted);
+}
+
+.hint-list-sections .accordion-body {
+  background: var(--bg-primary);
+}
+
+.hint-list-items {
+  padding: 4px 12px;
+}
+
+.hint-list-items .hint-item {
+  padding: 6px 8px;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+
+.hint-list-items .hint-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.hint-list-items .hint-location {
+  color: var(--hint-location-color);
+  letter-spacing: 0.01em;
+}
+
+.hint-list-items .hint-text {
+  font-size: 16px;
+  margin-bottom: 0;
+  font-family: var(--font-primary) !important;
+  font-weight: bold;
+  line-height: 1.4;
+  color: #fff;
+  text-align: center;
+}
+
+.hint-list-items .hint-text.completed {
+  opacity: 0.5;
+}
+
+.hint-list-section-reveal {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.hint-list-reveal-all {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+}
+

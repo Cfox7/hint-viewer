@@ -39,4 +39,12 @@ export interface GameConfig {
   settingsPresets?: SeedSettingsPreset[];
   extractSettings?: (raw: unknown) => SeedSettingsData;
   regionMerges?: [string, string][];
+  searchableRegions?: SearchableRegion[];
+}
+
+export interface SearchableRegion {
+  key: string;
+  displayName: string;
+  color?: string;
+  aliases: string[];
 }

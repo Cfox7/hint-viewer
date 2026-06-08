@@ -1,5 +1,5 @@
 import React from 'react';
-import type { GameConfig, LevelCategory, SpoilerLog, SeedSettingsData } from './types';
+import type { GameConfig, LevelCategory, SpoilerLog, SeedSettingsData, SearchableRegion } from './types';
 import DkHome from '../../broadcaster-site/src/components/DkHome';
 import { availableSettings, defaultSettings, settingsPresets } from './dk64-seed-settings';
 
@@ -42,6 +42,20 @@ const baseOrder = Object.keys(levelDisplayNames);
 baseOrder.splice(8, 0, ...batchNames);
 const levelOrder = baseOrder;
 const backgroundImage = './assets/bgfinal.webp';
+
+const searchableRegions: SearchableRegion[] = [
+  { key: 'Japes', displayName: 'Jungle Japes', color: '#59FF64', aliases: ['japes', 'jungle'] },
+  { key: 'Aztec', displayName: 'Angry Aztec', color: '#FFA010', aliases: ['aztec', 'angry'] },
+  { key: 'Factory', displayName: 'Frantic Factory', color: '#B5CDFF', aliases: ['factory', 'frantic', 'testing'] },
+  { key: 'Galleon', displayName: 'Gloomy Galleon', color: '#0C7DED', aliases: ['galleon', 'gloomy'] },
+  { key: 'Fungi', displayName: 'Fungi Forest', color: '#BB1CFF', aliases: ['fungi', 'forest', 'mushroom'] },
+  { key: 'Caves', displayName: 'Crystal Caves', color: '#3EE1E1', aliases: ['caves', 'crystal', 'cabins'] },
+  { key: 'Castle', displayName: 'Creepy Castle', color: '#E84898', aliases: ['castle', 'creepy'] },
+  { key: 'Helm', displayName: 'Hideout Helm', color: '#FF0000', aliases: ['helm', 'hideout'] },
+  { key: 'WOTH', displayName: 'Way of the Hoard', color: '#FFA010', aliases: ['woth', 'way of the hoard'] },
+  { key: 'Path', displayName: 'Path', color: '#FFA010', aliases: ['path'] },
+  { key: 'Foolish', displayName: 'Foolish', color: '#FF0000', aliases: ['foolish'] },
+];
 
 const sectionLabels: Record<LevelCategory, string> = {
   regions: 'Levels',
@@ -458,6 +472,7 @@ export const dk64Config: GameConfig = {
   defaultSettings,
   settingsPresets,
   extractSettings,
+  searchableRegions,
   toServerPayload: (hints, raw): Record<string, unknown> => {
     const payload: Record<string, unknown> = { "Wrinkly Hints": hints };
     const input = raw as DKSpoilerLog | undefined;

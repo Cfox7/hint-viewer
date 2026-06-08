@@ -1,37 +1,22 @@
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import TwitchLogin from './components/TwitchLogin';
 import Upload from './components/Upload';
 import Create from './components/Create';
 import Header from './components/Header';
-import { LevelNav } from './components/LevelNav';
 import { Footer } from './components/Footer';
-import { NavProvider, useNav } from './contexts/NavContext';
 import { GameProvider, useGame } from './contexts/GameContext';
 import './themes/base.css';
 import './themes/dk64.css';
 import './themes/oot.css';
 
 function AppBody() {
-  const { slides, activeIndex, setActiveIndex } = useNav();
   const { game } = useGame();
   useEffect(() => {
     document.documentElement.dataset.theme = game.id;
   }, [game.id]);
   const HomeComponent = game.homeComponent;
-  const location = useLocation();
-  const showSidebar =
-    (location.pathname === '/upload' || location.pathname === '/create') &&
-    slides.length > 0;
 
-  const [mode, setMode] = useState<'sidebar' | 'offcanvas'>(
-    window.innerWidth >= 1400 ? 'sidebar' : 'offcanvas'
-  );
-  useEffect(() => {
-    const handler = () => setMode(window.innerWidth >= 1400 ? 'sidebar' : 'offcanvas');
-    window.addEventListener('resize', handler);
-    return () => window.removeEventListener('resize', handler);
-  }, []);
   return (
     <TwitchLogin>
       {(user, logout, loginButton) => (
@@ -42,15 +27,6 @@ function AppBody() {
             loginButton={!user ? loginButton : undefined}
           />
           <div className="app-body">
-            {showSidebar && (
-              <LevelNav
-                slides={slides}
-                activeIndex={activeIndex}
-                onSelect={setActiveIndex}
-                levelDisplayNames={game.levelDisplayNames}
-                mode={mode}
-              />
-            )}
             <main className="main-content">
               <div className="content-card">
                 <div className="container">
@@ -79,11 +55,9 @@ function AppBody() {
 function App() {
   return (
     <GameProvider>
-      <NavProvider>
-        <BrowserRouter>
-          <AppBody />
-        </BrowserRouter>
-      </NavProvider>
+      <BrowserRouter>
+        <AppBody />
+      </BrowserRouter>
     </GameProvider>
   );
 }

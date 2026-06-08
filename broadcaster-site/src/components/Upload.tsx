@@ -2,13 +2,11 @@ import Toast from 'react-bootstrap/Toast';
 import ToastContainer from 'react-bootstrap/ToastContainer';
 import { useEffect, useState } from 'react';
 import { FaUpload, FaCog, FaStore } from 'react-icons/fa';
-import { HintCarousel } from './HintCarousel';
+import { HintListView } from './HintListView';
 import { useUpload } from '../hooks/useUpload';
 import { UploadModals } from './UploadModals';
 import { SeedSettingsOffcanvas } from './seed-settings/SeedSettingsOffcanvas';
 import { ShopTrackerOffcanvas } from './shop-tracker/ShopTrackerOffcanvas';
-import { buildSlides } from '@hint-viewer/shared/components/buildSlides';
-import { useNav } from '../contexts/NavContext';
 import { useGame } from '../contexts/GameContext';
 
 interface UploadProps { channelId: string; }
@@ -34,26 +32,11 @@ function Upload({ channelId }: UploadProps) {
     handleHintedItemChange,
   } = useUpload(channelId);
 
-  const { slides, activeIndex, setActiveIndex, setSlides, setRevealedHints, setCompletedHints } = useNav();
   const { game } = useGame();
   const [showSuccess, setShowSuccess] = useState(false);
   const [showSeedSettings, setShowSeedSettings] = useState(false);
   const [showSettingsSavedToast, setShowSettingsSavedToast] = useState(false);
   const [showShopTracker, setShowShopTracker] = useState(false);
-
-  useEffect(() => {
-    const { slides: newSlides } = spoilerData ? buildSlides(spoilerData.hints, {
-      levelOrder: game.levelOrder, sortHints: game.sortHints, getLevelCategory: game.getLevelCategory,
-      regionMerges: game.regionMerges, hintsPerPage: { direct: 5, foolish: 5, woth: 5 },
-    }) : { slides: [] };
-    setSlides(newSlides);
-    setActiveIndex(0);
-  }, [spoilerData]);
-
-  useEffect(() => {
-    setRevealedHints(revealedHints);
-    setCompletedHints(completedHints);
-  }, [revealedHints, completedHints]);
 
   useEffect(() => {
     if (success && file) setShowSuccess(true);
@@ -178,24 +161,17 @@ function Upload({ channelId }: UploadProps) {
             <span className="visually-hidden">Loading...</span>
           </div>
         </div>
-      ) : spoilerData && slides.length > 0 && (
-        <div className="card">
-          <div className="hints-preview">
-            <HintCarousel
-              hints={spoilerData.hints}
-              className="carousel-container"
-              channelId={channelId}
-              revealedHints={revealedHints}
-              completedHints={completedHints}
-              onToggleReveal={handleToggleReveal}
-              onToggleComplete={handleToggleComplete}
-              activeIndex={activeIndex}
-              onSelect={setActiveIndex}
-              hintedItems={hintedItems}
-              onHintedItemChange={handleHintedItemChange}
-            />
-          </div>
-        </div>
+      ) : spoilerData && Object.keys(spoilerData.hints).length > 0 && (
+        <HintListView
+          hints={spoilerData.hints}
+          revealedHints={revealedHints}
+          completedHints={completedHints}
+          hintedItems={hintedItems}
+          onToggleReveal={handleToggleReveal}
+          onToggleComplete={handleToggleComplete}
+          onHintedItemChange={handleHintedItemChange}
+          showRevealButtons
+        />
       )}
 
       {game.availableSettings && (

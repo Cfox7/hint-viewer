@@ -1,13 +1,11 @@
 import Toast from 'react-bootstrap/Toast';
 import ToastContainer from 'react-bootstrap/ToastContainer';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { FaEdit, FaSave, FaTasks, FaCog, FaStore } from 'react-icons/fa';
 import { MdNoteAdd } from 'react-icons/md';
-import { HintCarousel } from './HintCarousel';
+import { HintListView } from './HintListView';
 import { SeedSettingsOffcanvas } from './seed-settings/SeedSettingsOffcanvas';
 import { ShopTrackerOffcanvas } from './shop-tracker/ShopTrackerOffcanvas';
-import { buildSlides } from '@hint-viewer/shared/components/buildSlides';
-import { useNav } from '../contexts/NavContext';
 import { useGame } from '../contexts/GameContext';
 import { useManual } from '../hooks/useManual';
 import { ConfirmModal } from './ConfirmModal';
@@ -39,24 +37,7 @@ function Create({ channelId }: CreateProps) {
     saveSpoiler,
   } = useManual(channelId);
 
-  const { slides, activeIndex, setActiveIndex, setSlides, setRevealedHints, setCompletedHints } = useNav();
   const { game } = useGame();
-
-  useEffect(() => {
-    const sourceHints = isEditing && editHints ? editHints : hints;
-    const { slides: newSlides } = sourceHints && Object.keys(sourceHints).length > 0
-      ? buildSlides(sourceHints, {
-          levelOrder: game.levelOrder, sortHints: game.sortHints, getLevelCategory: game.getLevelCategory,
-          regionMerges: game.regionMerges, hintsPerPage: { direct: 5, foolish: 5, woth: 5 },
-        })
-      : { slides: [] };
-    setSlides(newSlides);
-  }, [hints, editHints, isEditing]);
-
-  useEffect(() => {
-    setRevealedHints(revealedHints);
-    setCompletedHints(completedHints);
-  }, [revealedHints, completedHints]);
 
   const handleEditToggle = () => {
     if (!isEditing) {
@@ -106,7 +87,6 @@ function Create({ channelId }: CreateProps) {
       setSeedSettingsClearTrigger(prev => prev + 1);
       setShowClearModal(false);
       setShowClearedToast(true);
-      setActiveIndex(0);
     } finally {
       setClearing(false);
     }
@@ -179,7 +159,7 @@ function Create({ channelId }: CreateProps) {
               >
                 <MdNoteAdd size={20} /> Create New Hint Template
               </button>
-              {slides.length > 0 && (
+              {Object.keys(hints).length > 0 && (
                 <button
                   className="btn btn-success btn-sm d-flex align-items-center gap-1"
                   onClick={handleEditToggle}
@@ -208,27 +188,18 @@ function Create({ channelId }: CreateProps) {
               )}
             </div>
           </div>
-          {slides.length > 0 && (
-            <div className="card">
-              <div className="hints-preview">
-                <HintCarousel
-                  hints={isEditing && editHints ? editHints : hints}
-                  className="carousel-container"
-                  channelId={channelId}
-                  revealedHints={revealedHints}
-                  completedHints={completedHints}
-                  onToggleReveal={handleToggleReveal}
-                  onToggleComplete={handleToggleComplete}
-                  activeIndex={activeIndex}
-                  onSelect={setActiveIndex}
-                  editable={isEditing}
-                  onEditHint={handleEditHint}
-                  showRevealButtons={false}
-                  hintedItems={hintedItems}
-                  onHintedItemChange={handleHintedItemChange}
-                />
-              </div>
-            </div>
+          {Object.keys(isEditing && editHints ? editHints : hints).length > 0 && (
+            <HintListView
+              hints={isEditing && editHints ? editHints : hints}
+              revealedHints={revealedHints}
+              completedHints={completedHints}
+              hintedItems={hintedItems}
+              onToggleReveal={handleToggleReveal}
+              onToggleComplete={handleToggleComplete}
+              onHintedItemChange={handleHintedItemChange}
+              editable={isEditing}
+              onEditHint={handleEditHint}
+            />
           )}
         </>
       )}

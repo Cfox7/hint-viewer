@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGame } from '../contexts/GameContext';
-import { useNav } from '../contexts/NavContext';
 import { deleteSpoiler, getState, postSeedSettings } from '../api/spoilerApi';
 import { ConfirmModal } from './ConfirmModal';
 import type { GameConfig } from '@hint-viewer/shared/games';
@@ -12,7 +11,6 @@ interface GameSwitcherProps {
 
 const GameSwitcher: React.FC<GameSwitcherProps> = ({ channelId }) => {
   const { game, setGame, games } = useGame();
-  const { setSlides, setActiveIndex } = useNav();
   const navigate = useNavigate();
   const [pendingGame, setPendingGame] = useState<GameConfig | null>(null);
   const [loading, setLoading] = useState(false);
@@ -36,8 +34,6 @@ const GameSwitcher: React.FC<GameSwitcherProps> = ({ channelId }) => {
         await postSeedSettings(channelId, {});
       }
       setGame(pendingGame);
-      setSlides([]);
-      setActiveIndex(0);
       setPendingGame(null);
       navigate('/');
     } finally {
