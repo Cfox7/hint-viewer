@@ -4,7 +4,9 @@
     "ignore": [
       "extension/src/components/HintCarousel.tsx",
       "extension/src/components/LevelNav.tsx",
-      "extension/src/contexts/GameContext.tsx"
+      "extension/src/contexts/GameContext.tsx",
+      "broadcaster-site/src/components/DkHome.tsx",
+      "broadcaster-site/src/components/OotHome.tsx"
     ]
   }
 }

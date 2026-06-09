@@ -18,8 +18,6 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 function OotHome() {
   return (
     <>
-      <h2 className="theme-gradient-text" style={{ marginBottom: '1.5rem' }}>Welcome to the Oot Randomizer Hint Viewer!</h2>
-
       <Section title="Getting Started">
         <p>
           This site lets <a href="https://ootrandomizer.com/" target="_blank" rel="noreferrer">Ocarina of Time Randomizer</a> broadcasters securely share hints with their viewers. 

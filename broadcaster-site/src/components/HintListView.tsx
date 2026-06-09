@@ -1,10 +1,18 @@
 import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
-import { Accordion, Button, Form } from 'react-bootstrap';
-import { FaTimes, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { Accordion, Button } from 'react-bootstrap';
+import Select from 'react-select';
+import type { MultiValue, SelectInstance } from 'react-select';
+import { FaEye, FaEyeSlash, FaFilter, FaTimes } from 'react-icons/fa';
 import HintItem from './HintItem';
 import { useGame } from '../contexts/GameContext';
 import { useCrossLinks } from '../hooks/use-cross-links';
 import { buildHintIndex } from '../lib/build-hint-index';
+import { useSelectTheme } from '../hooks/useSelectTheme';
+
+interface FilterOption {
+  value: string;
+  label: string;
+}
 
 export interface HintListViewProps {
   hints: Record<string, string>;
@@ -34,9 +42,13 @@ export function HintListView({
   showRevealButtons = false,
 }: HintListViewProps) {
   const { game } = useGame();
-  const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
+  const selectStyles = useSelectTheme<FilterOption>();
+  const [selectedRegions, setSelectedRegions] = useState<FilterOption[]>([]);
+  const [searchInput, setSearchInput] = useState('');
+  const [menuOpen, setMenuOpen] = useState(false);
+  const selectRef = useRef<SelectInstance<FilterOption, true>>(null);
   const [openSections, setOpenSections] = useState<Set<string>>(new Set());
+  const jumpTargetRef = useRef<string | null>(null);
   const stickyHeaderRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -52,6 +64,18 @@ export function HintListView({
     observer.observe(header);
     return () => observer.disconnect();
   }, []);
+
+  useEffect(() => {
+    const level = jumpTargetRef.current;
+    const container = containerRef.current;
+    if (!level || !container) return;
+    jumpTargetRef.current = null;
+    requestAnimationFrame(() => {
+      container.classList.remove('hint-list-no-transition');
+      const el = container.querySelector(`[data-level="${level}"]`);
+      el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }, [openSections]);
 
   const hiddenLocations = useMemo(() => {
     const hidden = new Set<string>();
@@ -110,7 +134,13 @@ export function HintListView({
     [hints, game],
   );
 
-  const isFiltered = selectedRegion !== null || searchQuery.length > 0;
+  const regions = game.searchableRegions ?? [];
+  const isFiltered = selectedRegions.length > 0 || searchInput.length > 0;
+
+  const regionOptions: FilterOption[] = useMemo(
+    () => regions.map((r) => ({ value: r.key, label: r.displayName })),
+    [regions],
+  );
 
   const filteredLocations = useMemo(() => {
     if (!isFiltered) return null;
@@ -119,19 +149,16 @@ export function HintListView({
       visibleLocations.filter((loc) => revealedHints.has(loc)),
     );
 
-    if (selectedRegion) {
-      const regionMatches = hintIndex.regionIndex.get(selectedRegion);
-      if (regionMatches) {
-        matchingLocations = new Set(
-          [...matchingLocations].filter((loc) => regionMatches.has(loc)),
-        );
-      } else {
-        matchingLocations = new Set();
-      }
+    if (selectedRegions.length > 0) {
+      matchingLocations = new Set(
+        [...matchingLocations].filter((loc) =>
+          selectedRegions.some((r) => hintIndex.regionIndex.get(r.value)?.has(loc)),
+        ),
+      );
     }
 
-    if (searchQuery.length > 0) {
-      const query = searchQuery.toLowerCase();
+    if (searchInput.length > 0) {
+      const query = searchInput.toLowerCase();
       matchingLocations = new Set(
         [...matchingLocations].filter((loc) => {
           const entry = hintIndex.entries.find((e) => e.location === loc);
@@ -141,22 +168,20 @@ export function HintListView({
     }
 
     return matchingLocations;
-  }, [isFiltered, selectedRegion, searchQuery, visibleLocations, revealedHints, hintIndex]);
+  }, [isFiltered, selectedRegions, searchInput, visibleLocations, revealedHints, hintIndex]);
 
-  const toggleRegion = (key: string) => {
-    setSelectedRegion((prev) => (prev === key ? null : key));
-    setSearchQuery('');
+  const handleFilterChange = (options: MultiValue<FilterOption>) => {
+    setSelectedRegions([...options]);
+    setSearchInput('');
   };
 
-  const clearFilters = () => {
-    setSelectedRegion(null);
-    setSearchQuery('');
+  const handleFilterClick = () => {
+    setMenuOpen(true);
+    selectRef.current?.focus();
   };
 
   const totalVisible = visibleLocations.length;
   const filteredCount = filteredLocations?.size ?? totalVisible;
-
-  const regions = game.searchableRegions ?? [];
 
   const handleRevealLevel = useCallback(
     (locations: string[]) => {
@@ -205,40 +230,58 @@ export function HintListView({
   return (
     <div className="hint-list-container" ref={containerRef}>
       <div className="hint-list-sticky-header" ref={stickyHeaderRef}>
-        <div className="hint-list-filter-label">Filter revealed hints by area mentioned:</div>
-        {regions.length > 0 && (
-          <div className="hint-list-chips">
-            {regions.map((region) => (
-              <button
-                key={region.key}
-                className={`hint-list-chip${selectedRegion === region.key ? ' active' : ''}`}
-                style={{
-                  '--chip-color': region.color ?? 'var(--text-primary)',
-                } as React.CSSProperties}
-                onClick={() => toggleRegion(region.key)}
-              >
-                {region.displayName}
-              </button>
-            ))}
-          </div>
-        )}
-        <div className="hint-list-search-row">
-          <Form.Control
-            type="text"
-            placeholder="Search hints..."
-            value={searchQuery}
-            onChange={(e) => { setSearchQuery(e.target.value); setSelectedRegion(null); }}
-            className="hint-list-search"
+        <div className="hint-list-filter-row">
+          <Select<FilterOption, true>
+            ref={selectRef}
+            isMulti
+            classNamePrefix="hint-filter"
+            options={regionOptions}
+            value={selectedRegions}
+            onChange={handleFilterChange}
+            inputValue={searchInput}
+            onInputChange={(val, action) => {
+              if (action.action === 'input-change') setSearchInput(val);
+            }}
+            placeholder="Search hints or filter by region..."
+            menuPortalTarget={document.body}
+            menuPlacement="auto"
+            menuIsOpen={menuOpen}
+            onMenuClose={() => setMenuOpen(false)}
+            openMenuOnClick={false}
+            openMenuOnFocus={false}
+            isSearchable
+            filterOption={() => true}
+            styles={{
+              ...selectStyles,
+              container: (base) => ({ ...base, width: '100%', maxWidth: 'none', minWidth: 0 }),
+            }}
+            components={{
+              DropdownIndicator: () => (
+                <>
+                  {searchInput.length > 0 && (
+                    <button
+                      className="hint-filter-add-btn"
+                      onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); setSearchInput(''); }}
+                      aria-label="Clear search"
+                      title="Clear search"
+                    >
+                    </button>
+                  )}
+                  <button
+                    className="hint-filter-add-btn"
+                    onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); handleFilterClick(); }}
+                    aria-label="Filter by region"
+                    title="Filter by region"
+                  >
+                    <FaFilter />
+                  </button>
+                </>
+              ),
+              IndicatorSeparator: () => null,
+            }}
+            isClearable={selectedRegions.length > 0 || searchInput.length > 0}
+            noOptionsMessage={() => 'No matching regions'}
           />
-          {isFiltered && (
-            <button
-              className="hint-list-clear-btn"
-              onClick={clearFilters}
-              aria-label="Clear filters"
-            >
-              <FaTimes />
-            </button>
-          )}
         </div>
         {isFiltered && (
           <div className="hint-list-count">
@@ -247,6 +290,24 @@ export function HintListView({
         )}
         {!isFiltered && (
           <div className="hint-list-expand-controls">
+            <select
+              className="hint-list-jump-select"
+              value=""
+              onChange={(e) => {
+                const level = e.target.value;
+                if (!level) return;
+                jumpTargetRef.current = level;
+                containerRef.current?.classList.add('hint-list-no-transition');
+                setOpenSections(new Set([level]));
+                e.target.value = '';
+              }}
+            >
+              <option value="" disabled hidden>Jump to...</option>
+              {groupedByLevel.orderedLevels.map((level) => {
+                const name = game.levelDisplayNames[level] || level;
+                return <option key={level} value={level}>{name}</option>;
+              })}
+            </select>
             <button
               className="hint-list-expand-btn"
               onClick={expandAll}
@@ -286,7 +347,7 @@ export function HintListView({
             : displayName;
 
           return (
-            <Accordion.Item key={level} eventKey={level}>
+            <Accordion.Item key={level} eventKey={level} data-level={level}>
               <Accordion.Header>
                 <span className="hint-list-section-title">{formattedName}</span>
                 <span className="hint-list-section-count">{displayLocations.length}</span>
