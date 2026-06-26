@@ -1,8 +1,9 @@
-import React from 'react';
-import { FaHome, FaUpload, FaTasks, FaSignOutAlt, FaGamepad, FaTwitch } from 'react-icons/fa';
+import React, { useState } from 'react';
+import { FaHome, FaUpload, FaTasks, FaSignOutAlt, FaGamepad, FaTwitch, FaStore } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { useGame } from '../contexts/GameContext';
 import GameSwitcher from './GameSwitcher';
+import { ShopTrackerOffcanvas } from './shop-tracker/ShopTrackerOffcanvas';
 
 interface AppSidebarProps {
   user?: {
@@ -17,8 +18,9 @@ interface AppSidebarProps {
 const AppSidebar: React.FC<AppSidebarProps> = ({ user, logout, onLogin }) => {
   const navigate = useNavigate();
   const { game } = useGame();
-
+  const [showShopTracker, setShowShopTracker] = useState(false);
   return (
+    <>
     <nav className="app-sidebar">
       <div className="app-sidebar-top">
         {user && (
@@ -26,8 +28,8 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ user, logout, onLogin }) => {
             <div className="app-sidebar-user">
               <a href={`https://twitch.tv/${user.display_name}`} target="_blank" rel="noopener noreferrer">
                 <img src={user.profile_image_url} alt={user.display_name} className="app-sidebar-avatar" />
+                <strong className="app-sidebar-username">{user.display_name}</strong>
               </a>
-              <strong className="app-sidebar-username">{user.display_name}</strong>
             </div>
 
             <div className="app-sidebar-nav">
@@ -55,9 +57,19 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ user, logout, onLogin }) => {
                 <FaTasks />
                 <span className="app-sidebar-nav-label">Create</span>
               </button>
-              <div className="app-sidebar-game-switcher" title={game.displayName}>
+              {game.id === 'dk64' && (
+                <button
+                  onClick={() => setShowShopTracker(true)}
+                  className="app-sidebar-nav-btn"
+                  title="Shops"
+                >
+                  <FaStore />
+                  <span className="app-sidebar-nav-label">Shops</span>
+                </button>
+              )}
+              <div className="app-sidebar-game-switcher" title="Game">
                 <FaGamepad />
-                <span className="app-sidebar-nav-label">{game.displayName}</span>
+                <span className="app-sidebar-nav-label">Game</span>
                 <GameSwitcher channelId={user?.id} />
               </div>
               {logout && (
@@ -88,6 +100,14 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ user, logout, onLogin }) => {
         )}
       </div>
     </nav>
+    {user && game.id === 'dk64' && (
+      <ShopTrackerOffcanvas
+        show={showShopTracker}
+        onHide={() => setShowShopTracker(false)}
+        channelId={user.id}
+      />
+    )}
+  </>
   );
 };
 

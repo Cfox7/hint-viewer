@@ -1,5 +1,6 @@
 import React from 'react';
 import type { GameConfig, LevelCategory, SearchableRegion, SpoilerLog } from './types';
+import { highlightParts } from './types';
 import OotHome from '../../broadcaster-site/src/components/OotHome';
 import { availableSettings, defaultSettings, settingsPresets, extractSettings } from './oot-seed-settings';
 
@@ -352,7 +353,7 @@ function sortHints(groupedHints: Record<string, string[]>): Record<string, strin
   return sorted;
 }
 
-function colorizeHints(text: string): React.ReactNode {
+function colorizeHints(text: string, highlight?: string): React.ReactNode {
   if (!text) return null;
   const [hintText, colorStr] = text.split('|');
   const colors = colorStr ? colorStr.split(',').map(c => c.trim()) : [];
@@ -386,7 +387,7 @@ function colorizeHints(text: string): React.ReactNode {
     remaining = remaining.slice(end + 1);
   }
 
-  const finalParts = parts.flatMap((part, partIndex) => {
+  let finalParts: React.ReactNode[] = parts.flatMap((part, partIndex) => {
     if (typeof part !== 'string') return [part];
     return part.split(/\b(foolish|path to)\b/gi).map((seg, segIndex) => {
       const color = ootColorMap[seg.toLowerCase()];
@@ -394,6 +395,10 @@ function colorizeHints(text: string): React.ReactNode {
       return seg;
     });
   });
+
+  if (highlight) {
+    finalParts = highlightParts(finalParts, highlight, colorIndex);
+  }
 
   return React.createElement(React.Fragment, null, ...finalParts);
 }

@@ -1,5 +1,6 @@
 import React from 'react';
 import type { GameConfig, LevelCategory, SpoilerLog, SeedSettingsData, SearchableRegion } from './types';
+import { highlightParts } from './types';
 import DkHome from '../../broadcaster-site/src/components/DkHome';
 import { availableSettings, defaultSettings, settingsPresets } from './dk64-seed-settings';
 
@@ -52,9 +53,7 @@ const searchableRegions: SearchableRegion[] = [
   { key: 'Caves', displayName: 'Crystal Caves', color: '#3EE1E1', aliases: ['caves', 'crystal', 'cabins'] },
   { key: 'Castle', displayName: 'Creepy Castle', color: '#E84898', aliases: ['castle', 'creepy'] },
   { key: 'Helm', displayName: 'Hideout Helm', color: '#FF0000', aliases: ['helm', 'hideout'] },
-  { key: 'WOTH', displayName: 'Way of the Hoard', color: '#FFA010', aliases: ['woth', 'way of the hoard'] },
   { key: 'Path', displayName: 'Path', color: '#FFA010', aliases: ['path'] },
-  { key: 'Foolish', displayName: 'Foolish', color: '#FF0000', aliases: ['foolish'] },
 ];
 
 const sectionLabels: Record<LevelCategory, string> = {
@@ -307,7 +306,7 @@ function sortHints(groupedHints: Record<string, string[]>): Record<string, strin
   return sorted;
 }
 
-function colorizeHints(text: string): React.ReactNode {
+function colorizeHints(text: string, highlight?: string): React.ReactNode {
   if (!text) return null;
   let parts: React.ReactNode[] = [text];
   let key = 0;
@@ -345,6 +344,10 @@ function colorizeHints(text: string): React.ReactNode {
     });
     parts = nextParts;
   });
+
+  if (highlight) {
+    parts = highlightParts(parts, highlight, key);
+  }
 
   return React.createElement(React.Fragment, null, ...parts);
 }

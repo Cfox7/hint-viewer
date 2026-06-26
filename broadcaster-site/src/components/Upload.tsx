@@ -1,12 +1,11 @@
 import Toast from 'react-bootstrap/Toast';
 import ToastContainer from 'react-bootstrap/ToastContainer';
 import { useEffect, useState } from 'react';
-import { FaUpload, FaCog, FaStore } from 'react-icons/fa';
+import { FaUpload, FaCog } from 'react-icons/fa';
 import { HintListView } from './HintListView';
 import { useUpload } from '../hooks/useUpload';
 import { UploadModals } from './UploadModals';
 import { SeedSettingsOffcanvas } from './seed-settings/SeedSettingsOffcanvas';
-import { ShopTrackerOffcanvas } from './shop-tracker/ShopTrackerOffcanvas';
 import { useGame } from '../contexts/GameContext';
 
 interface UploadProps { channelId: string; }
@@ -36,7 +35,6 @@ function Upload({ channelId }: UploadProps) {
   const [showSuccess, setShowSuccess] = useState(false);
   const [showSeedSettings, setShowSeedSettings] = useState(false);
   const [showSettingsSavedToast, setShowSettingsSavedToast] = useState(false);
-  const [showShopTracker, setShowShopTracker] = useState(false);
 
   useEffect(() => {
     if (success && file) setShowSuccess(true);
@@ -98,15 +96,6 @@ function Upload({ channelId }: UploadProps) {
                 onClick={() => setShowSeedSettings(true)}
               >
                 <FaCog /> Seed Settings
-              </button>
-            )}
-            {game.id === 'dk64' && success && (
-              <button
-                type="button"
-                className="twitch-btn btn btn-outline-primary btn-sm d-flex align-items-center gap-1"
-                onClick={() => setShowShopTracker(true)}
-              >
-                <FaStore /> Shops
               </button>
             )}
           </div>
@@ -181,14 +170,6 @@ function Upload({ channelId }: UploadProps) {
           onSaveSuccess={() => setShowSettingsSavedToast(true)}
           channelId={channelId}
           extractedSettings={extractedSettings}
-        />
-      )}
-
-      {game.id === 'dk64' && (
-        <ShopTrackerOffcanvas
-          show={showShopTracker}
-          onHide={() => setShowShopTracker(false)}
-          channelId={channelId}
         />
       )}
     </>

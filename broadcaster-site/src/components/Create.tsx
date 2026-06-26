@@ -1,11 +1,10 @@
 import Toast from 'react-bootstrap/Toast';
 import ToastContainer from 'react-bootstrap/ToastContainer';
 import { useState } from 'react';
-import { FaEdit, FaSave, FaTasks, FaCog, FaStore } from 'react-icons/fa';
+import { FaEdit, FaSave, FaTasks, FaCog } from 'react-icons/fa';
 import { MdNoteAdd } from 'react-icons/md';
 import { HintListView } from './HintListView';
 import { SeedSettingsOffcanvas } from './seed-settings/SeedSettingsOffcanvas';
-import { ShopTrackerOffcanvas } from './shop-tracker/ShopTrackerOffcanvas';
 import { useGame } from '../contexts/GameContext';
 import { useManual } from '../hooks/useManual';
 import { ConfirmModal } from './ConfirmModal';
@@ -22,7 +21,6 @@ function Create({ channelId }: CreateProps) {
   const [showSeedSettings, setShowSeedSettings] = useState(false);
   const [showSettingsSavedToast, setShowSettingsSavedToast] = useState(false);
   const [seedSettingsClearTrigger, setSeedSettingsClearTrigger] = useState(0);
-  const [showShopTracker, setShowShopTracker] = useState(false);
   const {
     initialLoading,
     hints,
@@ -178,14 +176,6 @@ function Create({ channelId }: CreateProps) {
                   <FaCog /> Seed Settings
                 </button>
               )}
-              {game.id === 'dk64' && (
-                <button
-                  className="twitch-btn btn btn-outline-primary btn-sm d-flex align-items-center gap-1"
-                  onClick={() => setShowShopTracker(true)}
-                >
-                  <FaStore /> Shops
-                </button>
-              )}
             </div>
           </div>
           {Object.keys(isEditing && editHints ? editHints : hints).length > 0 && (
@@ -211,14 +201,6 @@ function Create({ channelId }: CreateProps) {
           onSaveSuccess={() => setShowSettingsSavedToast(true)}
           channelId={channelId}
           clearTrigger={seedSettingsClearTrigger}
-        />
-      )}
-
-      {game.id === 'dk64' && (
-        <ShopTrackerOffcanvas
-          show={showShopTracker}
-          onHide={() => setShowShopTracker(false)}
-          channelId={channelId}
         />
       )}
     </>

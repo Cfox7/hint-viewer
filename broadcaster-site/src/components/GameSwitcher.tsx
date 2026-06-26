@@ -44,7 +44,6 @@ const GameSwitcher: React.FC<GameSwitcherProps> = ({ channelId }) => {
   return (
     <>
       <div className="game-switcher">
-        <label className="game-switcher-label" htmlFor="game-switcher">Game</label>
         <select
           id="game-switcher"
         className="game-switcher-select"
