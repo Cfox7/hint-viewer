@@ -976,6 +976,38 @@ html { font-size: 18px; }
   width: 100% !important;
 }
 
+/* Page header */
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 1rem;
+  padding: 16px 20px;
+  background: color-mix(in srgb, var(--text-accent) 8%, var(--bg-secondary));
+  border: 1px solid color-mix(in srgb, var(--text-accent) 20%, var(--border-color));
+  border-radius: 10px;
+}
+
+.page-header-icon {
+  color: var(--text-accent);
+  flex-shrink: 0;
+}
+
+.page-header h2 {
+  color: var(--text-accent);
+  font-weight: 700;
+  margin-bottom: 4px;
+  text-align: left;
+  font-size: 1.3rem;
+}
+
+.page-header p {
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  margin: 0;
+  opacity: 0.85;
+}
+
 /* Home page shared */
 .home-section {
   margin-bottom: 2rem;
@@ -983,8 +1015,8 @@ html { font-size: 18px; }
 
 .home-section-title {
   color: var(--text-accent);
-  border-bottom: 1px solid var(--border-color);
-  padding-bottom: 0.4rem;
+  border-bottom: 2px solid color-mix(in srgb, var(--text-accent) 35%, var(--border-color));
+  padding-bottom: 0.5rem;
   margin-bottom: 0.75rem;
 }
 
@@ -1649,25 +1681,35 @@ html { font-size: 18px; }
 .hint-search-bar {
   display: flex;
   align-items: center;
-  background: var(--select-bg, var(--bg-secondary));
-  border: 1px solid var(--select-border, var(--border-color));
-  border-radius: 6px;
+  background: var(--bg-input);
+  border: 2px solid var(--border-accent);
+  border-radius: 8px;
   padding: 0 4px;
   min-height: 38px;
   width: 100%;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.hint-search-bar:hover {
+  background: color-mix(in srgb, var(--bg-input-focus) 40%, var(--bg-input));
 }
 
 .hint-search-bar:focus-within {
-  border-color: var(--select-border-focus, var(--twitch-accent));
+  background: color-mix(in srgb, var(--text-accent) 8%, var(--bg-input));
+  border-color: var(--text-accent-alt);
+}
+
+input[type="text"].hint-search-input {
+  border: none !important;
+  background: transparent !important;
+  padding: 6px 8px !important;
+  border-radius: 0 !important;
 }
 
 .hint-search-input {
   flex: 1;
-  border: none;
-  background: transparent;
   color: var(--text-primary);
   font-size: 0.95rem;
-  padding: 6px 8px;
   outline: none;
   min-width: 0;
 }
@@ -1741,11 +1783,30 @@ html { font-size: 18px; }
 
 .hint-list-sections .accordion-item {
   background: var(--bg-primary);
-  border: 1px solid var(--border-color);
-  margin-bottom: 4px;
+  border: 2px solid color-mix(in srgb, var(--text-accent) 25%, var(--border-color));
+  margin-bottom: 6px;
   border-radius: 8px !important;
   overflow: visible !important;
   scroll-margin-top: calc(var(--sticky-header-height, 0px) + 4px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hint-list-sections .accordion-item .accordion-button {
+  border-radius: 6px 6px 0 0 !important;
+}
+
+.hint-list-sections .accordion-item .accordion-button.collapsed {
+  border-radius: 6px !important;
+}
+
+.hint-list-sections .accordion-item .accordion-collapse {
+  border-radius: 0 0 6px 6px !important;
+}
+
+.hint-list-sections .accordion-item:has(.accordion-button:not(.collapsed)) {
+  border-color: color-mix(in srgb, var(--text-accent-alt) 50%, var(--border-color));
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4), 0 0 0 1px color-mix(in srgb, var(--text-accent-alt) 15%, transparent);
 }
 
 
@@ -1756,19 +1817,24 @@ html { font-size: 18px; }
 }
 
 .hint-list-sections .accordion-button {
-  background: var(--bg-secondary);
+  background: color-mix(in srgb, var(--text-accent) 6%, var(--bg-secondary));
   color: var(--text-accent);
   font-family: var(--font-primary);
   font-weight: 600;
-  padding: 10px 16px;
+  padding: 12px 16px;
   box-shadow: none;
   display: flex;
   align-items: center;
   gap: 8px;
+  border-bottom: 1px solid color-mix(in srgb, var(--text-accent) 12%, transparent);
+}
+
+.hint-list-sections .accordion-button.collapsed {
+  border-bottom: none;
 }
 
 .hint-list-sections .accordion-button:not(.collapsed) {
-  background: color-mix(in srgb, var(--text-accent-alt) 10%, var(--bg-secondary));
+  background: color-mix(in srgb, var(--text-accent-alt) 12%, var(--bg-secondary));
   color: var(--text-accent-alt);
   border-left: 3px solid var(--text-accent-alt);
 }
@@ -1787,7 +1853,7 @@ html { font-size: 18px; }
 .hint-list-expand-btn {
   font-family: var(--font-primary);
   font-size: 0.8rem;
-  color: var(--text-muted);
+  color: var(--text-primary);
   background: none;
   border: none;
   cursor: pointer;
@@ -1798,13 +1864,13 @@ html { font-size: 18px; }
 }
 
 .hint-list-expand-btn:hover {
-  color: var(--text-primary);
+  color: var(--text-accent);
 }
 
 .hint-list-jump-select {
   font-family: var(--font-primary);
   font-size: 0.8rem;
-  color: var(--text-muted);
+  color: var(--text-primary);
   background: var(--bg-primary);
   border: 1px solid var(--border-color);
   border-radius: 4px;
@@ -1824,14 +1890,52 @@ html { font-size: 18px; }
 
 .hint-list-section-count {
   font-size: 0.75rem;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 1px 8px;
+  background: color-mix(in srgb, var(--text-accent) 15%, transparent);
+  padding: 2px 10px;
   border-radius: 10px;
-  color: var(--text-muted);
+  color: var(--text-accent);
+  font-weight: 600;
+}
+
+.accordion-button:not(.collapsed) .hint-list-section-count {
+  background: color-mix(in srgb, var(--text-accent-alt) 20%, transparent);
+  color: var(--text-accent-alt);
 }
 
 .hint-list-sections .accordion-body {
   background: var(--bg-primary);
+}
+
+.hint-list-filtered {
+  background: var(--bg-primary);
+  border: 2px solid color-mix(in srgb, var(--text-accent) 25%, var(--border-color));
+  border-radius: 8px;
+  padding: 4px 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.hint-list-filtered .hint-item {
+  padding: 6px 8px;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+
+.hint-list-filtered .hint-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.hint-list-filtered .hint-text {
+  font-size: 16px;
+  margin-bottom: 0;
+  font-family: var(--font-primary) !important;
+  font-weight: bold;
+  line-height: 1.4;
+  color: #fff;
+  text-align: center;
+}
+
+.hint-list-filtered .hint-text.completed {
+  opacity: 0.5;
 }
 
 .hint-list-items {

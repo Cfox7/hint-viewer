@@ -46,13 +46,13 @@ function Upload({ channelId }: UploadProps) {
       <UploadModals uploading={uploading} />
 
       {/* Header */}
-      <div className="upload-header d-flex align-items-center gap-3 mb-3 p-3" style={{ background: '#cce4fa', borderRadius: 8 }}>
-        <FaUpload size={36} style={{ color: '#007bff' }} />
+      <div className="page-header">
+        <FaUpload size={36} className="page-header-icon" />
         <div>
-          <h2 className="mb-1" style={{ color: '#007bff', fontWeight: 700 }}>Upload Spoiler Log</h2>
-          <div style={{ fontSize: '1rem', color: '#222' }}>
-            Upload your spoiler log to instantly populate all hints. You can then reveal/complete them as you go for you viewers. No manual entry required!
-          </div>
+          <h2>Upload Spoiler Log</h2>
+          <p>
+            Upload your spoiler log to instantly populate all hints. You can then reveal/complete them as you go for your viewers. No manual entry required!
+          </p>
         </div>
       </div>
 

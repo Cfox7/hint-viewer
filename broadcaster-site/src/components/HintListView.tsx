@@ -128,6 +128,28 @@ export function HintListView({
     [hints, game],
   );
 
+  const syntheticHintedItems = useMemo(() => {
+    const textToSourceLoc = new Map<string, string>();
+    for (const loc of visibleLocations) {
+      const level = loc.split(' ')[0];
+      if (syntheticLevels.has(level)) continue;
+      const cleaned = (hints[loc] || '').split('|')[0].trim();
+      if (cleaned) textToSourceLoc.set(cleaned, loc);
+    }
+
+    const result: Record<string, string> = {};
+    for (const loc of visibleLocations) {
+      const level = loc.split(' ')[0];
+      if (!syntheticLevels.has(level)) continue;
+      const cleaned = (hints[loc] || '').split('|')[0].trim();
+      const sourceLoc = textToSourceLoc.get(cleaned);
+      if (sourceLoc && hintedItems[sourceLoc]) {
+        result[loc] = hintedItems[sourceLoc];
+      }
+    }
+    return result;
+  }, [visibleLocations, syntheticLevels, hints, hintedItems]);
+
   const regions = game.searchableRegions ?? [];
   const isFiltered = searchInput.length > 0;
 
@@ -179,11 +201,11 @@ export function HintListView({
     (locations: string[]) => {
       const allRevealed = locations.every((loc) => revealedHints.has(loc));
       for (const loc of locations) {
-        if (allRevealed && revealedHints.has(loc)) revealWithSync(loc);
-        if (!allRevealed && !revealedHints.has(loc)) revealWithSync(loc);
+        if (allRevealed && revealedHints.has(loc)) onToggleReveal(loc);
+        if (!allRevealed && !revealedHints.has(loc)) onToggleReveal(loc);
       }
     },
-    [revealedHints, revealWithSync],
+    [revealedHints, onToggleReveal],
   );
 
   const handleRevealAll = useCallback(() => {
@@ -192,11 +214,9 @@ export function HintListView({
 
   const allRevealed = visibleLocations.length > 0 && visibleLocations.every((loc) => revealedHints.has(loc));
 
-  const activeKeys = isFiltered
-    ? getSectionsWithMatches(groupedByLevel, filteredLocations)
-    : [...openSections];
+  const activeKeys = [...openSections];
 
-  const allExpanded = !isFiltered && openSections.size === groupedByLevel.orderedLevels.length;
+  const allExpanded = openSections.size === groupedByLevel.orderedLevels.length;
 
   const handleAccordionToggle = (eventKey: string) => {
     setOpenSections((prev) => {
@@ -310,89 +330,112 @@ export function HintListView({
         )}
       </div>
 
-      <Accordion
-        alwaysOpen
-        activeKey={activeKeys}
-        onSelect={handleAccordionSelect}
-        className="hint-list-sections"
-      >
-        {groupedByLevel.orderedLevels.map((level) => {
-          const locations = groupedByLevel.sorted[level] || [];
-          const isSynthetic = syntheticLevels.has(level);
-          if (filteredLocations && isSynthetic) return null;
+      {isFiltered ? (
+        <div className="hint-list-filtered">
+          {[...filteredLocations!].map((location) => {
+            const cleanedHint = (hints[location] || '').split('|')[0].trim();
 
-          const displayLocations = filteredLocations
-            ? locations.filter((loc) => filteredLocations.has(loc))
-            : locations;
+            return (
+              <HintItem
+                key={location}
+                location={location}
+                locationLabel=""
+                cleanedHint={cleanedHint}
+                colorizedHint={game.colorizeHints(hints[location] || '', searchInput || undefined)}
+                isRevealed={revealedHints.has(location)}
+                isCompleted={completedHints.has(location)}
+                hideReveal={false}
+                hideLocation
+                onCompleteWithLinks={completeWithSync}
+                onRevealWithLinks={revealWithSync}
+                editable={editable}
+                onEditHint={onEditHint}
+                hintedItemOptions={game.hintedItemOptions}
+                hintedItem={hintedItems[location] ?? ''}
+                hintedItemEditable={true}
+                onHintedItemChange={(_, item) => onHintedItemChange?.(location, item)}
+              />
+            );
+          })}
+        </div>
+      ) : (
+        <Accordion
+          alwaysOpen
+          activeKey={activeKeys}
+          onSelect={handleAccordionSelect}
+          className="hint-list-sections"
+        >
+          {groupedByLevel.orderedLevels.map((level) => {
+            const locations = groupedByLevel.sorted[level] || [];
+            const isSynthetic = syntheticLevels.has(level);
 
-          if (filteredLocations && displayLocations.length === 0) return null;
+            const displayName = game.levelDisplayNames[level] || level;
+            const isBatch = level.startsWith('Batch');
+            const formattedName = isBatch
+              ? displayName.replace(/([A-Za-z])(\d)/, '$1 $2')
+              : displayName;
 
-          const displayName = game.levelDisplayNames[level] || level;
-          const isBatch = level.startsWith('Batch');
-          const formattedName = isBatch
-            ? displayName.replace(/([A-Za-z])(\d)/, '$1 $2')
-            : displayName;
-
-          return (
-            <Accordion.Item key={level} eventKey={level} data-level={level}>
-              <Accordion.Header>
-                <span className="hint-list-section-title">{formattedName}</span>
-                <span className="hint-list-section-count">{displayLocations.length}</span>
-              </Accordion.Header>
-              <Accordion.Body className="p-0">
-                {showRevealButtons && !isFiltered && (() => {
-                  const levelRevealed = locations.every((loc) => revealedHints.has(loc));
-                  return (
-                    <div className="hint-list-section-reveal">
-                      <Button
-                        size="sm"
-                        variant={levelRevealed ? 'outline-secondary' : 'outline-primary'}
-                        className="d-flex align-items-center gap-1"
-                        onClick={() => handleRevealLevel(locations)}
-                      >
-                        {levelRevealed ? <FaEyeSlash /> : <FaEye />}
-                        {levelRevealed ? `Hide ${formattedName}` : `Reveal ${formattedName}`}
-                      </Button>
-                    </div>
-                  );
-                })()}
-                <div className="hint-list-items">
-                  {displayLocations.map((location) => {
-                    const locationLabel = game.getLocationLabel(location, level);
-                    const cleanedHint = (hints[location] || '').split('|')[0].trim();
-
+            return (
+              <Accordion.Item key={level} eventKey={level} data-level={level}>
+                <Accordion.Header>
+                  <span className="hint-list-section-title">{formattedName}</span>
+                  <span className="hint-list-section-count">{locations.length}</span>
+                </Accordion.Header>
+                <Accordion.Body className="p-0">
+                  {showRevealButtons && !isSynthetic && (() => {
+                    const levelRevealed = locations.every((loc) => revealedHints.has(loc));
                     return (
-                      <HintItem
-                        key={location}
-                        location={location}
-                        locationLabel={game.colorizeHints(locationLabel)}
-                        cleanedHint={cleanedHint}
-                        colorizedHint={game.colorizeHints(hints[location] || '', searchInput || undefined)}
-                        isRevealed={revealedHints.has(location)}
-                        isCompleted={completedHints.has(location)}
-                        hideReveal={false}
-                        onCompleteWithLinks={completeWithSync}
-                        onRevealWithLinks={revealWithSync}
-                        editable={editable}
-                        onEditHint={onEditHint}
-                        hintedItemOptions={game.hintedItemOptions}
-                        hintedItem={hintedItems[location] ?? ''}
-                        hintedItemEditable={true}
-                        onHintedItemChange={(_, item) => onHintedItemChange?.(location, item)}
-                      />
+                      <div className="hint-list-section-reveal">
+                        <Button
+                          size="sm"
+                          variant={levelRevealed ? 'secondary' : 'primary'}
+                          className="d-flex align-items-center gap-1"
+                          onClick={() => handleRevealLevel(locations)}
+                        >
+                          {levelRevealed ? <FaEyeSlash /> : <FaEye />}
+                          {levelRevealed ? `Hide ${formattedName}` : `Reveal ${formattedName}`}
+                        </Button>
+                      </div>
                     );
-                  })}
-                </div>
-              </Accordion.Body>
-            </Accordion.Item>
-          );
-        })}
-      </Accordion>
+                  })()}
+                  <div className="hint-list-items">
+                    {locations.map((location) => {
+                      const locationLabel = game.getLocationLabel(location, level);
+                      const cleanedHint = (hints[location] || '').split('|')[0].trim();
+
+                      return (
+                        <HintItem
+                          key={location}
+                          location={location}
+                          locationLabel={game.colorizeHints(locationLabel)}
+                          cleanedHint={cleanedHint}
+                          colorizedHint={game.colorizeHints(hints[location] || '')}
+                          isRevealed={revealedHints.has(location)}
+                          isCompleted={completedHints.has(location)}
+                          hideReveal={isSynthetic}
+                          onCompleteWithLinks={completeWithSync}
+                          onRevealWithLinks={revealWithSync}
+                          editable={editable && !isSynthetic}
+                          onEditHint={onEditHint}
+                          hintedItemOptions={game.hintedItemOptions}
+                          hintedItem={isSynthetic ? (syntheticHintedItems[location] ?? '') : (hintedItems[location] ?? '')}
+                          hintedItemEditable={!isSynthetic}
+                          onHintedItemChange={(_, item) => onHintedItemChange?.(location, item)}
+                        />
+                      );
+                    })}
+                  </div>
+                </Accordion.Body>
+              </Accordion.Item>
+            );
+          })}
+        </Accordion>
+      )}
 
       {showRevealButtons && !isFiltered && (
         <div className="hint-list-reveal-all">
           <Button
-            variant={allRevealed ? 'outline-secondary' : 'outline-primary'}
+            variant={allRevealed ? 'secondary' : 'primary'}
             className="d-flex align-items-center gap-2"
             onClick={handleRevealAll}
           >
@@ -405,12 +448,3 @@ export function HintListView({
   );
 }
 
-function getSectionsWithMatches(
-  groupedByLevel: { sorted: Record<string, string[]>; orderedLevels: string[] },
-  filteredLocations: Set<string> | null,
-): string[] {
-  if (!filteredLocations) return [];
-  return groupedByLevel.orderedLevels.filter((level) =>
-    (groupedByLevel.sorted[level] || []).some((loc) => filteredLocations.has(loc)),
-  );
-}

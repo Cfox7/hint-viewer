@@ -210,7 +210,7 @@ function categorizeHints(hints: Record<string, string>): Record<string, string> 
     if (lower.includes('foolish')) {
       result[`Foolish ${foolishCount++}`] = val;
     }
-    if (lower.includes('way of the hoard')) {
+    if (lower.includes('way of the hoard') || lower.includes('woth')) {
       result[`WOTH ${wothCount++}`] = val;
     }
   }

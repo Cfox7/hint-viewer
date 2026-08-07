@@ -93,13 +93,13 @@ function Create({ channelId }: CreateProps) {
   return (
     <>
       {/* Header */}
-      <div className="upload-header d-flex align-items-center gap-3 mb-3 p-3" style={{ background: '#cce4fa', borderRadius: 8 }}>
-        <FaTasks size={60} style={{ color: '#007bff' }} />
+      <div className="page-header">
+        <FaTasks size={36} className="page-header-icon" />
         <div>
-          <h2 className="mb-1" style={{ color: '#007bff', fontWeight: 700 }}>Create Your Hints</h2>
-          <div style={{ fontSize: '1rem', color: '#222' }}>
+          <h2>Create Your Hints</h2>
+          <p>
             Manually enter or edit hints for your seed. Use this page to create custom hint sets, no file upload required! Then mark them as complete as you go for your viewers.
-          </div>
+          </p>
         </div>
       </div>
 
