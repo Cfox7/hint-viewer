@@ -201,18 +201,18 @@ export function HintListView({
     (locations: string[]) => {
       const allRevealed = locations.every((loc) => revealedHints.has(loc));
       for (const loc of locations) {
-        if (allRevealed && revealedHints.has(loc)) onToggleReveal(loc);
-        if (!allRevealed && !revealedHints.has(loc)) onToggleReveal(loc);
+        if (allRevealed && revealedHints.has(loc)) revealWithSync(loc);
+        if (!allRevealed && !revealedHints.has(loc)) revealWithSync(loc);
       }
     },
-    [revealedHints, onToggleReveal],
+    [revealedHints, revealWithSync],
   );
 
   const handleRevealAll = useCallback(() => {
-    handleRevealLevel(visibleLocations);
-  }, [visibleLocations, handleRevealLevel]);
+    handleRevealLevel(nonSyntheticLocations);
+  }, [nonSyntheticLocations, handleRevealLevel]);
 
-  const allRevealed = visibleLocations.length > 0 && visibleLocations.every((loc) => revealedHints.has(loc));
+  const allRevealed = nonSyntheticLocations.length > 0 && nonSyntheticLocations.every((loc) => revealedHints.has(loc));
 
   const activeKeys = [...openSections];
 
