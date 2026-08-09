@@ -1888,6 +1888,25 @@ input[type="text"].hint-search-input {
   border-color: var(--text-accent);
 }
 
+.hint-list-section-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-accent-alt);
+  box-shadow: 0 0 4px var(--text-accent-alt);
+}
+
+.accordion-button.collapsed .hint-list-section-dot {
+  background: var(--text-accent);
+  box-shadow: 0 0 4px var(--text-accent);
+}
+
+.hint-list-section-check {
+  font-size: 0.55rem;
+  color: #2ecc71;
+  filter: drop-shadow(0 0 3px rgba(46, 204, 113, 0.5));
+}
+
 .hint-list-section-count {
   font-size: 0.75rem;
   background: color-mix(in srgb, var(--text-accent) 15%, transparent);

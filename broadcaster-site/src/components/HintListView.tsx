@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { Accordion, Button } from 'react-bootstrap';
-import { FaEye, FaEyeSlash, FaFilter, FaTimes } from 'react-icons/fa';
+import { FaCheck, FaEye, FaEyeSlash, FaFilter, FaTimes } from 'react-icons/fa';
 import HintItem from './HintItem';
 import { useGame } from '../contexts/GameContext';
 import { useCrossLinks } from '../hooks/use-cross-links';
@@ -380,6 +380,13 @@ export function HintListView({
                 <Accordion.Header>
                   <span className="hint-list-section-title">{formattedName}</span>
                   <span className="hint-list-section-count">{locations.length}</span>
+                  {!isSynthetic && (() => {
+                    const allCompleted = locations.every((loc) => completedHints.has(loc));
+                    const anyRevealed = locations.some((loc) => revealedHints.has(loc));
+                    if (allCompleted) return <FaCheck className="hint-list-section-check" />;
+                    if (anyRevealed) return <span className="hint-list-section-dot" />;
+                    return null;
+                  })()}
                 </Accordion.Header>
                 <Accordion.Body className="p-0">
                   {showRevealButtons && !isSynthetic && (() => {
