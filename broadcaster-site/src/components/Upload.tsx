@@ -1,14 +1,11 @@
 import Toast from 'react-bootstrap/Toast';
 import ToastContainer from 'react-bootstrap/ToastContainer';
 import { useEffect, useState } from 'react';
-import { FaUpload, FaCog, FaStore } from 'react-icons/fa';
-import { HintCarousel } from './HintCarousel';
+import { FaUpload, FaCog } from 'react-icons/fa';
+import { HintListView } from './HintListView';
 import { useUpload } from '../hooks/useUpload';
 import { UploadModals } from './UploadModals';
 import { SeedSettingsOffcanvas } from './seed-settings/SeedSettingsOffcanvas';
-import { ShopTrackerOffcanvas } from './shop-tracker/ShopTrackerOffcanvas';
-import { buildSlides } from '@hint-viewer/shared/components/buildSlides';
-import { useNav } from '../contexts/NavContext';
 import { useGame } from '../contexts/GameContext';
 
 interface UploadProps { channelId: string; }
@@ -34,26 +31,10 @@ function Upload({ channelId }: UploadProps) {
     handleHintedItemChange,
   } = useUpload(channelId);
 
-  const { slides, activeIndex, setActiveIndex, setSlides, setRevealedHints, setCompletedHints } = useNav();
   const { game } = useGame();
   const [showSuccess, setShowSuccess] = useState(false);
   const [showSeedSettings, setShowSeedSettings] = useState(false);
   const [showSettingsSavedToast, setShowSettingsSavedToast] = useState(false);
-  const [showShopTracker, setShowShopTracker] = useState(false);
-
-  useEffect(() => {
-    const { slides: newSlides } = spoilerData ? buildSlides(spoilerData.hints, {
-      levelOrder: game.levelOrder, sortHints: game.sortHints, getLevelCategory: game.getLevelCategory,
-      regionMerges: game.regionMerges, hintsPerPage: { direct: 5, foolish: 5, woth: 5 },
-    }) : { slides: [] };
-    setSlides(newSlides);
-    setActiveIndex(0);
-  }, [spoilerData]);
-
-  useEffect(() => {
-    setRevealedHints(revealedHints);
-    setCompletedHints(completedHints);
-  }, [revealedHints, completedHints]);
 
   useEffect(() => {
     if (success && file) setShowSuccess(true);
@@ -65,13 +46,13 @@ function Upload({ channelId }: UploadProps) {
       <UploadModals uploading={uploading} />
 
       {/* Header */}
-      <div className="upload-header d-flex align-items-center gap-3 mb-3 p-3" style={{ background: '#cce4fa', borderRadius: 8 }}>
-        <FaUpload size={36} style={{ color: '#007bff' }} />
+      <div className="page-header">
+        <FaUpload size={36} className="page-header-icon" />
         <div>
-          <h2 className="mb-1" style={{ color: '#007bff', fontWeight: 700 }}>Upload Spoiler Log</h2>
-          <div style={{ fontSize: '1rem', color: '#222' }}>
-            Upload your spoiler log to instantly populate all hints. You can then reveal/complete them as you go for you viewers. No manual entry required!
-          </div>
+          <h2>Upload Spoiler Log</h2>
+          <p>
+            Upload your spoiler log to instantly populate all hints. You can then reveal/complete them as you go for your viewers. No manual entry required!
+          </p>
         </div>
       </div>
 
@@ -115,15 +96,6 @@ function Upload({ channelId }: UploadProps) {
                 onClick={() => setShowSeedSettings(true)}
               >
                 <FaCog /> Seed Settings
-              </button>
-            )}
-            {game.id === 'dk64' && success && (
-              <button
-                type="button"
-                className="twitch-btn btn btn-outline-primary btn-sm d-flex align-items-center gap-1"
-                onClick={() => setShowShopTracker(true)}
-              >
-                <FaStore /> Shops
               </button>
             )}
           </div>
@@ -178,24 +150,17 @@ function Upload({ channelId }: UploadProps) {
             <span className="visually-hidden">Loading...</span>
           </div>
         </div>
-      ) : spoilerData && slides.length > 0 && (
-        <div className="card">
-          <div className="hints-preview">
-            <HintCarousel
-              hints={spoilerData.hints}
-              className="carousel-container"
-              channelId={channelId}
-              revealedHints={revealedHints}
-              completedHints={completedHints}
-              onToggleReveal={handleToggleReveal}
-              onToggleComplete={handleToggleComplete}
-              activeIndex={activeIndex}
-              onSelect={setActiveIndex}
-              hintedItems={hintedItems}
-              onHintedItemChange={handleHintedItemChange}
-            />
-          </div>
-        </div>
+      ) : spoilerData && Object.keys(spoilerData.hints).length > 0 && (
+        <HintListView
+          hints={spoilerData.hints}
+          revealedHints={revealedHints}
+          completedHints={completedHints}
+          hintedItems={hintedItems}
+          onToggleReveal={handleToggleReveal}
+          onToggleComplete={handleToggleComplete}
+          onHintedItemChange={handleHintedItemChange}
+          showRevealButtons
+        />
       )}
 
       {game.availableSettings && (
@@ -205,14 +170,6 @@ function Upload({ channelId }: UploadProps) {
           onSaveSuccess={() => setShowSettingsSavedToast(true)}
           channelId={channelId}
           extractedSettings={extractedSettings}
-        />
-      )}
-
-      {game.id === 'dk64' && (
-        <ShopTrackerOffcanvas
-          show={showShopTracker}
-          onHide={() => setShowShopTracker(false)}
-          channelId={channelId}
         />
       )}
     </>

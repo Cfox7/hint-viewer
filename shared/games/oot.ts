@@ -1,5 +1,6 @@
 import React from 'react';
-import type { GameConfig, LevelCategory, SpoilerLog } from './types';
+import type { GameConfig, LevelCategory, SearchableRegion, SpoilerLog } from './types';
+import { highlightParts } from './types';
 import OotHome from '../../broadcaster-site/src/components/OotHome';
 import { availableSettings, defaultSettings, settingsPresets, extractSettings } from './oot-seed-settings';
 
@@ -352,7 +353,7 @@ function sortHints(groupedHints: Record<string, string[]>): Record<string, strin
   return sorted;
 }
 
-function colorizeHints(text: string): React.ReactNode {
+function colorizeHints(text: string, highlight?: string): React.ReactNode {
   if (!text) return null;
   const [hintText, colorStr] = text.split('|');
   const colors = colorStr ? colorStr.split(',').map(c => c.trim()) : [];
@@ -386,7 +387,7 @@ function colorizeHints(text: string): React.ReactNode {
     remaining = remaining.slice(end + 1);
   }
 
-  const finalParts = parts.flatMap((part, partIndex) => {
+  let finalParts: React.ReactNode[] = parts.flatMap((part, partIndex) => {
     if (typeof part !== 'string') return [part];
     return part.split(/\b(foolish|path to)\b/gi).map((seg, segIndex) => {
       const color = ootColorMap[seg.toLowerCase()];
@@ -394,6 +395,10 @@ function colorizeHints(text: string): React.ReactNode {
       return seg;
     });
   });
+
+  if (highlight) {
+    finalParts = highlightParts(finalParts, highlight, colorIndex);
+  }
 
   return React.createElement(React.Fragment, null, ...finalParts);
 }
@@ -430,6 +435,29 @@ function getEmptyHintTemplate(): Record<string, string> {
   return template;
 }
 
+const searchableRegions: SearchableRegion[] = [
+  { key: 'DMC', displayName: 'Death Mountain Crater', aliases: ['dmc', 'death mountain crater'] },
+  { key: 'DMT', displayName: 'Death Mountain Trail', aliases: ['dmt', 'death mountain trail'] },
+  { key: 'Dodongos', displayName: "Dodongo's Cavern", aliases: ['dodongos', "dodongo's cavern", 'dodongo'] },
+  { key: 'GC', displayName: 'Goron City', aliases: ['gc', 'goron city', 'goron'] },
+  { key: 'GV', displayName: 'Gerudo Valley', aliases: ['gv', 'gerudo valley', 'gerudo'] },
+  { key: 'Colossus', displayName: 'Colossus', aliases: ['colossus', 'spirit temple'] },
+  { key: 'Graveyard', displayName: 'Graveyard', aliases: ['graveyard', 'shadow temple'] },
+  { key: 'Kak', displayName: 'Kakariko Village', aliases: ['kak', 'kakariko'] },
+  { key: 'HC', displayName: 'Hyrule Castle', aliases: ['hc', 'hyrule castle', 'hyrule'] },
+  { key: 'HF', displayName: 'Hyrule Field', aliases: ['hf', 'hyrule field'] },
+  { key: 'KF', displayName: 'Kokiri Forest', aliases: ['kf', 'kokiri forest', 'kokiri'] },
+  { key: 'LH', displayName: 'Lake Hylia', aliases: ['lh', 'lake hylia', 'water temple'] },
+  { key: 'LW', displayName: 'Lost Woods', aliases: ['lw', 'lost woods', 'forest temple'] },
+  { key: 'SFM', displayName: 'Sacred Forest Meadow', aliases: ['sfm', 'sacred forest meadow'] },
+  { key: 'ToT', displayName: 'Temple of Time', aliases: ['tot', 'temple of time'] },
+  { key: 'ZD', displayName: "Zora's Domain", aliases: ['zd', "zora's domain", 'zora'] },
+  { key: 'ZF', displayName: "Zora's Fountain", aliases: ['zf', "zora's fountain"] },
+  { key: 'ZR', displayName: "Zora's River", aliases: ['zr', "zora's river"] },
+  { key: 'Path', displayName: 'Path/Major Hints', color: '#FFA010', aliases: ['path', 'woth', 'path to'] },
+  { key: 'Foolish', displayName: 'Foolish', color: '#FF0000', aliases: ['foolish'] },
+];
+
 export const ootConfig: GameConfig = {
   id: 'oot',
   displayName: 'Ocarina of Time Randomizer',
@@ -453,6 +481,7 @@ export const ootConfig: GameConfig = {
   settingsPresets,
   extractSettings,
   regionMerges,
+  searchableRegions,
   toServerPayload: (hints): Record<string, unknown> => ({ gossip_stones: hints }),
   fromServerPayload: (raw) => {
     const obj = raw as Record<string, unknown>;

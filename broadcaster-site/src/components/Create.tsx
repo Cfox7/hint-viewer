@@ -1,13 +1,10 @@
 import Toast from 'react-bootstrap/Toast';
 import ToastContainer from 'react-bootstrap/ToastContainer';
-import { useEffect, useState } from 'react';
-import { FaEdit, FaSave, FaTasks, FaCog, FaStore } from 'react-icons/fa';
+import { useState } from 'react';
+import { FaEdit, FaSave, FaTasks, FaCog } from 'react-icons/fa';
 import { MdNoteAdd } from 'react-icons/md';
-import { HintCarousel } from './HintCarousel';
+import { HintListView } from './HintListView';
 import { SeedSettingsOffcanvas } from './seed-settings/SeedSettingsOffcanvas';
-import { ShopTrackerOffcanvas } from './shop-tracker/ShopTrackerOffcanvas';
-import { buildSlides } from '@hint-viewer/shared/components/buildSlides';
-import { useNav } from '../contexts/NavContext';
 import { useGame } from '../contexts/GameContext';
 import { useManual } from '../hooks/useManual';
 import { ConfirmModal } from './ConfirmModal';
@@ -24,7 +21,6 @@ function Create({ channelId }: CreateProps) {
   const [showSeedSettings, setShowSeedSettings] = useState(false);
   const [showSettingsSavedToast, setShowSettingsSavedToast] = useState(false);
   const [seedSettingsClearTrigger, setSeedSettingsClearTrigger] = useState(0);
-  const [showShopTracker, setShowShopTracker] = useState(false);
   const {
     initialLoading,
     hints,
@@ -39,24 +35,7 @@ function Create({ channelId }: CreateProps) {
     saveSpoiler,
   } = useManual(channelId);
 
-  const { slides, activeIndex, setActiveIndex, setSlides, setRevealedHints, setCompletedHints } = useNav();
   const { game } = useGame();
-
-  useEffect(() => {
-    const sourceHints = isEditing && editHints ? editHints : hints;
-    const { slides: newSlides } = sourceHints && Object.keys(sourceHints).length > 0
-      ? buildSlides(sourceHints, {
-          levelOrder: game.levelOrder, sortHints: game.sortHints, getLevelCategory: game.getLevelCategory,
-          regionMerges: game.regionMerges, hintsPerPage: { direct: 5, foolish: 5, woth: 5 },
-        })
-      : { slides: [] };
-    setSlides(newSlides);
-  }, [hints, editHints, isEditing]);
-
-  useEffect(() => {
-    setRevealedHints(revealedHints);
-    setCompletedHints(completedHints);
-  }, [revealedHints, completedHints]);
 
   const handleEditToggle = () => {
     if (!isEditing) {
@@ -106,7 +85,6 @@ function Create({ channelId }: CreateProps) {
       setSeedSettingsClearTrigger(prev => prev + 1);
       setShowClearModal(false);
       setShowClearedToast(true);
-      setActiveIndex(0);
     } finally {
       setClearing(false);
     }
@@ -115,13 +93,13 @@ function Create({ channelId }: CreateProps) {
   return (
     <>
       {/* Header */}
-      <div className="upload-header d-flex align-items-center gap-3 mb-3 p-3" style={{ background: '#cce4fa', borderRadius: 8 }}>
-        <FaTasks size={60} style={{ color: '#007bff' }} />
+      <div className="page-header">
+        <FaTasks size={36} className="page-header-icon" />
         <div>
-          <h2 className="mb-1" style={{ color: '#007bff', fontWeight: 700 }}>Create Your Hints</h2>
-          <div style={{ fontSize: '1rem', color: '#222' }}>
+          <h2>Create Your Hints</h2>
+          <p>
             Manually enter or edit hints for your seed. Use this page to create custom hint sets, no file upload required! Then mark them as complete as you go for your viewers.
-          </div>
+          </p>
         </div>
       </div>
 
@@ -179,7 +157,7 @@ function Create({ channelId }: CreateProps) {
               >
                 <MdNoteAdd size={20} /> Create New Hint Template
               </button>
-              {slides.length > 0 && (
+              {Object.keys(hints).length > 0 && (
                 <button
                   className="btn btn-success btn-sm d-flex align-items-center gap-1"
                   onClick={handleEditToggle}
@@ -198,37 +176,20 @@ function Create({ channelId }: CreateProps) {
                   <FaCog /> Seed Settings
                 </button>
               )}
-              {game.id === 'dk64' && (
-                <button
-                  className="twitch-btn btn btn-outline-primary btn-sm d-flex align-items-center gap-1"
-                  onClick={() => setShowShopTracker(true)}
-                >
-                  <FaStore /> Shops
-                </button>
-              )}
             </div>
           </div>
-          {slides.length > 0 && (
-            <div className="card">
-              <div className="hints-preview">
-                <HintCarousel
-                  hints={isEditing && editHints ? editHints : hints}
-                  className="carousel-container"
-                  channelId={channelId}
-                  revealedHints={revealedHints}
-                  completedHints={completedHints}
-                  onToggleReveal={handleToggleReveal}
-                  onToggleComplete={handleToggleComplete}
-                  activeIndex={activeIndex}
-                  onSelect={setActiveIndex}
-                  editable={isEditing}
-                  onEditHint={handleEditHint}
-                  showRevealButtons={false}
-                  hintedItems={hintedItems}
-                  onHintedItemChange={handleHintedItemChange}
-                />
-              </div>
-            </div>
+          {Object.keys(isEditing && editHints ? editHints : hints).length > 0 && (
+            <HintListView
+              hints={isEditing && editHints ? editHints : hints}
+              revealedHints={revealedHints}
+              completedHints={completedHints}
+              hintedItems={hintedItems}
+              onToggleReveal={handleToggleReveal}
+              onToggleComplete={handleToggleComplete}
+              onHintedItemChange={handleHintedItemChange}
+              editable={isEditing}
+              onEditHint={handleEditHint}
+            />
           )}
         </>
       )}
@@ -240,14 +201,6 @@ function Create({ channelId }: CreateProps) {
           onSaveSuccess={() => setShowSettingsSavedToast(true)}
           channelId={channelId}
           clearTrigger={seedSettingsClearTrigger}
-        />
-      )}
-
-      {game.id === 'dk64' && (
-        <ShopTrackerOffcanvas
-          show={showShopTracker}
-          onHide={() => setShowShopTracker(false)}
-          channelId={channelId}
         />
       )}
     </>

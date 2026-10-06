@@ -22,6 +22,7 @@ interface HintItemProps {
   hintedItem?: string;
   hintedItemEditable?: boolean;
   onHintedItemChange?: (location: string, item: string) => void;
+  hideLocation?: boolean;
 }
 
 function parseItemList(value: string): string[] {
@@ -48,6 +49,7 @@ export default function HintItem({
   hintedItem = '',
   hintedItemEditable = true,
   onHintedItemChange,
+  hideLocation = false,
 }: HintItemProps) {
   const selectStyles = useSelectTheme();
   const [editValue, setEditValue] = useState(cleanedHint);
@@ -80,8 +82,8 @@ export default function HintItem({
   return (
     <div className="hint-item">
       <div className="d-flex justify-content-between align-items-center mb-1">
-        <span className="hint-location">{locationLabel}:</span>
-        <div className="d-flex gap-1">
+        {!hideLocation && <span className="hint-location">{locationLabel}:</span>}
+        <div className={`d-flex gap-1${hideLocation ? ' ms-auto' : ''}`}>
           {isRevealed && !hideReveal && (
             <Button size="sm" variant={isCompleted ? "success" : "outline-success"} className="hint-toggle-btn" aria-label={isCompleted ? "Mark uncompleted" : "Mark completed"} onClick={() => onCompleteWithLinks(location)}>
               <i className={`bi ${isCompleted ? "bi-check-circle-fill" : "bi-check-circle"}`}></i>
@@ -108,7 +110,7 @@ export default function HintItem({
         </p>
       )}
       {isCompleted && !hintedItemEditable && hintedItem && (
-        <div className="hinted-item-inline">
+        <div className="hinted-item-inline" style={{ textAlign: 'center' }}>
           <span className="hint-location" style={{ color: 'var(--text-muted)' }}>
             Hinted Item: <strong style={{ color: 'var(--text-primary)' }}>{hintedItem}</strong>
           </span>

@@ -2,12 +2,7 @@ import { useMemo } from 'react';
 import type { StylesConfig } from 'react-select';
 import { useGame } from '../contexts/GameContext';
 
-interface SelectOption {
-  value: string;
-  label: string;
-}
-
-export function useSelectTheme(): StylesConfig<SelectOption> {
+export function useSelectTheme<T = { value: string; label: string }>(): StylesConfig<T> {
   const { game } = useGame();
 
   return useMemo(() => {

@@ -1,5 +1,6 @@
 import React from 'react';
-import type { GameConfig, LevelCategory, SpoilerLog, SeedSettingsData } from './types';
+import type { GameConfig, LevelCategory, SpoilerLog, SeedSettingsData, SearchableRegion } from './types';
+import { highlightParts } from './types';
 import DkHome from '../../broadcaster-site/src/components/DkHome';
 import { availableSettings, defaultSettings, settingsPresets } from './dk64-seed-settings';
 
@@ -42,6 +43,18 @@ const baseOrder = Object.keys(levelDisplayNames);
 baseOrder.splice(8, 0, ...batchNames);
 const levelOrder = baseOrder;
 const backgroundImage = './assets/bgfinal.webp';
+
+const searchableRegions: SearchableRegion[] = [
+  { key: 'Japes', displayName: 'Jungle Japes', color: '#59FF64', aliases: ['japes', 'jungle'] },
+  { key: 'Aztec', displayName: 'Angry Aztec', color: '#FFA010', aliases: ['aztec', 'angry'] },
+  { key: 'Factory', displayName: 'Frantic Factory', color: '#B5CDFF', aliases: ['factory', 'frantic', 'testing'] },
+  { key: 'Galleon', displayName: 'Gloomy Galleon', color: '#0C7DED', aliases: ['galleon', 'gloomy'] },
+  { key: 'Fungi', displayName: 'Fungi Forest', color: '#BB1CFF', aliases: ['fungi', 'forest', 'mushroom'] },
+  { key: 'Caves', displayName: 'Crystal Caves', color: '#3EE1E1', aliases: ['caves', 'crystal', 'cabins'] },
+  { key: 'Castle', displayName: 'Creepy Castle', color: '#E84898', aliases: ['castle', 'creepy'] },
+  { key: 'Helm', displayName: 'Hideout Helm', color: '#FF0000', aliases: ['helm', 'hideout'] },
+  { key: 'Path', displayName: 'Path', color: '#FFA010', aliases: ['path'] },
+];
 
 const sectionLabels: Record<LevelCategory, string> = {
   regions: 'Levels',
@@ -197,7 +210,7 @@ function categorizeHints(hints: Record<string, string>): Record<string, string> 
     if (lower.includes('foolish')) {
       result[`Foolish ${foolishCount++}`] = val;
     }
-    if (lower.includes('way of the hoard')) {
+    if (lower.includes('way of the hoard') || lower.includes('woth')) {
       result[`WOTH ${wothCount++}`] = val;
     }
   }
@@ -293,7 +306,7 @@ function sortHints(groupedHints: Record<string, string[]>): Record<string, strin
   return sorted;
 }
 
-function colorizeHints(text: string): React.ReactNode {
+function colorizeHints(text: string, highlight?: string): React.ReactNode {
   if (!text) return null;
   let parts: React.ReactNode[] = [text];
   let key = 0;
@@ -331,6 +344,10 @@ function colorizeHints(text: string): React.ReactNode {
     });
     parts = nextParts;
   });
+
+  if (highlight) {
+    parts = highlightParts(parts, highlight, key);
+  }
 
   return React.createElement(React.Fragment, null, ...parts);
 }
@@ -458,6 +475,7 @@ export const dk64Config: GameConfig = {
   defaultSettings,
   settingsPresets,
   extractSettings,
+  searchableRegions,
   toServerPayload: (hints, raw): Record<string, unknown> => {
     const payload: Record<string, unknown> = { "Wrinkly Hints": hints };
     const input = raw as DKSpoilerLog | undefined;

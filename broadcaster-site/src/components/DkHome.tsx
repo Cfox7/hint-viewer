@@ -26,8 +26,6 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 function DkHome() {
   return (
     <>
-      <h2 className="theme-gradient-text" style={{ marginBottom: '1.5rem' }}>Welcome to the DK64 Randomizer Hint Viewer!</h2>
-
       <Section title="Getting Started">
         <p>
           This site lets <a href="https://dk64randomizer.com" target="_blank" rel="noreferrer">DK64 Randomizer</a> broadcasters securely share hints with their viewers. 
